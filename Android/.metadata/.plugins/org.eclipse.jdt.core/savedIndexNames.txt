@@ -1,0 +1,4 @@
+INDEX VERSION 1.126+C:\Users\joaom_000\Documents\GitHub\UFV-Anonymous\Android\.metadata\.plugins\org.eclipse.jdt.core
+2861467468.index
+659882407.index
+2417846218.index
