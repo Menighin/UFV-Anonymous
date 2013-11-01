@@ -1,7 +1,7 @@
 Anonymous-Chat
 ==============
 
-- What is?
+- What is?<br />
 Anonymous Chat is an Android application to connect two strangers inserted in an alike environment in a chat room.
 
 - Technologies
