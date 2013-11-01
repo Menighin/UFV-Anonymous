@@ -1,0 +1,49 @@
+<html>
+	<head>
+		<title> Test Login </title>
+		
+		
+	</head>
+		
+	<body>
+	
+		<H1> Teste login </h1>
+		<form action="login.php" method="POST">
+			<input type="text" name="username" placeholder="Username" />
+			<input type="text" name="password" placeholder="Password" />
+			<input type="submit" value="Login" />
+		</form>
+		<br />
+		<H1> Teste Connect </h1>
+		<form action="connect.php" method="POST">
+			<input type="text" name="user" placeholder="Username" />
+			<input type="text" name="sex" placeholder="Sex" />
+			<input type="text" name="course" placeholder="Course" />
+			<input type="text" name="wantssex" placeholder="Wants sex"/>
+			<input type="text" name="wantscourse" placeholder="Wants course" />
+			<input type="submit" value="Connect" />
+		</form>
+		<br />
+		<H1> Teste Conversation is Ready </h1>
+		<form action="is_conversation_ready.php" method="POST">
+			<input type="text" name="conversation_id" placeholder="Conversation id" />
+			<input type="submit" value="Test" />
+		</form>
+		<br />
+		<H1> Teste Send Message </h1>
+		<form action="send_message.php" method="POST">
+			<input type="text" name="conversation_id" placeholder="Conversation id" />
+			<input type="text" name="message" placeholder="Message" />
+			<input type="text" name="author" placeholder="Author 0 = server, 1 = client" />
+			<input type="text" name="flag" placeholder="END_FLAG" />
+			<input type="submit" value="Send" />
+		</form>
+		<br />
+		<H1> Teste Get Message</h1>
+		<form action="get_message.php" method="POST">
+			<input type="text" name="conversation_id" placeholder="Conversation id" />
+			<input type="text" name="author" placeholder="Author 0 = server, 1 = client" />
+			<input type="submit" value="Test" />
+		</form>
+	</body>
+</html>

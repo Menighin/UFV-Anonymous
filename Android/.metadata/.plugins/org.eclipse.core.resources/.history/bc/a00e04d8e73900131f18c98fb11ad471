@@ -1,0 +1,13 @@
+package com.anonymous.classes;
+
+public class User {
+	private String username;
+	private String course;
+	private String sex;
+	
+	public User (String username = null, String course = null, String sex = null) {
+		
+	}
+	
+	
+}

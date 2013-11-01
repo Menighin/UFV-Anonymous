@@ -1,0 +1,18 @@
+package com.anonymous.classes;
+
+public class User {
+	private String username;
+	private String course;
+	private String sex;
+	
+	public User () {
+		this.username = this.course = this.sex = "";
+	}
+	
+	public User (String username, String course, String sex) {
+		this.username = username;
+		this.course = course;
+		this.sex = sex;
+	}
+	
+}
