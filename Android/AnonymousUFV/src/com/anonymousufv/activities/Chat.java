@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -66,13 +67,14 @@ public class Chat extends Activity {
 		// Solving if the activity is either a client or server type
 		extras = getIntent().getExtras();
 		if (extras.getInt("type") == 0) {
-			talkingTo.setText("Esperando o anônimo(a) se conectar... ;)");
+			talkingTo.setText("Esperando o anônimo(a) se conectar...");
 			connected = false;
 			getMessagesFrom = 1;
 			sentMessagesFrom = 0;
 		}
 		else {
 			talkingTo.setText("Falando com: Anônimo");
+			talkingTo.setTextColor(Color.GREEN);
 			connected = true;
 			getMessagesFrom = 0;
 			sentMessagesFrom = 1;
@@ -86,14 +88,14 @@ public class Chat extends Activity {
 		        public void run() {
 		            new IsReadyAsync().execute();
 		        }
-		    }, 0, 4000);
+		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);
 		else // Client
 			myTimer.schedule(new TimerTask() {          
 		        @Override
 		        public void run() {
 		            new GetMessagesAsync().execute();
 		        }
-		    }, 0, 4000);
+		    }, 0, Settings.CHECK_MESSAGES_TIME);
 	}
 
 	// Function called when user hit the send button on screen
@@ -144,6 +146,7 @@ public class Chat extends Activity {
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
 				talkingTo.setText("Falando com: Anônimo");
+				talkingTo.setTextColor(Color.GREEN);
 				myTimer.cancel();
 				myTimer = new Timer();
 				myTimer.schedule(new TimerTask() {          
@@ -151,7 +154,7 @@ public class Chat extends Activity {
 			        public void run() {
 			            new GetMessagesAsync().execute();
 			        }
-			    }, 0, 3000);
+			    }, 0, Settings.CHECK_MESSAGES_TIME);
 			}
 		}
 	}
@@ -204,6 +207,7 @@ public class Chat extends Activity {
 						adapter.add(msg);
 					else {
 						talkingTo.setText("Anônimo se desconectou :( ...");
+						talkingTo.setTextColor(Color.RED);
 						message.setText("");
 						message.setEnabled(false);
 					}

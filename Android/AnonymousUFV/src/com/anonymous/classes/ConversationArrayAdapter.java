@@ -49,12 +49,14 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message>{
 		timeView = (TextView) row.findViewById(R.id.time);
 		timeView.setText(message.time);
 		
+		messageView.setMaxWidth(display.getWidth() - (30*display.getWidth()/100));
 		
 		if (message.left) {
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
+			messageView.setPadding(20, 7, 15, 10);
 			messageView.requestFocus();
 			
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -63,13 +65,12 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message>{
 			timeView.setLayoutParams(params);
 			timeView.setPadding(10, 0, 0, 0);
 			
-			messageView.setMaxWidth(display.getWidth() - (30*display.getWidth()/100));
-			
 		} else {
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
+			messageView.setPadding(15, 7, 20, 10);
 			messageView.requestFocus();
 			
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -78,9 +79,10 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message>{
 			timeView.setLayoutParams(params);
 			timeView.setPadding(0, 0, 10, 0);
 			
-			messageView.setMaxWidth(display.getWidth() - (30*display.getWidth()/100));
+			
 		}
-
+		
+		
 		return row;
 	}
 	

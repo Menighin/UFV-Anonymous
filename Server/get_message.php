@@ -1,4 +1,18 @@
 <?php
+	
+	/**
+	* API get_message function: return the message to the user if there is a message to return
+	* Author: João Menighin
+	* Parameters:
+	*	METHOD          => POST
+	*	conversation_id => int
+	*   author          => int
+	* Return: 
+	*	 int response:
+	*    	0 ==> If there's no messages to return
+	*    	1 ==> If there's messages to return
+	*    array of messages if response = 1
+	**/
 
 	header("Content-Type: text/html; charset=utf-8");
 
