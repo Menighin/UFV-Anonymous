@@ -22,6 +22,7 @@
 
             <label for="password">Senha: </label>
             <input type="password" name="password" id="password" />
+            <div id="erro-password"></div>
             <br />
 
             <label for="password-confirm">Confirmação da Senha: </label>
@@ -29,7 +30,8 @@
             <br />
             
             <label for="sex">Sexo: </label>
-            <select>
+            <select id="sexo" name="sexo">
+                <option value="">Selecione..</option>
                 <option value="M">Homem</option>
                 <option value="F">Mulher</option>
             </select>
@@ -40,7 +42,7 @@
             <br />
 
             <label for="university">Faculdade: </label>
-            <select id="university" onchange="getCursos(this.value)">
+            <select id="university" name="university" onchange="getCursos(this.value)">
                 <option value="-1">Selecione...</option>
                 <!-- Carregar a lista de faculdades -->
                 <?php
@@ -54,12 +56,12 @@
             <br />
             
             <label for="course">Curso: </label>
-            <select id="course">
+            <select id="course" name="course">
                 <option value="-1">Selecione...</option>
             </select>
             <br />
             
-            <input type="submit" value="Cadastrar" />
+            <input type="submit" id="button-cadastrar" value="Cadastrar" />
 
         </form>
     </body>
