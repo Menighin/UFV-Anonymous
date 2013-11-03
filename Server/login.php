@@ -28,7 +28,7 @@
 	else {
 		if (strcmp($row['password'], $_POST['password']) == 0)
 			if ($row['valid'] == true) {
-				echo json_encode(array('response' => 1, 'username' => $row['username'], 'course' => $row['course'], 'sex' => $row['sex']));
+				echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university']));
 				$_SESSION['user'] = $_POST['username'];
 				
 				$conn->query("UPDATE users SET last_seen = NOW() WHERE username = '" . $_POST['username'] . "'");

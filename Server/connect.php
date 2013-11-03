@@ -43,7 +43,7 @@
 			// Open new conversation
 			$query = 'INSERT INTO conversations (
 						user1, u1sex, u1course, u1university, u1wantssex, u1wantscourse, ready, participants, started_on)
-						VALUES (:user, :sex, :course, "ufv", :wantssex, :wantscourse, 0, 1, NOW())';
+						VALUES (:user, :sex, :course, 0, :wantssex, :wantscourse, 0, 1, NOW())';
 						
 			$stmt = $conn->prepare($query);
 			$stmt->execute(array (':user' => $_POST['user'], ':sex' => $_POST['sex'], ':course' => $_POST['course'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $_POST['wantscourse']));

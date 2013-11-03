@@ -160,7 +160,7 @@ public class MainMenu extends Activity {
 	
 	private int doConnect() throws Exception {
 		String urlParameters = "user=" + Settings.me.getUserID() + "&sex=" + Settings.me.getSex() + "&course=" + Settings.me.getCourseID() + 
-					"&wantssex=w&wantscourse=0";
+					"&wantssex=w&wantscourse=qualquer";
 		URL url = new URL(Settings.API_URL + "/connect");
 		
 		//Connection parameters

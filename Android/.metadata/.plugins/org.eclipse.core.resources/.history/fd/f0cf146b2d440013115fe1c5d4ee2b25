@@ -6,10 +6,10 @@ public class User {
 	private int courseID;
 	private String course;
 	private String sex;
-	private int university;
+	private String university;
 	
 	public User(int userID, String username, int courseID, String course,
-			String sex, int university) {
+			String sex, String university) {
 		super();
 		this.userID = userID;
 		this.username = username;
@@ -36,11 +36,11 @@ public class User {
 		this.courseID = courseID;
 	}
 
-	public int getUniversity() {
+	public String getUniversity() {
 		return university;
 	}
 
-	public void setUniversity(int university) {
+	public void setUniversity(String university) {
 		this.university = university;
 	}
 

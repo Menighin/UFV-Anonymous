@@ -38,6 +38,7 @@ public class Chat extends Activity {
 	
 	//TODO Solve about timestamp on messages
 	//TODO Layout orientantion change
+	//TODO Close conversation when user disconnects before another connecting to him 
 	//TODO Solve problem with accents
 	
 	private EditText message;

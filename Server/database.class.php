@@ -2,7 +2,7 @@
  class Database {
  
 	private $conn;
-	private $username = "root", $password = "", $host = "localhost", $dbname = "anonymousufv";
+	private $username = "root", $password = "", $host = "localhost", $dbname = "anonymouschat";
 	
 	function connect() {
 		try {
