@@ -45,6 +45,10 @@ class Database {
                 ->fetchall();
         return $resultSet;
     }
+    
+    function insertUser($sql) {
+        
+    }
 }
 
 ?>

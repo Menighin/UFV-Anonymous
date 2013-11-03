@@ -30,7 +30,7 @@
             <br />
             
             <label for="sex">Sexo: </label>
-            <select id="sexo" name="sexo">
+            <select id="sex" name="sex">
                 <option value="">Selecione..</option>
                 <option value="M">Homem</option>
                 <option value="F">Mulher</option>
