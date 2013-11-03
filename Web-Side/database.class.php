@@ -39,6 +39,12 @@ class Database {
         $resultSet = $this->conn->query("SELECT * FROM universities")->fetchall();
         return $resultSet;
     }
+    
+    function getCourses($university_id) {
+        $resultSet = $this->conn->query("SELECT * FROM courses WHERE university_id = " . $university_id)
+                ->fetchall();
+        return $resultSet;
+    }
 }
 
 ?>

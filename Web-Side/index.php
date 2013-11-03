@@ -9,6 +9,6 @@
             <input type="password" name="password" /> <br />
             <input type="submit" value="Login" />
         </form>
-        <a href="cadastro.php">Criar uma conta</a>
+        <a href="cadastro/cadastro.php">Criar uma conta</a>
     </body>
 </html>
