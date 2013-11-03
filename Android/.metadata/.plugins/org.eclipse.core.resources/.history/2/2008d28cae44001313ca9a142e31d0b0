@@ -7,10 +7,9 @@ public class User {
 	private String course;
 	private String sex;
 	private int university;
-	private String APIKey;
 	
 	public User(int userID, String username, int courseID, String course,
-			String sex, int university, String APIKey) {
+			String sex, int university) {
 		super();
 		this.userID = userID;
 		this.username = username;
@@ -18,19 +17,9 @@ public class User {
 		this.course = course;
 		this.sex = sex;
 		this.university = university;
-		this.APIKey = APIKey;
 	}
 	
 	
-	
-	public String getAPIKey() {
-		return APIKey;
-	}
-
-	public void setAPIKey(String aPIKey) {
-		APIKey = aPIKey;
-	}
-
 	public int getUserID() {
 		return userID;
 	}

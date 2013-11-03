@@ -14,7 +14,7 @@
 	**/
 
 	session_start(); 
-	include 'database.class.php';
+	include 'Database.class.php';
 	$database = new Database();
 	$conn = $database->connect();
 	
@@ -28,7 +28,7 @@
 	else {
 		if (strcmp($row['password'], $_POST['password']) == 0)
 			if ($row['valid'] == true) {
-				echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university']));
+				echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $row['api_key']));
 				$_SESSION['user'] = $_POST['username'];
 				
 				$conn->query("UPDATE users SET last_seen = NOW() WHERE username = '" . $_POST['username'] . "'");

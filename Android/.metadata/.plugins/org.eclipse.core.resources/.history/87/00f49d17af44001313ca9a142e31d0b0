@@ -105,8 +105,7 @@ public class Chat extends Activity {
 			adapter.add(new Message(false, message.getText().toString(), now.getTime().getHours() + ":" + now.getTime().getMinutes(), (short)0));
 			
 			try {
-				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + message.getText().toString() + 
-						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + message.getText().toString() + "&author=" + sentMessagesFrom + "&flag=0";
 	    		new SendMessageAsync().execute(urlParameters);
 			} catch (Exception e) {
 				Log.e ("SEND BUTTON", e.getMessage());
@@ -126,7 +125,7 @@ public class Chat extends Activity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID;
 		    		URL url = new URL(Settings.API_URL + "/is_conversation_ready");
 		    	    
 		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
@@ -171,8 +170,7 @@ public class Chat extends Activity {
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
 		        	msgs = new ArrayList<Message>();
-		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&author=" + getMessagesFrom + 
-		        			"&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&author=" + getMessagesFrom;
 		    		URL url = new URL(Settings.API_URL + "/get_message");
 		    	    
 		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
@@ -290,8 +288,7 @@ public class Chat extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		try {
-			String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=oi&author=" + sentMessagesFrom + "&flag=1"
-					+ "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+			String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=oi&author=" + sentMessagesFrom + "&flag=1";
 			new SendMessageAsync().execute(urlParameters);
 		} catch (Exception e) {
 			Log.e("Error onDestroy", e.getMessage());

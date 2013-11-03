@@ -157,8 +157,7 @@ public class Login extends Activity {
 	    
 	    //Set new global user
 	    if (json.getInt("response") == 1)
-	    	Settings.me = new User (
-	    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), "", json.getString("sex"), json.getInt("universityID"), json.getString("apikey"));
+	    	Settings.me = new User (json.getInt("id"), json.getString("username"), json.getInt("courseID"), "", json.getString("sex"), json.getInt("universityID"));
 	    return json.getInt("response");
 	    
 	}

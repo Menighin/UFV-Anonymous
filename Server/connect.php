@@ -21,15 +21,19 @@
 	
 	header("Content-Type: text/html;charset=utf-8");
 	
+	include "Database.class.php";
+	include "Validate.class.php";
+	$database = new Database();
+	$conn = $database->connect();
+	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
+	
+	
 	// User not logged in
-	/*if (!isset($_SESSION['user'])) {
-		echo json_encode(array('response' => -1));
-	}*/
+	if (!$validate->isValid()) {
+		echo json_encode(array('response' => -2));
+	}
 	// User authenticated
-	//else {
-		include "database.class.php";
-		$database = new Database();
-		$conn = $database->connect();
+	else {
 		
 		// Prepare query
 		$stmt = $conn->prepare('SELECT * FROM conversations WHERE ready=0');
@@ -56,6 +60,8 @@
 			
 			echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id']));
 		}
-	//}
+	}
+	
+	$conn = $database->disconnect();
 	
 ?>
