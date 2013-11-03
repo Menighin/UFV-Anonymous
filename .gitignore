@@ -31,12 +31,12 @@ proguard/
 .idea/
 
 # Files
-/Android/AnonymousUFV/proguard-project.txt
-/Android/AnonymousUFV/res/values-v11
-/Android/AnonymousUFV/res/values-v14
-/Android/AnonymousUFV/res/values-sw600dp
-/Android/AnonymousUFV/res/values-sw720dp-land
+Android/AnonymousUFV/proguard-project.txt
+Android/AnonymousUFV/res/values-v11/
+Android/AnonymousUFV/res/values-v14/
+Android/AnonymousUFV/res/values-sw600dp/
+Android/AnonymousUFV/res/values-sw720dp-land/
 
 
 # Web-side
-/Web-Side/nbproject
+Web-Side/nbproject/
