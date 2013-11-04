@@ -1,3 +1,6 @@
+CREATE DATABASE `anonymouschat` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `anonymouschat`;
+
 CREATE TABLE IF NOT EXISTS universities (
 	id INTEGER AUTO_INCREMENT,
 	name VARCHAR(100) NOT NULL,

@@ -30,7 +30,6 @@
 			if ($row['valid'] == true) {
 				echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $row['api_key']));
 				$_SESSION['user'] = $_POST['username'];
-				
 				$conn->query("UPDATE users SET last_seen = NOW() WHERE username = '" . $_POST['username'] . "'");
 				
 			}

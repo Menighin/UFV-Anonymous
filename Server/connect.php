@@ -18,7 +18,7 @@
 	*	 int conversation_id:
 	*		If the response is >= 0, return the id of the conversation that was created / connected.
 	**/
-	
+	session_start();
 	header("Content-Type: text/html;charset=utf-8");
 	
 	include "Database.class.php";
@@ -30,13 +30,20 @@
 	
 	// User not logged in
 	if (!$validate->isValid()) {
-		echo json_encode(array('response' => -2));
+		echo json_encode(array('response' => -1));
 	}
 	// User authenticated
 	else {
 		
 		// Prepare query
-		$stmt = $conn->prepare('SELECT * FROM conversations WHERE ready=0');
+		$query = 'SELECT C.id, 
+					U1.id AS u1id, U1.username AS user1, U1.sex AS u1sex, U1.course AS u1course, U1.university AS u1university, 
+					C.u1wantssex, C.u1wantscourse, C.ready, C.participants
+					FROM conversations C
+					INNER JOIN users U1
+					ON C.user1 = U1.id
+					WHERE ready = 0';
+		$stmt = $conn->prepare($query);
 		$stmt->execute();
 		
 		// Execute it
@@ -46,11 +53,11 @@
 		if (count($result) <= 0) {
 			// Open new conversation
 			$query = 'INSERT INTO conversations (
-						user1, u1sex, u1course, u1university, u1wantssex, u1wantscourse, ready, participants, started_on)
-						VALUES (:user, :sex, :course, 0, :wantssex, :wantscourse, 0, 1, NOW())';
+						user1, u1wantssex, u1wantscourse, ready, participants, started_on)
+						VALUES (:user, :wantssex, :wantscourse, 0, 1, NOW())';
 						
 			$stmt = $conn->prepare($query);
-			$stmt->execute(array (':user' => $_POST['user'], ':sex' => $_POST['sex'], ':course' => $_POST['course'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $_POST['wantscourse']));
+			$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $_POST['wantscourse']));
 			
 			echo json_encode (array('response' => 0, 'conversation_id' => $conn->lastInsertId()));
 		} else {

@@ -289,14 +289,12 @@ public class Chat extends Activity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(isFinishing()) {
-			try {
-				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=oi&author=" + sentMessagesFrom + "&flag=1"
-						+ "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
-				new SendMessageAsync().execute(urlParameters);
-			} catch (Exception e) {
-				Log.e("Error onDestroy", e.getMessage());
-			}
+		try {
+			String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=oi&author=" + sentMessagesFrom + "&flag=1"
+					+ "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+			new SendMessageAsync().execute(urlParameters);
+		} catch (Exception e) {
+			Log.e("Error onDestroy", e.getMessage());
 		}
 		
 	}

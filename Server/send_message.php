@@ -26,7 +26,7 @@
 	
 	// User not logged in
 	if (!$validate->isValid()) {
-		echo json_encode(array('response' => -2));
+		echo json_encode(array('response' => -1));
 	}
 	// User authenticated
 	else {
