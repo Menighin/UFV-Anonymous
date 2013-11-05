@@ -8,7 +8,6 @@
 <fullyQualifiedTypeName name="android.widget.Button"/>
 <fullyQualifiedTypeName name="com.anonymousufv.activities.R.drawable"/>
 <fullyQualifiedTypeName name="android.opengl.Visibility"/>
-<fullyQualifiedTypeName name="com.anonymousufv.settings.Settings"/>
 <fullyQualifiedTypeName name="android.os.Handler"/>
 <fullyQualifiedTypeName name="android.os.Message"/>
 <fullyQualifiedTypeName name="android.os.Handler.Callback"/>
@@ -26,4 +25,8 @@
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="org.json.JSONObject"/>
 <fullyQualifiedTypeName name="android.graphics.Color"/>
+<fullyQualifiedTypeName name="com.anonymousufv.activities.SplashScreen"/>
+<fullyQualifiedTypeName name="com.anonymousufv.activities.MainMenu"/>
+<fullyQualifiedTypeName name="com.anonymous.classes.SaveSharedPreferences"/>
+<fullyQualifiedTypeName name="com.anonymousufv.settings.Settings"/>
 </qualifiedTypeNameHistroy>

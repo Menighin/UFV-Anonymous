@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
@@ -29,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.anonymous.classes.SaveSharedPreferences;
 import com.anonymousufv.settings.Settings;
 
 public class MainMenu extends Activity {
@@ -159,8 +161,8 @@ public class MainMenu extends Activity {
 	}
 	
 	private int doConnect() throws Exception {
-		String urlParameters = "user=" + Settings.me.getUserID() + "&sex=" + Settings.me.getSex() + "&course=" + Settings.me.getCourseID() + 
-					"&wantssex=w&wantscourse=0" + "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+		String urlParameters = "user=" + Settings.me.getUserID() +
+					"&wantssex=w&wantscourse=1" + "&api_key=" + Settings.me.getAPIKey();
 		URL url = new URL(Settings.API_URL + "/connect");
 		
 		//Connection parameters
@@ -197,11 +199,28 @@ public class MainMenu extends Activity {
 	}
 	
 	
+	public void logout () {
+		SaveSharedPreferences.destroyPreferences(MainMenu.this);
+		startActivity(new Intent(MainMenu.this, Login.class));
+		finish();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main_menu, menu);
 		return true;
 	}
-
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.action_logout:
+	        logout();
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
+	
 }

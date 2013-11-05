@@ -58,5 +58,4 @@ CREATE TABLE IF NOT EXISTS messages (
 	END_FLAG TINYINT(1) NOT NULL,
 CONSTRAINT PK_Messages PRIMARY KEY (id),
 CONSTRAINT FK_Messages_Conversation FOREIGN KEY (conversation_id) REFERENCES conversations (id),
-CONSTRAINT FK_Messages_Author FOREIGN KEY (author) REFERENCES users (id)
 );

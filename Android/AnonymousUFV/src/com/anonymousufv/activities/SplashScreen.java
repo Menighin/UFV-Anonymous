@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.anonymous.classes.SaveSharedPreferences;
 import com.anonymousufv.settings.Settings;
 
 /*
@@ -27,7 +28,13 @@ public class SplashScreen extends Activity {
 	 
 	            @Override
 	            public void run() {
-	                Intent i = new Intent(SplashScreen.this, Login.class);
+	            	Intent i;
+	            	if (SaveSharedPreferences.getLoggedState(SplashScreen.this)) {
+	            		SaveSharedPreferences.setUser(SplashScreen.this);
+	            		i = new Intent(SplashScreen.this, MainMenu.class);
+	            	}
+	            	else
+	            		i = new Intent(SplashScreen.this, Login.class);
 	                startActivity(i);
 	                finish();
 	            }
@@ -39,5 +46,6 @@ public class SplashScreen extends Activity {
 		getMenuInflater().inflate(R.menu.splash_screen, menu);
 		return true;
 	}
+	
 
 }

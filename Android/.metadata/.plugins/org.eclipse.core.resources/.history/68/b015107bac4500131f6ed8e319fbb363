@@ -1,0 +1,5 @@
+package com.anonymous.classes;
+
+public class SaveSharedPreference {
+
+}

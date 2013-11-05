@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;com.anonymous.classes.SaveSharedPreference.java&apos; to &apos;SaveSharedPreferences.java&apos;&#x0D;&#x0A;- Original project: &apos;AnonymousUFV&apos;&#x0D;&#x0A;- Original element: &apos;com.anonymous.classes.SaveSharedPreference.java&apos;&#x0D;&#x0A;- Renamed element: &apos;com.anonymous.classes.SaveSharedPreferences.java&apos;" description="Rename compilation unit &apos;SaveSharedPreference.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;com.anonymous.classes{SaveSharedPreference.java" name="SaveSharedPreferences.java" references="false" stamp="1383609580957" version="1.0"/>
+</session>

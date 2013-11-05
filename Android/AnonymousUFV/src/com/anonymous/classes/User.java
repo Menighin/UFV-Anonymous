@@ -9,13 +9,12 @@ public class User {
 	private int university;
 	private String APIKey;
 	
-	public User(int userID, String username, int courseID, String course,
+	public User(int userID, String username, int courseID,
 			String sex, int university, String APIKey) {
 		super();
 		this.userID = userID;
 		this.username = username;
 		this.courseID = courseID;
-		this.course = course;
 		this.sex = sex;
 		this.university = university;
 		this.APIKey = APIKey;

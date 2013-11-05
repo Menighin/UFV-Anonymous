@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.anonymous.classes.SaveSharedPreferences;
 import com.anonymous.classes.User;
 import com.anonymousufv.settings.Settings;
 
@@ -33,8 +34,6 @@ public class Login extends Activity {
 	private EditText password;
 	private Button login;
 	private Toast toast;
-	
-	//TODO: Find a way to cancel AsyncTask with back button pressed
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -156,9 +155,12 @@ public class Login extends Activity {
 	    JSONObject json = new JSONObject(response.toString());
 	    
 	    //Set new global user
-	    if (json.getInt("response") == 1)
+	    if (json.getInt("response") == 1) {
 	    	Settings.me = new User (
-	    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), "", json.getString("sex"), json.getInt("universityID"), json.getString("apikey"));
+	    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), json.getString("sex"), json.getInt("universityID"), json.getString("apikey"));
+	    	SaveSharedPreferences.createPreferences(
+	    			Login.this, true, json.getString("username"), json.getInt("id"), json.getInt("courseID"), json.getInt("universityID"), json.getString("sex"), json.getString("apikey"));
+	    }
 	    return json.getInt("response");
 	    
 	}

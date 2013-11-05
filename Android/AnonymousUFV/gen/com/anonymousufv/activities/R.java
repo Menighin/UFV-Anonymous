@@ -47,6 +47,7 @@ public final class R {
         public static final int whatever_pressed=0x7f020012;
     }
     public static final class id {
+        public static final int action_logout=0x7f090012;
         public static final int action_settings=0x7f090011;
         public static final int connect_btn=0x7f09000d;
         public static final int courses_spinner=0x7f09000c;
@@ -80,6 +81,9 @@ public final class R {
         public static final int splash_screen=0x7f080003;
     }
     public static final class string {
+        /**  Menu 
+         */
+        public static final int action_logout=0x7f060010;
         public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
         public static final int choose_course=0x7f06000a;

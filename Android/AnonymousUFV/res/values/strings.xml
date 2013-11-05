@@ -22,4 +22,7 @@
     <string name="connect_btn">Conectar!</string>
     <string name="title_activity_server">Server</string>
 
+    
+    <!-- Menu -->
+    <string name="action_logout">Logout</string>
 </resources>
