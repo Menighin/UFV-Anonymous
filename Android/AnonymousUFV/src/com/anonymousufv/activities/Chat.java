@@ -36,10 +36,6 @@ import com.anonymousufv.settings.Settings;
 
 public class Chat extends Activity {
 	
-	//TODO Solve about timestamp on messages
-	//TODO Layout orientantion change
-	//TODO Solve problem with accents
-	
 	private EditText message;
 	private TextView talkingTo;
 	private Bundle extras;
@@ -98,7 +94,6 @@ public class Chat extends Activity {
 	}
 
 	// Function called when user hit the send button on screen
-	@SuppressWarnings("deprecation")
 	public void sendMessage (View v) {
 		if (message.getText().length() > 0) {
 			now = Calendar.getInstance();
@@ -107,6 +102,7 @@ public class Chat extends Activity {
 			try {
 				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + message.getText().toString() + 
 						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+				message.setText("");
 	    		new SendMessageAsync().execute(urlParameters);
 			} catch (Exception e) {
 				Log.e ("SEND BUTTON", e.getMessage());
@@ -222,6 +218,7 @@ public class Chat extends Activity {
 	
 	// AsyncTask to send the message to server
 	private class SendMessageAsync extends AsyncTask<String, Void, Integer> {
+		
 		@Override
 		protected Integer doInBackground (String... params) {
 			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -246,7 +243,7 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
-				message.setText("");
+
 			} else if (result == -2) {
 				Toast.makeText(Chat.this, "Vish deu erro. Vc tem conexão com a internet?", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {

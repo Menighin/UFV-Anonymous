@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+
+        -->
+    </style>
+
+<resources>
+	<style name="MyTheme" parent="@android:style/Theme.Light"> 
+		<item name="android:windowBackground">@color/background_color</item>
+		<item name="android:windowNoTitle">true</item>
+	</style>
+</resources>

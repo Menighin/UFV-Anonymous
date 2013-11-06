@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="MyTheme" parent="@android:style/Theme.Light"> 
+		<item name="android:windowBackground">@color/background_color</item>
+		<item name="android:windowNoTitle">true</item>
+	</style>
+	
+	<style name="LoginFormContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+    </style>
+</resources>

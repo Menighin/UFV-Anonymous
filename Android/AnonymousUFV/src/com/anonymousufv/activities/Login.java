@@ -34,6 +34,7 @@ public class Login extends Activity {
 	private EditText password;
 	private Button login;
 	private Toast toast;
+	private LoginAsync loginAsync = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,8 @@ public class Login extends Activity {
 			user.setEnabled(false);
 			password.setEnabled(false);
 			login.setEnabled(false);
-			new LoginAsync().execute();
+			loginAsync = new LoginAsync();
+			loginAsync.execute();
 		} else {
 			focusView.requestFocus();
 		}
@@ -86,7 +88,10 @@ public class Login extends Activity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	return doLogin();
+		        	if (!isCancelled())
+		        		return doLogin();
+		        	else
+		        		return -2;
 		        } catch (Exception e) {
 		        	Log.e("doLoginException", e.getMessage());
 		        	Log.e("doLoginException", e.toString());
@@ -96,7 +101,6 @@ public class Login extends Activity {
 		    	return -2;
 		    }
 		}
-		
 		
 		@Override
 		protected void onPostExecute(Integer result) {
@@ -171,6 +175,14 @@ public class Login extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		if (loginAsync != null) {
+			loginAsync.cancel(true);
+		}
 	}
 
 }

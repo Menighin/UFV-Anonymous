@@ -11,6 +11,7 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
+        public static final int background_color=0x7f040003;
         public static final int dark_gray=0x7f040000;
         public static final int darker_gray=0x7f040001;
         public static final int light_gray=0x7f040002;
@@ -128,12 +129,18 @@ public final class R {
         res/values-v11/styles.xml on API 14+ devices.
     
  API 14 theme customizations can go here. 
+
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+
+        
          */
         public static final int AppBaseTheme=0x7f070000;
         /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f070001;
         public static final int LoginFormContainer=0x7f070002;
+        public static final int MyTheme=0x7f070003;
     }
 }

@@ -16,7 +16,10 @@ import com.anonymousufv.settings.Settings;
  */
 
 public class SplashScreen extends Activity {
-
+	
+	private Handler hand;
+	private Runnable r;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,21 +27,22 @@ public class SplashScreen extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_splash_screen);
 		
-		 new Handler().postDelayed(new Runnable() {
-	 
-	            @Override
-	            public void run() {
-	            	Intent i;
-	            	if (SaveSharedPreferences.getLoggedState(SplashScreen.this)) {
-	            		SaveSharedPreferences.setUser(SplashScreen.this);
-	            		i = new Intent(SplashScreen.this, MainMenu.class);
-	            	}
-	            	else
-	            		i = new Intent(SplashScreen.this, Login.class);
-	                startActivity(i);
-	                finish();
-	            }
-	        }, Settings.SPLASH_TIME);
+		hand = new Handler();
+		r = new Runnable () {
+			@Override
+            public void run() {
+            	Intent i;
+            	if (SaveSharedPreferences.getLoggedState(SplashScreen.this)) {
+            		SaveSharedPreferences.setUser(SplashScreen.this);
+            		i = new Intent(SplashScreen.this, MainMenu.class);
+            	}
+            	else
+            		i = new Intent(SplashScreen.this, Login.class);
+                startActivity(i);
+                finish();
+            }
+		};
+		hand.postDelayed(r, Settings.SPLASH_TIME);
 	}
 
 	@Override
@@ -47,5 +51,11 @@ public class SplashScreen extends Activity {
 		return true;
 	}
 	
+	@Override
+	public void onBackPressed () {
+		super.onBackPressed();
+		if (r != null)
+			hand.removeCallbacks(r);
+	}	
 
 }
