@@ -29,4 +29,6 @@
 <fullyQualifiedTypeName name="com.anonymousufv.activities.MainMenu"/>
 <fullyQualifiedTypeName name="com.anonymous.classes.SaveSharedPreferences"/>
 <fullyQualifiedTypeName name="com.anonymousufv.settings.Settings"/>
+<fullyQualifiedTypeName name="com.anonymousufv.activities.Login.LoginAsync"/>
+<fullyQualifiedTypeName name="br.com.unichat.activities.MainMenu.getCoursesAsync"/>
 </qualifiedTypeNameHistroy>

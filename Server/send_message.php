@@ -45,7 +45,7 @@
 		}
 		
 		
-		echo json_encode(array('response' => 1));
+		echo json_encode(array('response' => 1, 'time' => '20:00'));
 	}
 	
 	$conn = $database->disconnect();
