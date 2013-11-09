@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,7 @@ import android.widget.TextView;
 
 import br.com.unichat.activities.R;
 
-public class ConversationArrayAdapter extends ArrayAdapter<Message>{
+public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 	
 	private TextView messageView;
 	private TextView timeView;
@@ -87,6 +86,19 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message>{
 	
 	public Message getItem(int index) {
 		return this.messages.get(index);
+	}
+	
+	public int getItem (Message m) {
+		return this.messages.indexOf(m);
+	}
+	
+	public void updateTime (int i, String time) {
+		messages.get(i).time = time;
+		Message msg = messages.get(i);
+		messages.remove(msg);
+		super.remove(msg);
+		messages.add(i, msg);
+		super.add(msg);
 	}
 	
 	@Override

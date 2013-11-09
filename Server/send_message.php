@@ -44,8 +44,8 @@
 			echo json_encode(array('response' => -1));;
 		}
 		
-		
-		echo json_encode(array('response' => 1, 'time' => '20:00'));
+		date_default_timezone_set('Brazil/East');
+		echo json_encode(array('response' => 1, 'time' => date('H:i')));
 	}
 	
 	$conn = $database->disconnect();

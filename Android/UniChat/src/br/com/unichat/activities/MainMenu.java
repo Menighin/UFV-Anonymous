@@ -207,8 +207,7 @@ public class MainMenu extends Activity {
 	}
 	
 	public Integer doGetCourses() throws Exception {
-		String urlParameters = "user=" + Settings.me.getUserID() +
-				"&university_id=" + Settings.me.getUniversity() + "&api_key=" + Settings.me.getAPIKey();
+		String urlParameters = "user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
 		URL url = new URL(Settings.API_URL + "/get_courses");
 		
 		//Connection parameters

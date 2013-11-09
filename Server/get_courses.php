@@ -14,8 +14,8 @@
 	else {
 
 		// Prepare query
-		$stmt = $conn->prepare('SELECT * FROM courses WHERE university_id = :id ORDER BY name');
-		$stmt->execute(array(':id' => $_POST['university_id']));
+		$stmt = $conn->prepare('SELECT * FROM courses WHERE university_id = (SELECT university FROM users WHERE id = :id) ORDER BY name');
+		$stmt->execute(array(':id' => $_POST['user']));
 		
 		// Fetch
 		$result= $stmt->fetchAll();
