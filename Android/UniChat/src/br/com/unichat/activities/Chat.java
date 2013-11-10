@@ -45,6 +45,7 @@ public class Chat extends Activity {
 	private short getMessagesFrom;
 	private short sentMessagesFrom;
 	private Handler handler;
+	private GetMessagesAsync getMessage = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +97,14 @@ public class Chat extends Activity {
 			myTimer.schedule(new TimerTask() {          
 		        @Override
 		        public void run() {
-		            new GetMessagesAsync().execute();
+		        	if (getMessage == null || getMessage.getStatus() == AsyncTask.Status.FINISHED) {
+			            getMessage = new GetMessagesAsync();
+			            getMessage.execute();
+		        	}
 		        }
 		    }, 0, Settings.CHECK_MESSAGES_TIME);
+		
+		
 	}
 
 	// Function called when user hit the send button on screen
@@ -111,7 +117,7 @@ public class Chat extends Activity {
 			try {
 				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + message.getText().toString() + 
 						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
-				message.setText("");
+				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
 				Log.e ("SEND BUTTON", e.getMessage());
@@ -157,7 +163,10 @@ public class Chat extends Activity {
 				myTimer.schedule(new TimerTask() {          
 			        @Override
 			        public void run() {
-			            new GetMessagesAsync().execute();
+			        	if (getMessage == null || getMessage.getStatus() == AsyncTask.Status.FINISHED) {
+				            getMessage = new GetMessagesAsync();
+				            getMessage.execute();
+			        	}
 			        }
 			    }, 0, Settings.CHECK_MESSAGES_TIME);
 			}
@@ -304,6 +313,7 @@ public class Chat extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		if(isFinishing()) {
+			myTimer.cancel();
 			try {
 				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=oi&author=" + sentMessagesFrom + "&flag=1"
 						+ "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();

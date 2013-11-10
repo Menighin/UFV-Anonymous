@@ -32,4 +32,6 @@
 <fullyQualifiedTypeName name="br.com.unichat.activities.R.id"/>
 <fullyQualifiedTypeName name="android.os.Message"/>
 <fullyQualifiedTypeName name="android.os.Handler.Callback"/>
+<fullyQualifiedTypeName name="br.com.unichat.activities.Chat.GetMessagesAsync"/>
+<fullyQualifiedTypeName name="android.os.AsyncTask.Status"/>
 </qualifiedTypeNameHistroy>

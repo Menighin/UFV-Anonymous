@@ -8,3 +8,4 @@ logcat.view.colsize.TID=50
 logcat.view.colsize.Tag=157
 logcat.view.colsize.Text=543
 logcat.view.colsize.Time=155
+logcat.view.filters.list=name\: 'br.com.unichat.activities (Session Filter)', tag\: '', text\: '', pid\: '', app\: 'br.com.unichat.activities', level\: 'verbose', 
