@@ -31,6 +31,8 @@ import android.widget.Toast;
 import br.com.unichat.classes.SaveSharedPreferences;
 import br.com.unichat.settings.Settings;
 
+import br.com.unichat.activities.R;
+
 public class MainMenu extends Activity {
 	
 	private LinearLayout paid;
@@ -64,6 +66,15 @@ public class MainMenu extends Activity {
 		
 		new getCoursesAsync().execute();
 		
+		
+		// Setting the Spinner listener
+		courses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+		        Object item = parent.getItemAtPosition(pos);
+		    }
+		    public void onNothingSelected(AdapterView<?> parent) {
+		    }
+		});
 		
 	}
 	
@@ -136,7 +147,7 @@ public class MainMenu extends Activity {
 	
 	private int doConnect() throws Exception {
 		String urlParameters = "user=" + Settings.me.getUserID() +
-					"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey();
+					"&wantssex=" + selectedSex + "&wantscourse=1" + "&api_key=" + Settings.me.getAPIKey();
 		URL url = new URL(Settings.API_URL + "/connect");
 		
 		//Connection parameters

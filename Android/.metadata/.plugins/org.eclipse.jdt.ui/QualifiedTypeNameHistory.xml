@@ -8,9 +8,6 @@
 <fullyQualifiedTypeName name="android.widget.Button"/>
 <fullyQualifiedTypeName name="com.anonymousufv.activities.R.drawable"/>
 <fullyQualifiedTypeName name="android.opengl.Visibility"/>
-<fullyQualifiedTypeName name="android.os.Handler"/>
-<fullyQualifiedTypeName name="android.os.Message"/>
-<fullyQualifiedTypeName name="android.os.Handler.Callback"/>
 <fullyQualifiedTypeName name="com.anonymous.classes.ConversationArrayAdapter"/>
 <fullyQualifiedTypeName name="android.R"/>
 <fullyQualifiedTypeName name="android.R.layout"/>
@@ -31,4 +28,8 @@
 <fullyQualifiedTypeName name="com.anonymousufv.settings.Settings"/>
 <fullyQualifiedTypeName name="com.anonymousufv.activities.Login.LoginAsync"/>
 <fullyQualifiedTypeName name="br.com.unichat.activities.MainMenu.getCoursesAsync"/>
+<fullyQualifiedTypeName name="android.os.Handler"/>
+<fullyQualifiedTypeName name="br.com.unichat.activities.R.id"/>
+<fullyQualifiedTypeName name="android.os.Message"/>
+<fullyQualifiedTypeName name="android.os.Handler.Callback"/>
 </qualifiedTypeNameHistroy>

@@ -31,6 +31,8 @@ import android.widget.Toast;
 import br.com.unichat.classes.SaveSharedPreferences;
 import br.com.unichat.settings.Settings;
 
+import br.com.unichat.activities.R;
+
 public class MainMenu extends Activity {
 	
 	private LinearLayout paid;
@@ -58,13 +60,9 @@ public class MainMenu extends Activity {
 			paid.setVisibility(View.GONE);
 		
 		Settings.COURSES = new ArrayList<String>();
-		Settings.COURSES_ID = new ArrayList<Integer>();
 		Settings.COURSES.add("Qualquer");
-		Settings.COURSES_ID.add(-1);
 		
 		new getCoursesAsync().execute();
-		
-		
 	}
 	
 	//Function to make the 3 buttons work like a RadioButton
@@ -136,7 +134,7 @@ public class MainMenu extends Activity {
 	
 	private int doConnect() throws Exception {
 		String urlParameters = "user=" + Settings.me.getUserID() +
-					"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey();
+					"&wantssex=" + selectedSex + "&wantscourse=1" + "&api_key=" + Settings.me.getAPIKey();
 		URL url = new URL(Settings.API_URL + "/connect");
 		
 		//Connection parameters
@@ -241,7 +239,6 @@ public class MainMenu extends Activity {
 	    	for (int i = 0; i < jsoncourses.length(); i++) {
 	    		JSONObject course = jsoncourses.getJSONObject(i);
 	    		Settings.COURSES.add(course.getString("name"));
-	    		Settings.COURSES_ID.add(course.getInt("id"));
 	    	}
 	    }
 	    

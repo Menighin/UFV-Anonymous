@@ -34,17 +34,35 @@
 	}
 	// User authenticated
 	else {
+		if ($_POST['wantscourse'] == -1)
+			$wantscourse = null;
+		else
+			$wantscourse = $_POST['wantscourse'];
 		
 		// Prepare query
-		$query = 'SELECT C.id, 
+		$query = "SELECT C.id, 
 					U1.id AS u1id, U1.username AS user1, U1.sex AS u1sex, U1.course AS u1course, U1.university AS u1university, 
 					C.u1wantssex, C.u1wantscourse, C.ready, C.participants
 					FROM conversations C
 					INNER JOIN users U1
 					ON C.user1 = U1.id
-					WHERE ready = 0';
+					WHERE ready = 0 AND 
+					(C.u1wantssex = 'w' OR C.u1wantssex = (SELECT sex FROM users WHERE id = :user)) AND 
+					(C.u1wantscourse IS NULL OR C.u1wantscourse = (SELECT course FROM users WHERE id = :user))";
+		
+		$params = array(':user' => $_POST['user']);
+		if ($_POST['wantssex'] != 'w') {
+			$query .= " AND U1.sex = :wantssex";
+			$params[':wantssex'] = $_POST['wantssex'];
+		}
+		if ($wantscourse != null) {
+			$query .= " AND U1.course = :wantscourse";
+			$params[':wantscourse'] = $wantscourse;
+		}
+		
 		$stmt = $conn->prepare($query);
-		$stmt->execute();
+		
+		$stmt->execute($params);
 		
 		// Execute it
 		$result = $stmt->fetchAll();
@@ -57,7 +75,7 @@
 						VALUES (:user, :wantssex, :wantscourse, 0, 1, NOW())';
 						
 			$stmt = $conn->prepare($query);
-			$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $_POST['wantscourse']));
+			$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $wantscourse));
 			
 			echo json_encode (array('response' => 0, 'conversation_id' => $conn->lastInsertId()));
 		} else {

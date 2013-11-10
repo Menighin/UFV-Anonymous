@@ -18,6 +18,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +33,8 @@ import android.widget.Toast;
 import br.com.unichat.classes.SaveSharedPreferences;
 import br.com.unichat.settings.Settings;
 
+import br.com.unichat.activities.R;
+
 public class MainMenu extends Activity {
 	
 	private LinearLayout paid;
@@ -38,7 +42,9 @@ public class MainMenu extends Activity {
 	private Button femaleBtn;
 	private Button maleBtn;
 	private Spinner courses;
-	private char selectedSex = 'w';
+	private char selectedSex = 0;
+	private Handler handler;
+	private Toast toast;
 	private boolean backActivated = true;
 	private ArrayAdapter<String> adapter;
 	
@@ -57,14 +63,19 @@ public class MainMenu extends Activity {
 		if (Settings.FREE_VERSION)
 			paid.setVisibility(View.GONE);
 		
+		handler = new Handler (new Handler.Callback() {
+			@Override
+			public boolean handleMessage(Message msg) {
+				toast = Toast.makeText(MainMenu.this, (String) msg.obj, Toast.LENGTH_SHORT);
+				toast.show();
+				return true;
+			}
+		});
+		
 		Settings.COURSES = new ArrayList<String>();
-		Settings.COURSES_ID = new ArrayList<Integer>();
 		Settings.COURSES.add("Qualquer");
-		Settings.COURSES_ID.add(-1);
 		
 		new getCoursesAsync().execute();
-		
-		
 	}
 	
 	//Function to make the 3 buttons work like a RadioButton
@@ -74,19 +85,19 @@ public class MainMenu extends Activity {
 				femaleBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.female_pressed, 0, 0);
 				whateverBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.whatever, 0, 0);
 				maleBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.male, 0, 0);
-				selectedSex = 'f';
+				selectedSex = 1;
 				break;
 			case R.id.male_btn:
 				femaleBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.female, 0, 0);
 				whateverBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.whatever, 0, 0);
 				maleBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.male_pressed, 0, 0);
-				selectedSex = 'm';
+				selectedSex = 2;
 				break;
 			case R.id.whatever_btn:
 				femaleBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.female, 0, 0);
 				whateverBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.whatever_pressed, 0, 0);
 				maleBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.male, 0, 0);
-				selectedSex = 'w';
+				selectedSex = 0;
 				break;
 		}
 	}
@@ -102,6 +113,7 @@ public class MainMenu extends Activity {
 		
 		@Override
 		protected Integer doInBackground (Void... params) {
+			Message msg = new Message();
 			
 			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -111,9 +123,11 @@ public class MainMenu extends Activity {
 		        	return doConnect();
 		        } catch (Exception e) {
 		        	Log.e("doConnectException", e.getMessage());
-		        	return -3;
+		        	return -2;
 		        }
 		    } else {
+		    	msg.obj = "Preciso de uma conexão com a internet pra logar!";
+		    	handler.sendMessage(msg);
 		    	return -2;
 		    }
 		}
@@ -124,8 +138,6 @@ public class MainMenu extends Activity {
 				Intent intent = new Intent(MainMenu.this, Chat.class);
 				intent.putExtra("type", result);
 				startActivity(intent);
-			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			} else {
 				Toast.makeText(MainMenu.this, "Deu merda. Que que c fez?", Toast.LENGTH_SHORT).show();
 			}
@@ -136,7 +148,7 @@ public class MainMenu extends Activity {
 	
 	private int doConnect() throws Exception {
 		String urlParameters = "user=" + Settings.me.getUserID() +
-					"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey();
+					"&wantssex=" + "&wantscourse=1" + "&api_key=" + Settings.me.getAPIKey();
 		URL url = new URL(Settings.API_URL + "/connect");
 		
 		//Connection parameters
@@ -176,17 +188,10 @@ public class MainMenu extends Activity {
 	public class getCoursesAsync extends AsyncTask <Void, Void, Integer> {
 		@Override
 		protected Integer doInBackground (Void... Params) {
-			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-			
-			if (networkInfo != null && networkInfo.isConnected()) {
-				try {
-					return doGetCourses();
-				} catch (Exception e) {
-					Log.e("doGetCourses", e.getMessage());
-					return -3;
-				}
-			} else {
+			try {
+				return doGetCourses();
+			} catch (Exception e) {
+				Log.e("doGetCourses", e.getMessage());
 				return -2;
 			}
 		}
@@ -196,8 +201,6 @@ public class MainMenu extends Activity {
 			if (result == 1) {
 				adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
 				courses.setAdapter(adapter);
-			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			} else
 				Toast.makeText(MainMenu.this, "Problema ao carregar lista de cursos, malz. =s", Toast.LENGTH_SHORT).show();
 		}
@@ -241,7 +244,6 @@ public class MainMenu extends Activity {
 	    	for (int i = 0; i < jsoncourses.length(); i++) {
 	    		JSONObject course = jsoncourses.getJSONObject(i);
 	    		Settings.COURSES.add(course.getString("name"));
-	    		Settings.COURSES_ID.add(course.getInt("id"));
 	    	}
 	    }
 	    

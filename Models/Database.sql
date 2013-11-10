@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Conversations (
 	user1 INTEGER NOT NULL,
 	user2 INTEGER DEFAULT NULL,
 	u1wantssex SET('m','f','w') NOT NULL,
-	u1wantscourse INTEGER NOT NULL,
+	u1wantscourse INTEGER NULL,
 	ready TINYINT(1) NOT NULL,
 	participants INTEGER NOT NULL,
 	started_on DATETIME NOT NULL,

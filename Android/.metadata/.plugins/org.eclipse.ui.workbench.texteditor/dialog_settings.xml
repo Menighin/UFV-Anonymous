@@ -13,8 +13,10 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="Falando" key="selection"/>
+		<item value="adapter" key="selection"/>
 		<list key="findhistory">
+			<item value="adapter"/>
+			<item value="doLogin"/>
 			<item value="Falando"/>
 			<item value="Esperando"/>
 			<item value="Log"/>

@@ -13,7 +13,7 @@ public class Settings {
 	public static final int CHECK_MESSAGES_TIME = 4000;
 	public static final boolean FREE_VERSION = false;
 	public static ArrayList<String> COURSES = null;
-	public static ArrayList<Integer> COURSES_ID = null;
+	public static ArrayList<int> COURSES_ID = null;
 	public static User me;
 	public static int CONVERSATION_ID;
 }
