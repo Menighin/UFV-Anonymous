@@ -1,4 +1,0 @@
-INDEX VERSION 1.126+C:\Users\joaom_000\Documents\GitHub\Anonymous-Chat\Android\.metadata\.plugins\org.eclipse.jdt.core
-1416693358.index
-2861467468.index
-79362213.index
