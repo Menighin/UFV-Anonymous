@@ -290,7 +290,6 @@ public class Chat extends Activity {
 		conn.setDoInput(true);
 	    conn.setDoOutput(true);
 	    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-	    conn.setRequestProperty("charset", "utf-8");
 	    
 	    //Send request
 		DataOutputStream wr = new DataOutputStream (conn.getOutputStream ());

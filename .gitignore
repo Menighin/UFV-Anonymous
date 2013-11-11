@@ -9,8 +9,9 @@
 *.class
 
 # generated files
-bin/
-gen/
+Android/UniChat/bin/
+Android/UniChat/gen/
+Android\.metadata
 
 # Local configuration file (sdk path, etc)
 *.properties
@@ -30,11 +31,11 @@ proguard/
 .idea/
 
 # Files
-Android/AnonymousUFV/proguard-project.txt
-Android/AnonymousUFV/res/values-v11/
-Android/AnonymousUFV/res/values-v14/
-Android/AnonymousUFV/res/values-sw600dp/
-Android/AnonymousUFV/res/values-sw720dp-land/
+Android/UniChat/proguard-project.txt
+Android/UniChat/res/values-v11/
+Android/UniChat/res/values-v14/
+Android/UniChat/res/values-sw600dp/
+Android/UniChat/res/values-sw720dp-land/
 
 
 # Web-side
