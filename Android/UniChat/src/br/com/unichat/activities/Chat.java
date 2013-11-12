@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -115,8 +116,8 @@ public class Chat extends Activity {
 			Integer lastMsg = adapter.getItem(msg);
 			
 			try {
-				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + message.getText().toString() + 
-						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + URLEncoder.encode(message.getText().toString(), "UTF-8") + 
+						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
@@ -137,7 +138,8 @@ public class Chat extends Activity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&user=" + Settings.me.getUserID() + "&api_key=" + 
+		        			URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 		    		URL url = new URL(Settings.API_URL + "/is_conversation_ready");
 		    	    
 		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
@@ -186,7 +188,7 @@ public class Chat extends Activity {
 		        try {
 		        	msgs = new ArrayList<Message>();
 		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&author=" + getMessagesFrom + 
-		        			"&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+		        			"&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 		    		URL url = new URL(Settings.API_URL + "/get_message");
 		    	    
 		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
@@ -283,8 +285,9 @@ public class Chat extends Activity {
 	
 	// Function to make the POST request to the server
 	private String POSTConnection (String urlParameters, URL url) throws Exception{
-		
+
 		//Connection parameters
+		
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("POST");
 		conn.setDoInput(true);
@@ -318,8 +321,8 @@ public class Chat extends Activity {
 		if(isFinishing()) {
 			myTimer.cancel();
 			try {
-				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=oi&author=" + sentMessagesFrom + "&flag=1"
-						+ "&user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=end&author=" + sentMessagesFrom + "&flag=1"
+						+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 				new SendMessageAsync().execute(urlParameters, "-1");
 			} catch (Exception e) {
 				Log.e("Error onDestroy", e.getMessage());

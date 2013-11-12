@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
@@ -130,7 +131,7 @@ public class Login extends Activity {
 	
 	private int doLogin() throws Exception {
 		
-		String urlParameters = "username=" + user.getText().toString() + "&password=" + password.getText().toString();
+		String urlParameters = "username=" + URLEncoder.encode(user.getText().toString(), "UTF-8") + "&password=" + password.getText().toString();
 		URL url = new URL(Settings.API_URL + "/login");
 		
 		//Connection parameters

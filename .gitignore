@@ -11,7 +11,8 @@
 # generated files
 Android/UniChat/bin/
 Android/UniChat/gen/
-*Android/.metadata
+Android/.metadata/
+
 
 # Local configuration file (sdk path, etc)
 *.properties
