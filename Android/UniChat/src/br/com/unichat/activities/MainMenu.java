@@ -62,7 +62,7 @@ public class MainMenu extends Activity {
 		Settings.COURSES.add("Qualquer");
 		Settings.COURSES_ID.add(-1);
 		
-		new getCoursesAsync().execute();
+		new GetCoursesAsync().execute();
 		
 		
 	}
@@ -108,7 +108,17 @@ public class MainMenu extends Activity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	return doConnect();
+		        	String urlParameters = "user=" + Settings.me.getUserID() +
+							"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey();
+					URL url = new URL(Settings.API_URL + "/connect");
+				    
+				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));
+				    
+				    //Set new global id conversation
+				    if (json.getInt("response") == 1 || json.getInt("response") == 0)
+				    	Settings.CONVERSATION_ID = json.getInt("conversation_id");
+				
+				    return json.getInt("response");
 		        } catch (Exception e) {
 		        	Log.e("doConnectException", e.getMessage());
 		        	return -3;
@@ -134,46 +144,7 @@ public class MainMenu extends Activity {
 		
 	}
 	
-	private int doConnect() throws Exception {
-		String urlParameters = "user=" + Settings.me.getUserID() +
-					"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey();
-		URL url = new URL(Settings.API_URL + "/connect");
-		
-		//Connection parameters
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("POST");
-		conn.setDoInput(true);
-	    conn.setDoOutput(true);
-	    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-	    
-	    //Send request
-  		DataOutputStream wr = new DataOutputStream (conn.getOutputStream ());
-  		wr.writeBytes (urlParameters);
-  		wr.flush ();
-  		wr.close ();
-  		
-  		//Get Response	
-	    InputStream is = conn.getInputStream();
-	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-	    String line;
-	    StringBuffer response = new StringBuffer(); 
-	    while((line = rd.readLine()) != null) {
-	    	response.append(line);
-	    	response.append('\r');
-	    }
-	    rd.close();
-	    
-	    JSONObject json = new JSONObject(response.toString());
-	    
-	    //Set new global id conversation
-	    if (json.getInt("response") == 1 || json.getInt("response") == 0)
-	    	Settings.CONVERSATION_ID = json.getInt("conversation_id");
-		
-		return json.getInt("response");
-	}
-	
-	
-	public class getCoursesAsync extends AsyncTask <Void, Void, Integer> {
+	public class GetCoursesAsync extends AsyncTask <Void, Void, Integer> {
 		@Override
 		protected Integer doInBackground (Void... Params) {
 			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -181,9 +152,26 @@ public class MainMenu extends Activity {
 			
 			if (networkInfo != null && networkInfo.isConnected()) {
 				try {
-					return doGetCourses();
+					String urlParameters = "user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+					URL url = new URL(Settings.API_URL + "/get_courses");
+				    
+				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));
+					
+				    JSONArray jsoncourses;
+				    
+				    if (json.getInt("response") == 1) {
+				    	jsoncourses = json.getJSONArray("courses");
+				    	
+				    	for (int i = 0; i < jsoncourses.length(); i++) {
+				    		JSONObject course = jsoncourses.getJSONObject(i);
+				    		Settings.COURSES.add(course.getString("name"));
+				    		Settings.COURSES_ID.add(course.getInt("id"));
+				    	}
+				    }
+				    
+					return json.getInt("response");
 				} catch (Exception e) {
-					Log.e("doGetCourses", e.getMessage());
+					Log.e("GetCoursesAsync", e.getMessage());
 					return -3;
 				}
 			} else {
@@ -203,23 +191,76 @@ public class MainMenu extends Activity {
 		}
 	}
 	
-	public Integer doGetCourses() throws Exception {
-		String urlParameters = "user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
-		URL url = new URL(Settings.API_URL + "/get_courses");
+	public void logout () {
+		new LogoutAsync().execute();
+	}
+	
+	public class LogoutAsync extends AsyncTask <Void, Void, Integer> {
+		@Override
+		protected Integer doInBackground (Void... Params) {
+			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+			
+			if (networkInfo != null && networkInfo.isConnected()) {
+				try {
+					String urlParameters = "user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+					URL url = new URL(Settings.API_URL + "/logout");
+				    
+				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));
+					
+				    JSONArray jsoncourses;
+				    
+				    if (json.getInt("response") == 1) {
+				    	jsoncourses = json.getJSONArray("courses");
+				    	
+				    	for (int i = 0; i < jsoncourses.length(); i++) {
+				    		JSONObject course = jsoncourses.getJSONObject(i);
+				    		Settings.COURSES.add(course.getString("name"));
+				    		Settings.COURSES_ID.add(course.getInt("id"));
+				    	}
+				    }
+				    
+					return json.getInt("response");
+				} catch (Exception e) {
+					Log.e("LogoutAsync", e.getMessage());
+					return -3;
+				}
+			} else {
+				return -2;
+			}
+		}
 		
+		@Override
+		protected void onPostExecute (Integer result) {
+			if (result == 1) {
+				SaveSharedPreferences.destroyPreferences(MainMenu.this);
+				startActivity(new Intent(MainMenu.this, Login.class));
+				finish();
+			} else if (result == -1) {
+				Toast.makeText(MainMenu.this, "Problema ao fazer logout, malz. =s", Toast.LENGTH_SHORT).show();
+			} else if (result == -2) {
+				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+			}
+		
+		}
+	}
+	
+	private String POSTConnection (String urlParameters, URL url) throws Exception{
+
 		//Connection parameters
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("POST");
 		conn.setDoInput(true);
 	    conn.setDoOutput(true);
 	    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	    conn.setRequestProperty("charset", "utf-8");
 	    
 	    //Send request
 		DataOutputStream wr = new DataOutputStream (conn.getOutputStream ());
 		wr.writeBytes (urlParameters);
 		wr.flush ();
 		wr.close ();
-			
+		
 		//Get Response	
 	    InputStream is = conn.getInputStream();
 	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
@@ -231,27 +272,7 @@ public class MainMenu extends Activity {
 	    }
 	    rd.close();
 	    
-	    JSONObject json = new JSONObject(response.toString());
-		
-	    JSONArray jsoncourses;
-	    
-	    if (json.getInt("response") == 1) {
-	    	jsoncourses = json.getJSONArray("courses");
-	    	
-	    	for (int i = 0; i < jsoncourses.length(); i++) {
-	    		JSONObject course = jsoncourses.getJSONObject(i);
-	    		Settings.COURSES.add(course.getString("name"));
-	    		Settings.COURSES_ID.add(course.getInt("id"));
-	    	}
-	    }
-	    
-		return json.getInt("response");
-	}
-	
-	public void logout () {
-		SaveSharedPreferences.destroyPreferences(MainMenu.this);
-		startActivity(new Intent(MainMenu.this, Login.class));
-		finish();
+	    return response.toString();
 	}
 	
 	@Override

@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS Users (
 	valid TINYINT(1) NOT NULL,
 	hash VARCHAR(50) NOT NULL,
 	last_seen DATETIME DEFAULT NULL,
+	logged TINYINT(1) DEFAULT NULL,
 CONSTRAINT PK_Users PRIMARY KEY (id, username, email),
 CONSTRAINT FK_Users_University FOREIGN KEY (university) REFERENCES Universities (id),
 CONSTRAINT FK_Users_Cousers FOREIGN KEY (course) REFERENCES Courses (id)

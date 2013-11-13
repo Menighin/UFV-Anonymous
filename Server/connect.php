@@ -47,6 +47,7 @@
 					INNER JOIN users U1
 					ON C.user1 = U1.id
 					WHERE ready = 0 AND 
+					u1university = (SELECT university FROM users Where id = :user) AND
 					(C.u1wantssex = 'w' OR C.u1wantssex = (SELECT sex FROM users WHERE id = :user)) AND 
 					(C.u1wantscourse IS NULL OR C.u1wantscourse = (SELECT course FROM users WHERE id = :user))";
 		

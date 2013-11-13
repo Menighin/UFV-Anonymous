@@ -27,10 +27,10 @@
 		echo json_encode(array('response' => -1));
 	else {
 		if (strcmp($row['password'], $_POST['password']) == 0)
-			if ($row['valid'] == true) {
+			if ($row['valid'] == true && $row['logged'] == 0) {
 				echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $row['api_key']));
 				$_SESSION['user'] = $_POST['username'];
-				$conn->query("UPDATE users SET last_seen = NOW() WHERE username = '" . $_POST['username'] . "'");
+				$conn->query("UPDATE users SET last_seen = NOW(), logged = 1 WHERE username = '" . $_POST['username'] . "'");
 				
 			}
 			else
