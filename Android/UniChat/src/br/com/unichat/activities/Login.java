@@ -35,7 +35,6 @@ public class Login extends Activity {
 	private EditText user;
 	private EditText password;
 	private Button login;
-	private Toast toast;
 	private LoginAsync loginAsync = null;
 	
 	@Override
@@ -100,7 +99,7 @@ public class Login extends Activity {
 		        	return -2;
 		        }
 		    } else {
-		    	return -2;
+		    	return -5;
 		    }
 		}
 		
@@ -115,14 +114,13 @@ public class Login extends Activity {
 				password.setEnabled(true);
 				login.setEnabled(true);
 	        	if (result == 0) {
-	        		toast = Toast.makeText(Login.this, "Usuário não validado. Verifique seu email @ufv.com.br", Toast.LENGTH_SHORT);
-					toast.show();
+	        		Toast.makeText(Login.this, "Usuário não validado. Verifique seu email @ufv.com.br", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -1) {
-	        		toast = Toast.makeText(Login.this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT);
-					toast.show();
+	        		Toast.makeText(Login.this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -2) {
-	        		toast = Toast.makeText(Login.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT);
-					toast.show();
+	        		Toast.makeText(Login.this, "Esse usuário já está logado em outro dispositivo", Toast.LENGTH_SHORT).show();
+	        	} else if (result == -5) {
+	        		Toast.makeText(Login.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 	        	}
 			}
 		}

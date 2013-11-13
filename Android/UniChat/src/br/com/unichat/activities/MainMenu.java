@@ -207,18 +207,6 @@ public class MainMenu extends Activity {
 					URL url = new URL(Settings.API_URL + "/logout");
 				    
 				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));
-					
-				    JSONArray jsoncourses;
-				    
-				    if (json.getInt("response") == 1) {
-				    	jsoncourses = json.getJSONArray("courses");
-				    	
-				    	for (int i = 0; i < jsoncourses.length(); i++) {
-				    		JSONObject course = jsoncourses.getJSONObject(i);
-				    		Settings.COURSES.add(course.getString("name"));
-				    		Settings.COURSES_ID.add(course.getInt("id"));
-				    	}
-				    }
 				    
 					return json.getInt("response");
 				} catch (Exception e) {
