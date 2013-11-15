@@ -57,12 +57,17 @@ public class MainMenu extends Activity {
 		if (Settings.FREE_VERSION)
 			paid.setVisibility(View.GONE);
 		
-		Settings.COURSES = new ArrayList<String>();
-		Settings.COURSES_ID = new ArrayList<Integer>();
-		Settings.COURSES.add("Qualquer");
-		Settings.COURSES_ID.add(-1);
-		
-		new GetCoursesAsync().execute();
+		if (Settings.COURSES == null) {
+			Settings.COURSES = new ArrayList<String>();
+			Settings.COURSES_ID = new ArrayList<Integer>();
+			Settings.COURSES.add("Qualquer");
+			Settings.COURSES_ID.add(-1);
+			new GetCoursesAsync().execute();
+		}
+		else {
+			adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
+			courses.setAdapter(adapter);
+		}
 		
 		
 	}

@@ -1,5 +1,20 @@
 <?php
-
+	
+	/**
+	* API function to constantly check if another user connected into a created conversation
+	* Author: João Menighin
+	* Parameters:
+	*	METHOD      => POST
+	*	user        => int
+	*   api_key     => string
+	* Return: 
+	*	 int response:
+	*	   -2 ==> Invalid API Key for user
+	* 	   -1 ==> If some error ocurred in database queries
+	*		0 ==> If ready == 0, thus another user didn't connect yet
+	*    	1 ==> If ready == 1, thus another user connected
+	**/
+	
 	include "Database.class.php";
 	include "Validate.class.php";
 	$database = new Database();
@@ -26,7 +41,7 @@
 		$row = $stmt->fetch();
 		
 		if (!$row)
-			echo json_encode(array('response' => -3));
+			echo json_encode(array('response' => -1));
 		else
 			echo json_encode(array('response' => (int)$row[0]));
 	}

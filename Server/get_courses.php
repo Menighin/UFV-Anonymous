@@ -1,5 +1,20 @@
 <?php
-
+	
+	/**
+	* API get_courses function: return the list of the courses of the university the user belongs to
+	* Author: João Menighin
+	* Parameters:
+	*	METHOD      => POST
+	*	user        => int
+	*   api_key     => string
+	* Return: 
+	*	 int response:
+	*	   -1 ==> Database error
+	*    	0 ==> If there's no messages to return
+	*    	1 ==> If there's messages to return
+	*             courses ==> Array of courses
+	**/
+	
 	include "Database.class.php";
 	include "Validate.class.php";
 	$database = new Database();

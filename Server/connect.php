@@ -6,6 +6,7 @@
 	* Parameters:
 	*	METHOD      => POST
 	*	user        => string
+	*   api_key     => string
 	*	sex         => string
 	*   course      => string
 	*   wantssex    => string

@@ -1,7 +1,7 @@
 <?php
 	
 	/**
-	* API send_message function used to send message to database so other user can fetch it. It closes the conversation (ready = 1) weather any of them send an END_FLAG message.
+	* API send_message function used to send message to database so other user can fetch it. It closes the conversation (ready = 1) wether any of them send an END_FLAG message.
 	* Author: João Menighin
 	* Parameters:
 	*	METHOD          => POST
@@ -9,6 +9,8 @@
 	*   message         => string
 	*   author          => int
 	*   flag            => int
+	*	user			=> int
+	*   api_key         => string
 	* Return: 
 	*	 int response:
 	*	   -2 ==> Invalid API Key for user

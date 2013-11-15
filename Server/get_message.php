@@ -7,13 +7,15 @@
 	*	METHOD          => POST
 	*	conversation_id => int
 	*   author          => int
+	*	user			=> int
+	*   api_key         => string
 	* Return: 
 	*	 int response:
 	*	   -2 ==> Invalid API Key for user
 	*	   -1 ==> Database error
 	*    	0 ==> If there's no messages to return
 	*    	1 ==> If there's messages to return
-	*    array of messages if response = 1
+	*             messages ==> Array of messages
 	**/
 
 	header("Content-Type: text/html; charset=utf-8");
