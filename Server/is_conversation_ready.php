@@ -29,9 +29,15 @@
 	else {
 		// Prepare query
 		try {
-			$stmt = $conn->prepare('SELECT ready FROM conversations WHERE id=:id');
+			$query = 'SELECT C.ready, U2.username AS username, U2.special AS special
+						FROM conversations C
+						INNER JOIN users U2
+						ON C.user2 = U2.id
+						WHERE C.id=:id';
+			$stmt = $conn->prepare($query);
 			$stmt->execute(array(':id' => $_POST['conversation_id']));
 		} catch (Exception $e) {
+			echo $e->getMessage();
 			echo json_encode(array('response' => -1));
 			$conn = $database->disconnect();
 			exit(1);
@@ -41,9 +47,9 @@
 		$row = $stmt->fetch();
 		
 		if (!$row)
-			echo json_encode(array('response' => -1));
+			echo json_encode(array('response' => 0));
 		else
-			echo json_encode(array('response' => (int)$row[0]));
+			echo json_encode(array('response' => 1, 'username' => $row['username'], 'special' => $row['special']));
 	}
 	
 	$conn = $database->disconnect();

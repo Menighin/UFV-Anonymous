@@ -43,13 +43,13 @@
 		
 		// Prepare query
 		$query = "SELECT C.id, 
-					U1.id AS u1id, U1.username AS user1, U1.sex AS u1sex, U1.course AS u1course, U1.university AS u1university, 
+					U1.id AS u1id, U1.username AS user1, U1.sex AS u1sex, U1.course AS u1course, U1.university AS u1university, U1.special AS u1special,
 					C.u1wantssex, C.u1wantscourse, C.ready, C.participants
 					FROM conversations C
 					INNER JOIN users U1
 					ON C.user1 = U1.id
 					WHERE ready = 0 AND 
-					u1university = (SELECT university FROM users Where id = :user) AND
+					U1.university = (SELECT university FROM users Where id = :user) AND
 					(C.u1wantssex = 'w' OR C.u1wantssex = (SELECT sex FROM users WHERE id = :user)) AND 
 					(C.u1wantscourse IS NULL OR C.u1wantscourse = (SELECT course FROM users WHERE id = :user))";
 		
@@ -67,6 +67,7 @@
 			$stmt = $conn->prepare($query);
 			$stmt->execute($params);
 		} catch (Exception $e) {
+			//echo $e->getMessage();
 			echo json_encode(array('response' => -1));
 			$conn = $database->disconnect();
 			exit(1);
@@ -87,6 +88,7 @@
 				$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $wantscourse));
 				echo json_encode (array('response' => 0, 'conversation_id' => $conn->lastInsertId()));
 			} catch (Exception $e) {
+				//echo $e->getMessage();
 				echo json_encode(array('response' => -1));
 			}
 		} else {
@@ -94,8 +96,9 @@
 			
 			try {
 				$conn->query("UPDATE conversations SET user2 = '" . $_POST['user'] . "', ready = 1, participants = 2 WHERE id = " . $result[$random = mt_rand(0, count($result) - 1)]['id'] . " AND ready = 0");
-				echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id']));
+				echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id'], 'username' => $result[$random]['user1'], 'special' => $result[$random]['u1special']));
 			} catch (Exception $e) {
+				//echo $e->getMessage();
 				echo json_encode(array('response' => -1));
 			}
 		}

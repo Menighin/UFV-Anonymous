@@ -38,6 +38,7 @@ public class Chat extends Activity {
 	
 	private EditText message;
 	private TextView talkingTo;
+	private String talkingToName = "Anônimo";
 	private Bundle extras;
 	private ListView conversation;
 	private ConversationArrayAdapter adapter;
@@ -78,7 +79,7 @@ public class Chat extends Activity {
 			sentMessagesFrom = 0;
 		}
 		else {
-			talkingTo.setText("Falando com: Anônimo");
+			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
 			talkingTo.setTextColor(Color.GREEN);
 			connected = true;
 			getMessagesFrom = 0;
@@ -144,6 +145,9 @@ public class Chat extends Activity {
 		    	    
 		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
 		    	    
+		    	    if (json.getInt("response") == 1 && json.getInt("special") == 1)
+		    	    	talkingToName = json.getString("username");
+		    	    
 		    	    return json.getInt("response");
 		        } catch (Exception e) {
 		        	Log.e("IsReadyException", e.getMessage());
@@ -158,7 +162,7 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
-				talkingTo.setText("Falando com: Anônimo");
+				talkingTo.setText("Falando com: " + talkingToName);
 				talkingTo.setTextColor(Color.GREEN);
 				myTimer.cancel();
 				myTimer = new Timer();
@@ -262,8 +266,6 @@ public class Chat extends Activity {
 			    	    msg.obj = json.getString("time");
 			    	    handler.sendMessage(msg);
 		    	    }
-		    	    
-		    	    Log.d("SENT", json.getString("debug"));
 		    	    
 		    	    return json.getInt("response");
 		        } catch (Exception e) {

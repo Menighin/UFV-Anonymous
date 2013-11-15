@@ -41,6 +41,7 @@ public class MainMenu extends Activity {
 	private char selectedSex = 'w';
 	private boolean backActivated = true;
 	private ArrayAdapter<String> adapter;
+	private Intent intent;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +121,17 @@ public class MainMenu extends Activity {
 				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));
 				    
 				    //Set new global id conversation
-				    if (json.getInt("response") == 1 || json.getInt("response") == 0)
+				    if (json.getInt("response") == 1 || json.getInt("response") == 0) {
 				    	Settings.CONVERSATION_ID = json.getInt("conversation_id");
-				
+				    
+					    // Creating next intent and putting username if it is the case
+					    String talkingTo = "Anônimo";
+					    intent = new Intent(MainMenu.this, Chat.class);
+					    if (json.getInt("response") == 1 && json.getInt("special") == 1)
+					    	talkingTo = json.getString("username");
+					    intent.putExtra("talkingTo", talkingTo);
+				    }
+				    
 				    return json.getInt("response");
 		        } catch (Exception e) {
 		        	Log.e("doConnectException", e.getMessage());
@@ -136,7 +145,6 @@ public class MainMenu extends Activity {
 		@Override
 		protected void onPostExecute (Integer result) {
 			if (result == 0 || result == 1) {
-				Intent intent = new Intent(MainMenu.this, Chat.class);
 				intent.putExtra("type", result);
 				startActivity(intent);
 			} else if (result == -1) {
