@@ -148,10 +148,10 @@ public class Chat extends Activity {
 		        } catch (Exception e) {
 		        	Log.e("IsReadyException", e.getMessage());
 		        	Log.e("IsReadyException", e.toString());
-		        	return -2;
+		        	return -1;
 		        }
 		    } else {
-		    	return -2;
+		    	return -3;
 		    }
 		}
 		
@@ -171,6 +171,12 @@ public class Chat extends Activity {
 			        	}
 			        }
 			    }, 0, Settings.CHECK_MESSAGES_TIME);
+			} else if (result == -1) {
+				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
+			} else if (result == -2) {
+				Toast.makeText(Chat.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+			} else if (result == -3) {
+				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -263,10 +269,10 @@ public class Chat extends Activity {
 		        } catch (Exception e) {
 		        	Log.e("SendMessageException", e.getMessage());
 		        	Log.e("SendMessageException", e.toString());
-		        	return -2;
+		        	return -1;
 		        }
 		    } else {
-		    	return -2;
+		    	return -3;
 		    }
 		}
 		
@@ -274,10 +280,12 @@ public class Chat extends Activity {
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
 
-			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Vish deu erro. Vc tem conexão com a internet?", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {
-				Toast.makeText(Chat.this, "Deu algum erro no servidor. Desculpa. :(", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
+			} else if (result == -2) {
+				Toast.makeText(Chat.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+			} else if (result == -3) {
+				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}

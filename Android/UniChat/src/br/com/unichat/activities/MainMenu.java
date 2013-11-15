@@ -121,10 +121,10 @@ public class MainMenu extends Activity {
 				    return json.getInt("response");
 		        } catch (Exception e) {
 		        	Log.e("doConnectException", e.getMessage());
-		        	return -3;
+		        	return -1;
 		        }
 		    } else {
-		    	return -2;
+		    	return -3;
 		    }
 		}
 		
@@ -134,10 +134,12 @@ public class MainMenu extends Activity {
 				Intent intent = new Intent(MainMenu.this, Chat.class);
 				intent.putExtra("type", result);
 				startActivity(intent);
+			} else if (result == -1) {
+				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
-			} else {
-				Toast.makeText(MainMenu.this, "Deu merda. Que que c fez?", Toast.LENGTH_SHORT).show();
 			}
 			backActivated = true;
 		}
@@ -172,10 +174,10 @@ public class MainMenu extends Activity {
 					return json.getInt("response");
 				} catch (Exception e) {
 					Log.e("GetCoursesAsync", e.getMessage());
-					return -3;
+					return -1;
 				}
 			} else {
-				return -2;
+				return -3;
 			}
 		}
 		
@@ -184,10 +186,15 @@ public class MainMenu extends Activity {
 			if (result == 1) {
 				adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
 				courses.setAdapter(adapter);
+			} else if (result == 0) {
+				Toast.makeText(MainMenu.this, "Essa universidade não tem cursos, lol", Toast.LENGTH_SHORT).show();
+			} else if (result == -1) {
+				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
-			} else
-				Toast.makeText(MainMenu.this, "Problema ao carregar lista de cursos, malz. =s", Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 	
@@ -214,7 +221,7 @@ public class MainMenu extends Activity {
 					return -3;
 				}
 			} else {
-				return -2;
+				return -3;
 			}
 		}
 		
@@ -225,8 +232,10 @@ public class MainMenu extends Activity {
 				startActivity(new Intent(MainMenu.this, Login.class));
 				finish();
 			} else if (result == -1) {
-				Toast.makeText(MainMenu.this, "Problema ao fazer logout, malz. =s", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		

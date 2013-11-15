@@ -99,7 +99,7 @@ public class Login extends Activity {
 		        	return -2;
 		        }
 		    } else {
-		    	return -5;
+		    	return -3;
 		    }
 		}
 		
@@ -116,10 +116,10 @@ public class Login extends Activity {
 	        	if (result == 0) {
 	        		Toast.makeText(Login.this, "Usuário não validado. Verifique seu email @ufv.com.br", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -1) {
-	        		Toast.makeText(Login.this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(Login.this, "Ocorreu um erro no servidor =S", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -2) {
 	        		Toast.makeText(Login.this, "Esse usuário já está logado em outro dispositivo", Toast.LENGTH_SHORT).show();
-	        	} else if (result == -5) {
+	        	} else if (result == -3) {
 	        		Toast.makeText(Login.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 	        	}
 			}

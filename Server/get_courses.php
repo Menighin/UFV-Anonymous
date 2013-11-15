@@ -8,14 +8,20 @@
 	
 	// User not logged in
 	if (!$validate->isValid()) {
-		echo json_encode(array('response' => -1));
+		echo json_encode(array('response' => -2));
 	}
 	// User authenticated
 	else {
 
 		// Prepare query
-		$stmt = $conn->prepare('SELECT * FROM courses WHERE university_id = (SELECT university FROM users WHERE id = :id) ORDER BY name');
-		$stmt->execute(array(':id' => $_POST['user']));
+		try {
+			$stmt = $conn->prepare('SELECT * FROM courses WHERE university_id = (SELECT university FROM users WHERE id = :id) ORDER BY name');
+			$stmt->execute(array(':id' => $_POST['user']));
+		} catch (Exception $e) {
+			echo json_encode (array('response' => -1));
+			$conn = $database->disconnect();
+			exit(1);
+		}
 		
 		// Fetch
 		$result= $stmt->fetchAll();

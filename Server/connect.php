@@ -12,6 +12,7 @@
 	*   wantscourse => string
 	* Return: 
 	*	 int response:
+	*	   -2 ==> Invalid API Key for user
 	* 	   -1 ==> If the user is not using a valid key
 	*    	0 ==> If the user created a new converstion (i.e. server function)
 	*    	1 ==> If the user connected to someone (i.e. client function)
@@ -30,7 +31,7 @@
 	
 	// User not logged in
 	if (!$validate->isValid()) {
-		echo json_encode(array('response' => -1));
+		echo json_encode(array('response' => -2));
 	}
 	// User authenticated
 	else {
@@ -61,9 +62,14 @@
 			$params[':wantscourse'] = $wantscourse;
 		}
 		
-		$stmt = $conn->prepare($query);
-		
-		$stmt->execute($params);
+		try {
+			$stmt = $conn->prepare($query);
+			$stmt->execute($params);
+		} catch (Exception $e) {
+			echo json_encode(array('response' => -1));
+			$conn = $database->disconnect();
+			exit(1);
+		}
 		
 		// Execute it
 		$result = $stmt->fetchAll();
@@ -75,16 +81,22 @@
 						user1, u1wantssex, u1wantscourse, ready, participants, started_on)
 						VALUES (:user, :wantssex, :wantscourse, 0, 1, NOW())';
 						
-			$stmt = $conn->prepare($query);
-			$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $wantscourse));
-			
-			echo json_encode (array('response' => 0, 'conversation_id' => $conn->lastInsertId()));
+			try {
+				$stmt = $conn->prepare($query);
+				$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $wantscourse));
+				echo json_encode (array('response' => 0, 'conversation_id' => $conn->lastInsertId()));
+			} catch (Exception $e) {
+				echo json_encode(array('response' => -1));
+			}
 		} else {
 			// Select random conversation to talk with
 			
-			$conn->query("UPDATE conversations SET user2 = '" . $_POST['user'] . "', ready = 1, participants = 2 WHERE id = " . $result[$random = mt_rand(0, count($result) - 1)]['id'] . " AND ready = 0");
-			
-			echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id']));
+			try {
+				$conn->query("UPDATE conversations SET user2 = '" . $_POST['user'] . "', ready = 1, participants = 2 WHERE id = " . $result[$random = mt_rand(0, count($result) - 1)]['id'] . " AND ready = 0");
+				echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id']));
+			} catch (Exception $e) {
+				echo json_encode(array('response' => -1));
+			}
 		}
 	}
 	

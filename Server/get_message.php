@@ -9,6 +9,8 @@
 	*   author          => int
 	* Return: 
 	*	 int response:
+	*	   -2 ==> Invalid API Key for user
+	*	   -1 ==> Database error
 	*    	0 ==> If there's no messages to return
 	*    	1 ==> If there's messages to return
 	*    array of messages if response = 1
@@ -25,14 +27,20 @@
 	
 	// User not logged in
 	if (!$validate->isValid()) {
-		echo json_encode(array('response' => -1));
+		echo json_encode(array('response' => -2));
 	}
 	// User authenticated
 	else {
 
 		// Prepare query
-		$stmt = $conn->prepare('SELECT * FROM messages WHERE conversation_id=:id AND is_read = 0 AND author = :author');
-		$stmt->execute(array(':id' => $_POST['conversation_id'], ':author' => $_POST['author']));
+		try {
+			$stmt = $conn->prepare('SELECT * FROM messages WHERE conversation_id=:id AND is_read = 0 AND author = :author');
+			$stmt->execute(array(':id' => $_POST['conversation_id'], ':author' => $_POST['author']));
+		} catch (Exception $e) {
+			echo json_encode (array('response' => -1));
+			$conn = $database->disconnect();
+			exit(1);
+		}
 		
 		// Fetch
 		$result= $stmt->fetchAll();

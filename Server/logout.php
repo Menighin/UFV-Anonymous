@@ -1,13 +1,14 @@
 <?php
 
 	/**
-	* API login function
+	* API logout function
 	* Author: João Menighin
 	* Parameters:
 	*	METHOD   => POST
 	*	user ==> int
 	* Return: int:
-	*   -1 ==> Error ocurred
+	*   -2 ==> Invalid API Key for user
+	*   -1 ==> Database error
 	*    1 ==> User logout
 	**/
 
