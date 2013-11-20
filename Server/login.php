@@ -8,7 +8,7 @@
 	*	username => string
 	*	password => string
 	* Return: int:
-	*	-3 ==> Incorrect password
+	*	-4 ==> Incorrect password or user
 	*	-2 ==> User already logged
 	* 	-1 ==> Database error
 	*    0 ==> Not validated user
@@ -31,7 +31,7 @@
 	
     $row = $stmt->fetch();
 	if (!$row)
-		echo json_encode(array('response' => -1));
+		echo json_encode(array('response' => -4));
 	else {
 		if (strcmp($row['password'], $_POST['password']) == 0) {
 			if ($row['valid'] == true) {
@@ -49,7 +49,7 @@
 				echo json_encode(array('response' => 0));
 			}
 		} else {
-			echo json_encode(array('response' => -3));
+			echo json_encode(array('response' => -4));
 		}
 	}
     

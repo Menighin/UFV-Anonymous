@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS Users (
 	valid TINYINT(1) NOT NULL,
 	hash VARCHAR(50) NOT NULL,
 	last_seen DATETIME DEFAULT NULL,
-	logged TINYINT(1) DEFAULT NULL,
-	special TINYINT(1) DEFAULT NULL,
+	logged TINYINT(1) DEFAULT 0,
+	special TINYINT(1) DEFAULT 0,
 CONSTRAINT PK_Users PRIMARY KEY (id, username, email),
 CONSTRAINT FK_Users_University FOREIGN KEY (university) REFERENCES Universities (id),
 CONSTRAINT FK_Users_Cousers FOREIGN KEY (course) REFERENCES Courses (id)
@@ -112,4 +112,5 @@ INSERT INTO Courses (university_id, name) VALUES (1, 'Secreteriado Executivo Tri
 INSERT INTO Courses (university_id, name) VALUES (1, 'Zootecnia');
 
 /* Users */
-INSERT INTO Users (username, password, api_key, email, sex, university, course, valid, hash, last_seen) VALUES ('menighin', '12345', 'TesteAPIKey', 'joao.menighin@ufv.br', 'm', 1, 3, 1, 'TesteHASH', NULL);
+INSERT INTO Users (username, password, api_key, email, sex, university, course, valid, hash, last_seen, special) VALUES ('menighin', '12345', 'TesteAPIKey', 'joao.menighin@ufv.br', 'm', 1, 5, 1, 'TesteHASH', NULL, 1);
+INSERT INTO Users (username, password, api_key, email, sex, university, course, valid, hash, last_seen, special) VALUES ('aline', '12345', 'TesteAPIKey2', 'aline@ufv.br', 'm', 1, 11, 1, 'TesteHASH', NULL, 0);
