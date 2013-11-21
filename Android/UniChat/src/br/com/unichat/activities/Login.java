@@ -10,6 +10,9 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +40,8 @@ public class Login extends Activity {
 	private Button login;
 	private LoginAsync loginAsync = null;
 	
+	private AdView mAdView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,6 +52,9 @@ public class Login extends Activity {
 		user = (EditText) findViewById(R.id.login_user);
 		password = (EditText) findViewById(R.id.login_password);
 		login = (Button) findViewById(R.id.login_btn);
+		
+		mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.loadAd(new AdRequest.Builder().build());
 	}
 	
 	public void loginButton (View v) {
@@ -61,7 +69,7 @@ public class Login extends Activity {
 		} 
 		
 		if (user.getText().toString().length() <= 0) {
-			user.setError("Digite um usuário");
+			user.setError("Digite um usuï¿½rio");
 			valid = false;
 			focusView = user;
 		}
@@ -118,9 +126,9 @@ public class Login extends Activity {
 	        	} else if (result == -1) {
 	        		Toast.makeText(Login.this, "Ocorreu um erro no servidor =S", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -2) {
-	        		Toast.makeText(Login.this, "Esse usuário já está logado em outro dispositivo", Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(Login.this, "Esse usuï¿½rio jï¿½ estï¿½ logado em outro dispositivo", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -3) {
-	        		Toast.makeText(Login.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(Login.this, "Preciso de uma conexï¿½o com a internet pra logar!", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -4) {
 	        		Toast.makeText(Login.this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show();
 	        	}

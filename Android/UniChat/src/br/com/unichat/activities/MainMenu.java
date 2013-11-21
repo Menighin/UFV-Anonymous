@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +46,8 @@ public class MainMenu extends Activity {
 	private ArrayAdapter<String> adapter;
 	private Intent intent;
 	
+	private AdView mAdView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,7 +75,8 @@ public class MainMenu extends Activity {
 			courses.setAdapter(adapter);
 		}
 		
-		
+		mAdView = (AdView) findViewById(R.id.adView);
+		mAdView.loadAd(new AdRequest.Builder().build());
 	}
 	
 	//Function to make the 3 buttons work like a RadioButton
@@ -125,7 +131,7 @@ public class MainMenu extends Activity {
 				    	Settings.CONVERSATION_ID = json.getInt("conversation_id");
 				    
 					    // Creating next intent and putting username if it is the case
-					    String talkingTo = "Anônimo";
+					    String talkingTo = "Anï¿½nimo";
 					    intent = new Intent(MainMenu.this, Chat.class);
 					    if (json.getInt("response") == 1 && json.getInt("special") == 1)
 					    	talkingTo = json.getString("username");
@@ -150,9 +156,9 @@ public class MainMenu extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave invï¿½lida para usuï¿½rio", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Preciso de uma conexï¿½o com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 			backActivated = true;
 		}
@@ -200,13 +206,13 @@ public class MainMenu extends Activity {
 				adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
 				courses.setAdapter(adapter);
 			} else if (result == 0) {
-				Toast.makeText(MainMenu.this, "Essa universidade não tem cursos, lol", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Essa universidade nï¿½o tem cursos, lol", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave invï¿½lida para usuï¿½rio", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Preciso de uma conexï¿½o com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -247,9 +253,9 @@ public class MainMenu extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave invï¿½lida para usuï¿½rio", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Preciso de uma conexï¿½o com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		
 		}

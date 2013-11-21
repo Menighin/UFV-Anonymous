@@ -11,6 +11,7 @@
     <string name="input_user">Usuário</string>
     <string name="input_password">Senha</string>
     <string name="login_button">Login</string>
+    <string name="ad_unit_id">ca-app-pub-7698594623226287/6894259007</string>
 
     <!-- MainMeny Activity -->
     <string name="title_activity_main_menu">Menu</string>
