@@ -13,6 +13,7 @@
 		* Funcion to create a connection with the database info
 		* Return:
 		*	Connection with database if sucessfull, null otherwise
+		*
 		**/
 		public function connect() {
 			try {
