@@ -38,7 +38,7 @@ public class Chat extends Activity {
 	
 	private EditText message;
 	private TextView talkingTo;
-	private String talkingToName = "Anônimo";
+	private String talkingToName = "AnÃ´nimo";
 	private Bundle extras;
 	private ListView conversation;
 	private ConversationArrayAdapter adapter;
@@ -73,7 +73,7 @@ public class Chat extends Activity {
 		// Solving if the activity is either a client or server type
 		extras = getIntent().getExtras();
 		if (extras.getInt("type") == 0) {
-			talkingTo.setText("Esperando o anônimo(a) se conectar...");
+			talkingTo.setText("Esperando o anÃ´nimo(a) se conectar...");
 			connected = false;
 			getMessagesFrom = 1;
 			sentMessagesFrom = 0;
@@ -178,9 +178,9 @@ public class Chat extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Chave invÃ¡lida para usuÃ¡rio", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Preciso de uma conexÃ£o com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -227,13 +227,13 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute (ArrayList<Message> msgs) {
 			if (msgs == null) {
-				Toast.makeText(Chat.this, "Vish, deu merda, desculpa :( (Você tá conectado na internet?)", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Vish, deu merda, desculpa :( (VocÃª tÃ¡ conectado na internet?)", Toast.LENGTH_SHORT).show();
 			} else {
 				for (Message msg : msgs) {
 					if (msg.FLAG == 0)
 						adapter.add(msg);
 					else {
-						talkingTo.setText("Anônimo se desconectou :( ...");
+						talkingTo.setText("Anï¿½nimo se desconectou :( ...");
 						talkingTo.setTextColor(Color.RED);
 						message.setText("");
 						message.setEnabled(false);
@@ -285,9 +285,9 @@ public class Chat extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Chave invï¿½lida para usuÃ¡rio", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Preciso de uma conexÃ£o com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}

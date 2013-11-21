@@ -156,9 +156,9 @@ public class MainMenu extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inv�lida para usu�rio", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conex�o com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 			backActivated = true;
 		}
@@ -206,13 +206,13 @@ public class MainMenu extends Activity {
 				adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
 				courses.setAdapter(adapter);
 			} else if (result == 0) {
-				Toast.makeText(MainMenu.this, "Essa universidade n�o tem cursos, lol", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Essa universidade não tem cursos, lol", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inv�lida para usu�rio", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conex�o com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -253,9 +253,9 @@ public class MainMenu extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inv�lida para usu�rio", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conex�o com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		
 		}

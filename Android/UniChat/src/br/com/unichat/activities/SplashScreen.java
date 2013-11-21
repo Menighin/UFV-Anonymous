@@ -30,7 +30,7 @@ import br.com.unichat.settings.Settings;
 import br.com.unichat.activities.R;
 
 /*
- * Activity que mostra a tela inicial do aplicativo. O tempo está definido na classe Settings.java
+ * Activity que mostra a tela inicial do aplicativo. O tempo estï¿½ definido na classe Settings.java
  */
 
 public class SplashScreen extends Activity {
@@ -110,16 +110,16 @@ public class SplashScreen extends Activity {
 				startActivity(i);
 				finish();
 			} else if (result == 0) {
-				Toast.makeText(SplashScreen.this, "Essa universidade não tem cursos, lol", Toast.LENGTH_SHORT).show();
+				Toast.makeText(SplashScreen.this, "Essa universidade nÃ£o tem cursos, lol", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {
 				Toast.makeText(SplashScreen.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(SplashScreen.this, "Você fez login em outro aparelho recentemente. Loga denovo. :)", Toast.LENGTH_SHORT).show();
+				Toast.makeText(SplashScreen.this, "VocÃª fez login em outro aparelho recentemente. Loga denovo. :)", Toast.LENGTH_SHORT).show();
 				i = new Intent(SplashScreen.this, Login.class);
 				startActivity(i);
 				finish();
 			} else if (result == -3) {
-				Toast.makeText(SplashScreen.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(SplashScreen.this, "Preciso de uma conexÃ£o com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}

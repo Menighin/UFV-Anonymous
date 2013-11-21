@@ -69,7 +69,7 @@ public class Login extends Activity {
 		} 
 		
 		if (user.getText().toString().length() <= 0) {
-			user.setError("Digite um usu�rio");
+			user.setError("Digite um usuário");
 			valid = false;
 			focusView = user;
 		}
@@ -122,15 +122,15 @@ public class Login extends Activity {
 				password.setEnabled(true);
 				login.setEnabled(true);
 	        	if (result == 0) {
-	        		Toast.makeText(Login.this, "Usu�rio n�o validado. Verifique seu email", Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(Login.this, "Usuário não validado. Verifique seu email", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -1) {
 	        		Toast.makeText(Login.this, "Ocorreu um erro no servidor =S", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -2) {
-	        		Toast.makeText(Login.this, "Esse usu�rio j� est� logado em outro dispositivo", Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(Login.this, "Esse usuário já está logado em outro dispositivo", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -3) {
-	        		Toast.makeText(Login.this, "Preciso de uma conex�o com a internet pra logar!", Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(Login.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -4) {
-	        		Toast.makeText(Login.this, "Usu�rio ou senha inv�lidos", Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(Login.this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show();
 	        	}
 			}
 		}
