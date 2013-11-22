@@ -77,6 +77,7 @@ public class Chat extends Activity {
 			connected = false;
 			getMessagesFrom = 1;
 			sentMessagesFrom = 0;
+			message.setEnabled(false);
 		}
 		else {
 			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
@@ -164,6 +165,7 @@ public class Chat extends Activity {
 			if (result == 1) {
 				talkingTo.setText("Falando com: " + talkingToName);
 				talkingTo.setTextColor(Color.GREEN);
+				message.setEnabled(true);
 				myTimer.cancel();
 				myTimer = new Timer();
 				myTimer.schedule(new TimerTask() {          
