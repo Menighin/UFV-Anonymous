@@ -23,11 +23,13 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 	private WindowManager wm;
 	private Display display;
 	private RelativeLayout.LayoutParams params;
+	private Context context;
 
 	
 	public ConversationArrayAdapter(Context context, int textViewResourceId) {
 		super(context, textViewResourceId);
 		
+		this.context = context;
 		wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		display = wm.getDefaultDisplay();
 	}
@@ -55,28 +57,36 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
-			messageView.setPadding(20, 7, 15, 10);
+			messageView.setPadding(
+					(int)(15 * context.getResources().getDisplayMetrics().density),
+					(int)(5 * context.getResources().getDisplayMetrics().density), 
+					(int)(10 * context.getResources().getDisplayMetrics().density), 
+					(int)(6 * context.getResources().getDisplayMetrics().density));
 			messageView.requestFocus();
 			
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.RIGHT_OF, R.id.message);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			timeView.setLayoutParams(params);
-			timeView.setPadding(10, 0, 0, 0);
+			timeView.setPadding((int)(10 * context.getResources().getDisplayMetrics().density), 0, 0, 0);
 			
 		} else {
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
-			messageView.setPadding(15, 7, 20, 10);
+			messageView.setPadding(
+					(int)(10 * context.getResources().getDisplayMetrics().density),
+					(int)(5 * context.getResources().getDisplayMetrics().density), 
+					(int)(15 * context.getResources().getDisplayMetrics().density), 
+					(int)(6 * context.getResources().getDisplayMetrics().density));
 			messageView.requestFocus();
 			
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.LEFT_OF, R.id.message);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			timeView.setLayoutParams(params);
-			timeView.setPadding(0, 0, 10, 0);
+			timeView.setPadding(0, 0, (int)(10 * context.getResources().getDisplayMetrics().density), 0);
 			
 			
 		}

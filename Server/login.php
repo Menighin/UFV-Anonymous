@@ -37,9 +37,11 @@
 			if ($row['valid'] == true) {
 				if ($row['logged'] == 0) {
 					try {
-						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1 WHERE username = '" . $_POST['username'] . "'");
-						echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $row['api_key']));
+						$key = md5(uniqid(rand(), true));
+						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1, api_key = '". $key ."' WHERE username = '" . $_POST['username'] . "'");
+						echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $key));
 					} catch (Exception $e) {
+						echo $e->getMessage();
 						echo json_encode(array('response' => -1));
 					}
 				} else {

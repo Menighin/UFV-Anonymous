@@ -13,6 +13,7 @@
 	* 	   -1 ==> If some error ocurred in database queries
 	*		0 ==> If ready == 0, thus another user didn't connect yet
 	*    	1 ==> If ready == 1, thus another user connected
+	*
 	**/
 	
 	include "Database.class.php";

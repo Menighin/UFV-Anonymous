@@ -131,7 +131,7 @@ public class MainMenu extends Activity {
 				    	Settings.CONVERSATION_ID = json.getInt("conversation_id");
 				    
 					    // Creating next intent and putting username if it is the case
-					    String talkingTo = "An�nimo";
+					    String talkingTo = "Anônimo";
 					    intent = new Intent(MainMenu.this, Chat.class);
 					    if (json.getInt("response") == 1 && json.getInt("special") == 1)
 					    	talkingTo = json.getString("username");
@@ -246,14 +246,12 @@ public class MainMenu extends Activity {
 		
 		@Override
 		protected void onPostExecute (Integer result) {
-			if (result == 1) {
+			if (result == 1 || result == -2) {
 				SaveSharedPreferences.destroyPreferences(MainMenu.this);
 				startActivity(new Intent(MainMenu.this, Login.class));
 				finish();
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
-			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}

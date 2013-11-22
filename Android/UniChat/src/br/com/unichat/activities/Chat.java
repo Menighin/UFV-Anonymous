@@ -233,7 +233,7 @@ public class Chat extends Activity {
 					if (msg.FLAG == 0)
 						adapter.add(msg);
 					else {
-						talkingTo.setText("An�nimo se desconectou :( ...");
+						talkingTo.setText("Anônimo se desconectou :( ...");
 						talkingTo.setTextColor(Color.RED);
 						message.setText("");
 						message.setEnabled(false);
