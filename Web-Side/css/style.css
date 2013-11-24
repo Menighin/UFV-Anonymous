@@ -1,0 +1,42 @@
+* {
+	padding: 0;
+	margin: 0;
+	color: black;
+	text-decoration: none;
+}
+
+#wrapper {
+	background-color: #ccc;
+	width: 96%;
+	max-width: 980px;
+	margin: 0 auto;
+}
+
+#wrapper > header {
+	height: 240px;
+}
+
+@media screen and (max-width: 480px) {
+	#logo {
+		display: none;
+	}
+}
+
+#logo {
+		float: left;
+}
+
+#login {
+	float: right;
+}
+
+#content{
+	clear: both;
+	background-color: #fcc;
+	height: 1000px;
+}
+
+footer {
+	background-color: #cfc;
+	height: 200px;
+}
