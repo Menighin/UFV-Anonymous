@@ -3,18 +3,80 @@
 	margin: 0;
 	color: black;
 	text-decoration: none;
+	font-family: sans-serif;
 }
 
-#wrapper {
-	background-color: #ccc;
-	width: 96%;
-	max-width: 980px;
-	margin: 0 auto;
+/* GENERAL ***********************************************************/
+@font-face {
+	font-family: CaviarDreams;
+	src: url('../fonts/CaviarDreams.ttf');
 }
 
-#wrapper > header {
-	height: 240px;
+@font-face {
+	font-family: Bellerose;
+	src: url('../fonts/Bellerose.ttf');
+	
 }
+
+h1 {
+	font-family: CaviarDreams;
+	color: #d74c4c;
+	font-size: 35px;
+}
+
+p {
+	padding: 10px 10px;
+	color: #555;
+	font-size: 14px;
+	text-align: justify;
+	text-indent:42px;
+}
+
+body {
+	background: url('../img/back.jpg') repeat;
+	padding: 0 28px;
+}
+
+form{
+	margin: 3px;
+	color: #aaa;
+	font-size: 12px;
+	padding: 2px;
+}
+
+input {
+	margin: 1px;
+	padding: 3px;
+	border: 0;
+}
+
+input[type=text], input[type=password] {
+	width: 100px;
+	border-radius: 3px;
+	border: 1px solid #ddd;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+	outline: none;
+	width: 100px;
+	border: 1px solid #e66464;
+}
+
+.button, input[type=submit] {
+	padding: 3px 5px;
+	background-color: #d74c4c;
+	color: white;
+	font-size: 12px;
+	margin: 4px;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.button:hover , input[type=submit]:hover{
+	background-color: #d03a3a;
+}
+
+/* HEADER ************************************************************/
 
 @media screen and (max-width: 480px) {
 	#logo {
@@ -23,20 +85,330 @@
 }
 
 #logo {
-		float: left;
+	float: left;
+	width: 212px;
+}
+
+#menuContent {
+	width: 100%;
+	height: 100%;
+}
+
+#menuWrapper {
+	margin: 40px auto;
+	width: 50%;
+	height: 50px;
+}
+
+#menu {
+	text-align: center;
+	border-top: 4px #d74c4c solid;
+	border-bottom: 11px #d74c4c solid;
+	width: 360px;
+	width: 95.55%;
+	height: 17px;
+	padding: 7px 0;
+	position: relative;
+	top: -50px;
+	left: 11px;
+}
+
+#menutip2 {
+	position:relative;
+	top: -96px;
+	float: right;
+	width: 2.2%;
+	height: 46px;
+}
+
+#menutip1 {
+	width: 2.3%;
+	height: 46px;
+}
+
+.menuItem {
+	width: 33.33%;
+	height: 20px;
+	font-size: 14px;
+	display: block;
+	float: left;
+	font-weight: bold;
+	padding: 10px 0;
+	margin-top: -10px;
+	color: #9a1e1e;
+}
+
+.menuItem:hover {
+	background-color: #d74c4c;
+	color: white;
 }
 
 #login {
+	text-align: right;
+}
+
+#logged {
+	color: #777;
+	font-size: 12px;
+}
+
+#logged span {
+	color: #555;
+	font-weight: bold;
+}
+
+#logged a, #forgotPassword a {
+	color: #b00;
+	font-weight: bold;
+}
+
+#logged a:hover, #forgotPassword a:hover {
+	color: #e00;
+	text-decoration: underline;
+}
+
+#forgotPassword {
+	font-size: 12px;
+}
+
+/* HOME PAGE *********************************************************/
+
+#wrapper {
+	width: 100%;
+	max-width: 960px;
+	margin: 0 auto;
+}
+
+#wrapper > header {
+	height: 240px;
+	padding-top: 20px;
+}
+
+#contentWrapper{
+	clear: both;
+	
+}
+
+#slide {
+	width: 100%;
+	height: 600px;
+	background-color: #888;
+	background-color: rgba(50, 50, 50, 0.5);
+	float: left;
+	position: relative;
+	top: 50px;
+	box-shadow: 0 8px 20px 0px #888;
+	background: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.9));
+}
+
+#slidetip1 {
+	float: left;
+	position: relative;
+	top: 50px;
+	width: 2.39%;
+	
+}
+
+#slidetip2 {
+	float: right;
+	position: relative;
+	top: 50px;
+	width: 2.39%;
+}
+
+#slideshow { 
+    width: 70%; 
+	height: 60%;
+	margin: 30px auto;
+}
+
+#slideshow li { 
+    position: absolute; 
+	list-style: none;
+	width: 70%;
+	height: 60%;
+	overflow: hidden;
+	background-size: 100% AUTO;
+}
+
+.slideInfo {
+	margin: 19% 5%;
+	width: 49%;
+}
+
+.slideTitle, .slideTitle a {
+	color: #ff7575;
+	font-size: 32px;
+}
+
+.slideTitle a:hover {
+	text-decoration: underline;
+}
+
+.slideText {
+	color: #ddd;
+	font-size: 14px;
+}
+
+#slidebuttons {
+	width: 650px;
+	margin: 0 auto;
+	text-align: center;
+}
+#slidebuttons li {
+	list-style:none;
+	display: inline;
+	margin-left: 10px;
+}
+
+#downloadContent {
+	width: 340px;
+	height: 70px;
+	text-align: center;
+	margin: 0 auto;
+	padding: 20px;
+	padding-bottom: 30px;
+	border-bottom: 1px rgba(255, 255, 255, 0.3) dotted;
+}
+
+#downloadContent span {
+	display: block;
+	margin-bottom: 10px;
+	color: white;
+	font-size: 12px;
+}
+
+#downloadPago, #downloadFree {
+	width: 162px;
+	height: 37px;
+	margin: 0 auto;
+	display: block;
+	float: left;
+}
+
+#downloadPago {
+	float: left;
+	opacity: 0.85;
+}
+
+#downloadPago:hover, #downloadFree:hover {
+	opacity: 1.0;
+}
+
+#downloadFree {
+	opacity: 0.85;
 	float: right;
 }
 
-#content{
+#activeUsers {
 	clear: both;
-	background-color: #fcc;
-	height: 1000px;
+	padding: 10px;
+	font-weight: bold;
+	color: #84ba4a;
 }
 
+#content {
+	width: 95.416667%;
+	background-color: #fff;
+	margin: 0 auto;
+	padding-bottom: 50px;
+	padding-top: 50px;
+	border-top: 14px rgba(0, 0, 0, 0.3) solid;
+}
+
+#content li {
+	color: #555;
+	font-size: 14px;
+	margin-left: 80px;
+}
+
+#faq {
+	width: 84%;
+	margin: 0 auto;
+	padding-top: 650px;
+}
+
+.faqItem {
+	margin: 20px 0;
+}
+
+/* REGISTER PAGE *********************************************************/
+#registerForm {
+	width: 70%;
+	margin: 0 auto;
+	padding: 50px 0;
+	color: #444;
+}
+
+#formDiv, #formDivForgot {
+	border: 1px dotted #bbb;
+	padding: 60px;
+	background-color: #f7f7f7;
+}
+
+#formDivForgot {
+	margin: 0 auto;
+	text-align: center;
+	color: #666;
+}
+
+#formDivForgot span {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+
+#registerForm table, #registerForm td {
+	color: #444;
+	padding-right: 15px;
+	margin-left: -2px;
+}
+
+#registerButton, #saveButton {
+	display: block-inline;
+	float: right;
+}
+
+#saveButton {
+	opacity: 0.5;
+}
+
+#usernameMsg, #passwordMsg, #emailMsg, #loginMsg {
+	color: #888;
+	font-size: 11px;
+	margin-top: 5px;
+}
+
+#successMsg {
+	text-align: center;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+#successMsg span {
+	color: #444;
+	font-weight: normal;
+	text-decoration: underline;
+}
+
+#usernameProfile {
+	font-size: 49px;
+}
+
+h2 {
+	color: #777;
+}
+
+#updateSuccess {
+	text-align: center;
+	color: #94bc3e;
+}
+
+
 footer {
-	background-color: #cfc;
-	height: 200px;
+	background-color: rgba(50, 50, 50, 0.5);
+	text-align: center;
+	color: white;
+	font-size: 10px;
+	padding: 10px 0;
 }

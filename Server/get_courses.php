@@ -39,7 +39,7 @@
 		}
 		
 		// Fetch
-		$result= $stmt->fetchAll();
+		$result = $stmt->fetchAll();
 		
 		if (!$result)
 			echo json_encode(array('response' => 0));

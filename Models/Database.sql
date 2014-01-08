@@ -4,6 +4,7 @@ USE `unichat`;
 CREATE TABLE IF NOT EXISTS universities (
 	id INTEGER AUTO_INCREMENT,
 	name VARCHAR(100) NOT NULL,
+	acronym VARCHAR (15) NOT NULL,
 	email VARCHAR(50) NOT NULL,
 CONSTRAINT PK_universities PRIMARY KEY(id, name)
 );

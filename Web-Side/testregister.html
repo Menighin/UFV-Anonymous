@@ -1,0 +1,86 @@
+<html>
+	<head>
+		<title> Test Login </title>
+		<meta charset="UTF-8">
+		
+	</head>
+		
+	<body>
+	
+		<H1> Teste register </h1>
+		<form action="server/register.php" method="POST">
+			<span>Usuário: </span> <br />
+			<input name="username" type="text" maxlength="15" onblur="checkUsername(this);" autocomplete="off" /> <span id="usernameMsg"></span> <br /><br />
+			<table>
+				<tr>
+					<td>
+						Senha: <br />
+						<input id="password" name="password" maxlength="15" type="password" onblur="checkPassword(this);" /> <br />
+					</td>
+					<td>
+						Confirmar senha: <br />
+						<input name="confirmPassword" maxlength="15" type="password" onblur="checkConfirmPassword(this);" /> <br />
+					</td>
+					<td>
+						<span id="passwordMsg"></span>
+					</td>
+				</tr>
+			</table><br />
+			Sexo: <br />
+			<input name="sex" type="text" />
+			<table>
+				<tr>
+					<td>
+						Universidade:<br />
+						<input name="university" type="text" />
+					</td>
+					<td>Curso:<br />
+						<input name="course" type="text" />
+					</td>
+				</tr>
+			</table><br />
+			E-mail: <br />
+			<input name="email" maxlength="40" type="text" onblur="checkEmail(this);" required ><span id="email">@ufv.br</span> <span id="emailMsg"></span> <br /><br />
+			<input id="registerButton" type="submit" value="registrar" />
+		</form>
+		<hr />
+		<form action="server/updateUser.php" method="POST">
+			<span>Usuário: </span> <br />
+			<input name="username" type="text" maxlength="15" onblur="checkUsername(this);" autocomplete="off" /> <span id="usernameMsg"></span> <br /><br />
+			<table>
+				<tr>
+					<td>
+						Senha: <br />
+						<input id="password" name="password" maxlength="15" type="password" onblur="checkPassword(this);" /> <br />
+					</td>
+					<td>
+						Confirmar senha: <br />
+						<input name="confirmPassword" maxlength="15" type="password" onblur="checkConfirmPassword(this);" /> <br />
+					</td>
+					<td>
+						<span id="passwordMsg"></span>
+					</td>
+				</tr>
+			</table><br />
+			Sexo: <br />
+			<input name="sex" type="text" /><br />
+			<td>Curso:<br />
+			<input name="course" type="text" />
+			<input id="registerButton" type="submit" value="registrar" />
+		</form>
+		<hr />
+		<form action="server/redefinePass.php" method="POST">
+			<span>Usuário: </span> <br />
+			<input name="username" type="text" maxlength="15" autocomplete="off" /> <br /><br />
+			<input id="registerButton" type="submit" value="redefine" />
+		</form>
+		<hr />
+		<form action="server/retrieveCountSex.php" method="POST">
+			<input name="param" type="text" maxlength="15" autocomplete="off" placeholder="param" /> <br /><br />
+			<input name="attr" type="text" maxlength="15" autocomplete="off" placeholder="attr" /> <br /><br />
+			<input id="registerButton" type="submit" value="Count" />
+		</form>
+		
+		
+	</body>
+</html>

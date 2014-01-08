@@ -14,8 +14,6 @@
 	*    0 ==> Not validated user
 	*    1 ==> User correct (do the login)
 	**/
-
-	session_start(); 
 	include 'Database.class.php';
 	$database = new Database();
 	$conn = $database->connect();
