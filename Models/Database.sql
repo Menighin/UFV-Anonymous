@@ -65,7 +65,7 @@ CONSTRAINT FK_messages_Conversation FOREIGN KEY (conversation_id) REFERENCES con
 
 /* INSERTs */
 /* universities and courses */
-INSERT INTO universities (name, email) VALUES ('Universidade Federal de Viçosa', '@ufv.br');
+INSERT INTO universities (name, email, acronym) VALUES ('Universidade Federal de Viçosa', '@ufv.br', 'UFV');
 
 INSERT INTO courses (university_id, name) VALUES (1, 'Administração');
 INSERT INTO courses (university_id, name) VALUES (1, 'Agronomia');
