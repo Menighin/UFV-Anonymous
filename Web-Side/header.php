@@ -48,7 +48,7 @@
 						<img id="menutip1" src="img/menutip1.png" />
 						<div id="menu">
 							<a class="menuItem" href="Home">Home</a>
-							<a class="menuItem" href="Estatistica">Estatásticas</a>
+							<a class="menuItem" href="Estatistica">Estatísticas</a>
 							<a class="menuItem" href="Reportar">Reportar Bugs</a>
 						</div>
 						<img id="menutip2" src="img/menutip2.png" />
