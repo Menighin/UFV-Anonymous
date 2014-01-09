@@ -1,7 +1,6 @@
 <?php
 
 	include 'Database.class.php';
-	include 'phpmailer/phpmailer.php';
 	$database = new Database();
 	$conn = $database->connect();
 	
@@ -43,22 +42,10 @@
 	$headers = "From:" . $from;
 	
 	//echo $to . " - " . $subject . " - " . $from . " - " . $headers;
-	/*if (mail($to, $subject, $message, $headers))
-		print 1;
-	else
-		print 0;*/
-    
-	$mail->Subject = $subject;
-	$mail->Body    = $message;
-	$mail->From = $from;
-	$mail->FromName = 'UniChat';
-	$mail->addAddress($to);  
-	
-	if($mail->send())
+	if (mail($to, $subject, $message, $headers))
 		print 1;
 	else
 		print 0;
-	
 	
 	$conn = $database->disconnect();
 ?>
