@@ -1,6 +1,7 @@
 <?php
 
 	include 'Database.class.php';
+	include 'phpmailer/phpmailer.php';
 	$database = new Database();
 	$conn = $database->connect();
 	
@@ -40,9 +41,24 @@
 				localhost/validate.php?u=" . strtolower($_POST['username']) . "&h=" . $hash;
 	$from = "noreply@unichat.com.br";
 	$headers = "From:" . $from;
-	mail($to, $subject, $message, $headers);
 	
-	print 1;
+	//echo $to . " - " . $subject . " - " . $from . " - " . $headers;
+	/*if (mail($to, $subject, $message, $headers))
+		print 1;
+	else
+		print 0;*/
     
+	$mail->Subject = $subject;
+	$mail->Body    = $message;
+	$mail->From = $from;
+	$mail->FromName = 'UniChat';
+	$mail->addAddress($to);  
+	
+	if($mail->send())
+		print 1;
+	else
+		print 0;
+	
+	
 	$conn = $database->disconnect();
 ?>
