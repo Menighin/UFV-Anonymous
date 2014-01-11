@@ -136,6 +136,19 @@ var validPassword = false;
 var validPasswordConfirm = false;
 var validEmail = false;
 
+function activeRegister () {
+	if (validUsername && validPassword && validPasswordConfirm && validEmail) {
+		$("#registerButton").css("opacity","1");
+		$("#registerButton").css("cursor","pointer");
+		$("#registerButton").attr("onclick", "register();");
+	} else {
+		$("#registerButton").css("opacity","0.4");
+		$("#registerButton").css("cursor","default");
+		$("#registerButton").attr("onclick", "");
+	}
+}
+
+
 function checkUsername(input) {
 	if (input.value.length > 0 || validUsername) {
 		if (input.value.length < 5) {
@@ -162,6 +175,7 @@ function checkUsername(input) {
 					} else {
 						alert("Um error ocorreu no servidor. Por favor tente mais tarde.");
 					}
+					activeRegister();
 				}
 			});
 		}
@@ -179,6 +193,7 @@ function checkPassword (input) {
 			$("#passwordMsg").html("");
 			validPassword = true;
 		}
+		activeRegister();
 	}
 }
 
@@ -194,6 +209,7 @@ function checkConfirmPassword (input) {
 			$("#passwordMsg").html("A senha e confirmação são diferentes");
 			validPasswordConfirm = false;
 		}
+		activeRegister();
 	}
 }
 
@@ -232,6 +248,7 @@ function onChangeUniveristy (university) {
 						} else {
 							alert("Um error ocorreu no servidor. Por favor tente mais tarde.");
 						}
+						activeRegister();
 					}
 				});
 			}
@@ -262,6 +279,7 @@ function checkEmail(input) {
 				} else {
 					alert("Um error ocorreu no servidor. Por favor tente mais tarde.");
 				}
+				activeRegister();
 			}
 		});
 	}
@@ -286,6 +304,8 @@ function register() {
 		
 		var POSTdata = {username: username, password: password, email: email, sex: sex, university: university, course: course};
 		
+		$(".loading").css("display", "block");
+		
 		$.ajax({
 			type: "POST",
 			url: "server/register.php", 
@@ -296,6 +316,7 @@ function register() {
 				} else {
 					alert("Um error ocorreu no servidor. Por favor tente mais tarde.");
 				}
+				$(".loading").css("display", "none");
 			}
 		});
 		
@@ -435,5 +456,5 @@ function plotData() {
 }
 
 $(function () {
-	plotData();
+	//plotData();
 });

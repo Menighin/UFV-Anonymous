@@ -2,7 +2,7 @@
 	include 'server/Database.class.php';
 	include 'header.php';
 ?>
-
+			<div class="loading"><img src="img/loader.gif" /> </div>
 			<section id="contentWrapper">
 				<div id="content">
 					<form id="registerForm">
@@ -88,7 +88,7 @@
 							</table><br />
 							E-mail: <br />
 							<input name="email" maxlength="40" type="text" onblur="checkEmail(this);" required ><span id="email">@ufv.br</span> <span id="emailMsg"></span> <br /><br />
-							<div id="registerButton" onclick="register();" class="button">Registrar</div>
+							<div id="registerButton" class="button">Registrar</div>
 							
 						</div>
 					</form>
