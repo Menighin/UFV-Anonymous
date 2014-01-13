@@ -2,6 +2,7 @@
 
 	include 'server/Database.class.php';
 	include ('header.php');
+	include "analyticstracking.php";
 
 ?>
 

@@ -1,6 +1,7 @@
 <?php
 	include 'server/Database.class.php';
 	include 'header.php';
+	include 'analyticstracking.php';
 ?>
 			<div class="loading"><img src="img/loader.gif" /> </div>
 			<section id="contentWrapper">
