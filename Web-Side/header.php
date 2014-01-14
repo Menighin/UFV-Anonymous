@@ -14,6 +14,18 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	</head>
 	<body>
+	    <div><center>
+	        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- UniChatSiteTop -->
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:600px;height:100px"
+                 data-ad-client="ca-pub-7698594623226287"
+                 data-ad-slot="6807286609"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script></center>
+        </div>
+        
     	<?php  include "analyticstracking.php"; ?>
 		<div id="wrapper">
 			<header>
