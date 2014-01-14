@@ -1,6 +1,5 @@
 <?php
 	include "header.php";
-	include "analyticstracking.php";
 ?>
 
 			<section id="contentWrapper">

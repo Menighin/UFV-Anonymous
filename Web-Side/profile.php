@@ -1,7 +1,6 @@
 <?php
 	include "header.php";
 	include "server/Database.class.php";
-	include "analyticstracking.php";
 	header("Content-Type: text/html; charset=utf-8");
 	
 	if (!isset($_SESSION['user']))
