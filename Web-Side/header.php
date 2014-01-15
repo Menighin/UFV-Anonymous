@@ -14,25 +14,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	</head>
 	<body>
-	    <div>
-	        <center>
-	            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- UniChatSiteTop -->
-                <ins class="adsbygoogle"
-                     style="display:inline-block;width:600px;height:100px"
-                     data-ad-client="ca-pub-7698594623226287"
-                     data-ad-slot="6807286609"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </center>
-        </div>
-        
-    	<?php  include "analyticstracking.php"; ?>
 		<div id="wrapper">
 			<header>
 				<div id="logo">
-					<a href="http://www.google.com.br"><img src="img/logo.png" /></a>
+					<a href="http://www.unichat.com.br"><img src="img/logo.png" /></a>
 				</div>
 				<div id="menuContent">
 					<div id="login">
@@ -48,6 +33,7 @@
 						<a class="button" href="register.php"> Registrar </a>
 						<div id="loginMsg"></div>
 						<div id="forgotPassword"><a href="/forgot.php">Esqueci minha senha</a></div>
+						<div id="loadingLogin"><img src="img/loader.gif" width="25" height="25" /></div>
 						<?php
 							} else {
 						?>
@@ -62,11 +48,26 @@
 					<div id="menuWrapper">
 						<img id="menutip1" src="img/menutip1.png" />
 						<div id="menu">
-							<a class="menuItem" href="Home">Home</a>
-							<a class="menuItem" href="Estatistica">Estatísticas</a>
-							<a class="menuItem" href="Reportar">Reportar Bugs</a>
+							<a class="menuItem" href="http://www.unichat.com.br">Home</a>
+							<a class="menuItem" href="http://www.unichat.com.br">Estatísticas</a>
+							<a class="menuItem" href="http://www.unichat.com.br">Reportar Bugs</a>
 						</div>
 						<img id="menutip2" src="img/menutip2.png" />
 					</div>
+					
+					<div id="adTop">
+						publicidade <br />
+						<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<ins class="adsbygoogle"
+							 style="display:inline-block;width:250px;height:70px"
+							 data-ad-client="ca-pub-7698594623226287"
+							 data-ad-slot="6807286609"></ins>
+						<script>
+							(adsbygoogle = window.adsbygoogle || []).push({});
+							</script>
+					</div>
+					
+					<?php  include "analyticstracking.php"; ?>
+					
 				</div>
 			<header>

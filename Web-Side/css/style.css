@@ -93,6 +93,13 @@ input[type=text]:focus, input[type=password]:focus {
 	left: 49%;
 }
 
+#loadingLogin {
+	position: relative;
+	top: -80px;
+	right: -20px;
+	float: right;
+	display: none;
+}
 
 /* HEADER ************************************************************/
 
@@ -113,7 +120,9 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 #menuWrapper {
-	margin: 40px auto;
+	margin: 0 auto 20px;
+	position: relative;
+	top: 10px;
 	width: 50%;
 	height: 50px;
 }
@@ -122,7 +131,6 @@ input[type=text]:focus, input[type=password]:focus {
 	text-align: center;
 	border-top: 4px #d74c4c solid;
 	border-bottom: 11px #d74c4c solid;
-	width: 360px;
 	width: 95.55%;
 	height: 17px;
 	padding: 7px 0;
@@ -187,6 +195,15 @@ input[type=text]:focus, input[type=password]:focus {
 
 #forgotPassword {
 	font-size: 12px;
+}
+
+#adTop {
+	position: relative;
+	right: 15px;
+	top: -20px;
+	float: right;
+	text-align: right;
+	font-size: 10px;
 }
 
 /* HOME PAGE *********************************************************/
@@ -277,6 +294,7 @@ input[type=text]:focus, input[type=password]:focus {
 	list-style:none;
 	display: inline;
 	margin-left: 10px;
+	cursor: pointer;
 }
 
 #downloadContent {

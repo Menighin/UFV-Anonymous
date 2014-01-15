@@ -111,7 +111,7 @@ function login() {
 	
 	if (username.length > 0 && password.length > 0) {
 		var POSTdata = {username: username, password: password};
-			
+			$("#loadingLogin").css("display", "block");
 			$.ajax({
 				type: "POST",
 				url: "server/login.php", 
@@ -124,6 +124,7 @@ function login() {
 					} else {
 						alert("Um error ocorreu no servidor. Por favor tente mais tarde.");
 					}
+					$("#loadingLogin").css("display", "none");
 				}
 			});
 	}
