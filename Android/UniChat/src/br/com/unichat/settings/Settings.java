@@ -6,8 +6,8 @@ import br.com.unichat.classes.User;
 
 public class Settings {
 	
-	//public static final String API_URL = "http://93.188.161.199:82";
-	public static final String API_URL = "http://10.0.2.2";
+	public static final String API_URL = "http://www.unichat.com.br:9001";
+	//public static final String API_URL = "http://10.0.2.2";
 	public static final int SPLASH_TIME = 4000;
 	public static final int CHECK_CONVERSATION_READY_TIME = 4000;
 	public static final int CHECK_MESSAGES_TIME = 4000;

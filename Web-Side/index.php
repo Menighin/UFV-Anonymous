@@ -14,7 +14,7 @@
 					</div>
 					<div id="slideshow">
 						<ul>
-							<li style="background: url('img/home/slideregister.png') no-repeat">
+							<li>
 								<div class="slideInfo">
 									<div class="slideTitle">
 										<a href="register.php">Registre-se</a>
@@ -23,8 +23,9 @@
 										Crie sua conta no UniChat para começar a usar. É de graça!
 									</div>
 								</div>
+								<img class="slideImg" src="img/home/slideregister.png" />
 							</li>
-							<li style="background: url('img/home/slidemail.png') no-repeat">
+							<li>
 								<div class="slideInfo">
 									<div class="slideTitle">
 										Valide sua conta
@@ -33,8 +34,9 @@
 										Acesse seu e-mail cadastrado para validar a sua conta
 									</div>
 								</div>
+								<img class="slideImg" src="img/home/slidemail.png" />
 							</li>
-							<li style="background: url('img/home/slidedownload.png') no-repeat">
+							<li>
 								<div class="slideInfo">
 									<div class="slideTitle">
 										<a href="www.google.com.br">Baixe o UniChat</a>
@@ -43,8 +45,9 @@
 										Baixe o UniChat no seu smartphone através da Google Playstore
 									</div>
 								</div>
+								<img class="slideImg" src="img/home/slidedownload.png" />
 							</li>
-							<li style="background: url('img/home/slideuse.png') no-repeat">
+							<li>
 								<div class="slideInfo">
 									<div class="slideTitle">
 										Converse
@@ -53,6 +56,7 @@
 										Converse com anônimos e faça novos amigos!
 									</div>
 								</div>
+								<img class="slideImg" src="img/home/slideuse.png" />
 							</li>
 						</ul>
 					</div>

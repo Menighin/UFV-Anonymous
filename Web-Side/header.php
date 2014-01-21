@@ -11,7 +11,7 @@
 		<script type="text/JavaScript" src="js/jquery.js"></script> 
 		<script type="text/JavaScript" src="js/script.js"></script> 
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
 	</head>
 	<body>
 		<div id="wrapper">
@@ -46,20 +46,19 @@
 						?>
 					</div>
 					<div id="menuWrapper">
-						<img id="menutip1" src="img/menutip1.png" />
+						 <img id="menutip1" src="img/menutip1.png" /> 
 						<div id="menu">
-							<a class="menuItem" href="http://www.unichat.com.br">Home</a>
+							<div class="menuItem" href="http://www.unichat.com.br">Home</div>
 							<a class="menuItem" href="http://www.unichat.com.br">Estatísticas</a>
 							<a class="menuItem" href="http://www.unichat.com.br">Reportar Bugs</a>
 						</div>
-						<img id="menutip2" src="img/menutip2.png" />
+						<img id="menutip2" src="img/menutip2.png" /> 
 					</div>
 					
 					<div id="adTop">
 						publicidade <br />
 						<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 						<ins class="adsbygoogle"
-							 style="display:inline-block;width:250px;height:70px"
 							 data-ad-client="ca-pub-7698594623226287"
 							 data-ad-slot="6807286609"></ins>
 						<script>

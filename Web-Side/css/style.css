@@ -109,6 +109,11 @@ input[type=text]:focus, input[type=password]:focus {
 	}
 }
 
+#wrapper > header {
+	height: 240px;
+	padding-top: 20px;
+}
+
 #logo {
 	float: left;
 	width: 212px;
@@ -120,9 +125,10 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 #menuWrapper {
-	margin: 0 auto 20px;
 	position: relative;
-	top: 10px;
+	float: left;
+	top: 90px;
+	left: 20px;
 	width: 50%;
 	height: 50px;
 }
@@ -152,6 +158,24 @@ input[type=text]:focus, input[type=password]:focus {
 	height: 46px;
 }
 
+@-webkit-keyframes spaceboots {
+	0% { -webkit-transform: rotate(0deg); }
+	10% { -webkit-transform: rotate(-2deg); }
+	20% { -webkit-transform: rotate(2deg); }
+	30% { -webkit-transform: rotate(0deg); }
+	100% { -webkit-transform: rotate(0deg); }
+	/*0% { -webkit-transform: translate(2px, 1px) rotate(0deg); }
+	10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); }
+	20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); }
+	30% { -webkit-transform: translate(0px, 2px) rotate(0deg); }
+	40% { -webkit-transform: translate(1px, -1px) rotate(1deg); }
+	50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); }
+	60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); }
+	70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); }
+	80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); }
+	90% { -webkit-transform: translate(2px, 2px) rotate(0deg); */
+}
+
 .menuItem {
 	width: 33.33%;
 	height: 20px;
@@ -167,10 +191,15 @@ input[type=text]:focus, input[type=password]:focus {
 .menuItem:hover {
 	background-color: #d74c4c;
 	color: white;
+	-webkit-animation-name: spaceboots;
+	-webkit-animation-duration: 0.8s;
+	-webkit-transform-origin:50% 50%;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
 }
 
 #login {
-	text-align: right;
+	float: right;
 }
 
 #logged {
@@ -199,11 +228,17 @@ input[type=text]:focus, input[type=password]:focus {
 
 #adTop {
 	position: relative;
-	right: 15px;
-	top: -20px;
+	top: 90px;
+	right: -80px;
 	float: right;
 	text-align: right;
 	font-size: 10px;
+}
+
+.adsbygoogle {
+	display:inline-block;
+	width:250px;
+	height:70px
 }
 
 /* HOME PAGE *********************************************************/
@@ -212,11 +247,6 @@ input[type=text]:focus, input[type=password]:focus {
 	width: 100%;
 	max-width: 960px;
 	margin: 0 auto;
-}
-
-#wrapper > header {
-	height: 240px;
-	padding-top: 20px;
 }
 
 #contentWrapper{
@@ -263,12 +293,12 @@ input[type=text]:focus, input[type=password]:focus {
 	width: 70%;
 	height: 60%;
 	overflow: hidden;
-	background-size: 100% AUTO;
 }
 
 .slideInfo {
 	margin: 19% 5%;
 	width: 49%;
+	float: left;
 }
 
 .slideTitle, .slideTitle a {
@@ -283,6 +313,10 @@ input[type=text]:focus, input[type=password]:focus {
 .slideText {
 	color: #ddd;
 	font-size: 14px;
+}
+
+.slideImg {
+	float: right;
 }
 
 #slidebuttons {
@@ -445,4 +479,173 @@ footer {
 	color: white;
 	font-size: 10px;
 	padding: 10px 0;
+}
+
+
+
+/**************** RESPONSIVE **/
+
+@media screen and (max-width: 1024px) {
+	#wrapper {
+		max-width: 800px;
+		min-width: 710px;
+	}
+	
+	#wrapper > header {
+		height: 180px;
+		padding-top: 20px;
+	}
+	
+	#logo img, #logo {
+		width: 150px;
+		height: auto;
+	}
+	
+	#menuWrapper {
+		position: relative;
+		float: left;
+		top: 100px;
+		width: 50%;
+		height: 50px;
+	}
+
+	#menu {
+		text-align: center;
+		border-top: 2px #d74c4c solid;
+		border-bottom: 6px #d74c4c solid;
+		width: 400px;
+		height: 17px;
+		padding: 7px 0;
+		position: relative;
+		top: -50px;
+		left: 11px;
+	}
+
+	#menutip2 {
+		display: none;
+	}
+
+	#menutip1 {
+		display: none;
+	}
+	
+	#adTop {
+		position: relative;
+		top: 60px;
+		right: -100px;
+		float: right;
+		text-align: right;
+		font-size: 10px;
+	}
+	
+	.adsbygoogle {
+		display:inline-block;
+		width:250px;
+		height:50px
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	#wrapper {
+		max-width: 800px;
+		min-width: 710px;
+	}
+	
+	#wrapper > header {
+		height: 180px;
+		padding-top: 20px;
+	}
+	
+	#logo img, #logo {
+		width: 150px;
+		height: auto;
+	}
+	
+	#menuWrapper {
+		position: relative;
+		float: left;
+		top: 100px;
+		width: 50%;
+		height: 50px;
+	}
+
+	#menu {
+		text-align: center;
+		border-top: 2px #d74c4c solid;
+		border-bottom: 6px #d74c4c solid;
+		width: 400px;
+		height: 17px;
+		padding: 7px 0;
+		position: relative;
+		top: -50px;
+		left: 11px;
+	}
+
+	#menutip2 {
+		display: none;
+	}
+
+	#menutip1 {
+		display: none;
+	}
+	
+	#adTop {
+		position: relative;
+		top: 60px;
+		right: -100px;
+		float: right;
+		text-align: right;
+		font-size: 10px;
+	}
+	
+	.adsbygoogle {
+		display:inline-block;
+		width:250px;
+		height:50px
+	}
+	
+	#slide {
+		height: 450px;
+	}
+	
+	#slideshow { 
+		width: 70%; 
+		height: 45%;
+		margin: 30px auto;
+	}
+
+	.slideInfo {
+		margin: 7% 5%;
+		width: 49%;
+		float: left;
+	}
+	
+	.slideImg {
+		height: 200px;
+		width: auto;
+	}
+	
+	#downloadPago, #downloadFree, #downloadPago img, #downloadFree img {
+		width: 123px;
+		height: 28px;
+	}
+	
+	#downloadPago {
+		position: relative;
+		left: 42px;
+	}
+	
+	#downloadFree {
+		position: relative;
+		right: 42px;
+	}
+	
+	#downloadContent {
+		height: 60px;
+	}
+	
+	#faq {
+		padding-top: 470px;
+	}
+	
 }
