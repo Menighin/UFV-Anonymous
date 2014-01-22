@@ -19,7 +19,7 @@
 		
 		$stmt->execute(array(
 			'username' => strtolower($_POST['username']),
-			'password' => strtolower($_POST['password']),
+			'password' => md5(strtolower($_POST['password'])),
 			'api_key' => md5(uniqid(rand(), true)),
 			'email' => strtolower($_POST['email']),
 			'sex' => $_POST['sex'],

@@ -10,7 +10,7 @@
 	$conn = $database->connect();
 	
 	try {
-		$new_pass = substr(md5(uniqid(rand(), true)), 0, 10);
+		$new_pass = uniqid(rand(), true);
 		$api_key =  md5(uniqid(rand(), true));
 	
 		$query = "SELECT email FROM users WHERE username=:username";
@@ -22,7 +22,7 @@
 		
 		$query = 'UPDATE users SET password=:password, api_key=:api_key WHERE username=:username';
 		$stmt = $conn->prepare($query);
-		$stmt->execute(array ('username' => $_POST['username'], 'password' => $new_pass, 'api_key' => $api_key));
+		$stmt->execute(array ('username' => $_POST['username'], 'password' => md5($new_pass), 'api_key' => $api_key));
 		
 		$to = $email;
 		$subject = "Senha redefinida";

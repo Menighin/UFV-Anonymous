@@ -56,6 +56,20 @@ input[type=text], input[type=password] {
 	border: 1px solid #ddd;
 }
 
+textarea {
+	border-radius: 3px;
+	border: 1px solid #ddd;
+	resize: none;
+	width: 100%;
+	height: 100px;
+	padding: 10px;
+}
+
+textarea:focus {
+	outline: none;
+	border: 1px solid #e66464;
+}
+
 input[type=text]:focus, input[type=password]:focus {
 	outline: none;
 	width: 100px;
@@ -485,7 +499,7 @@ footer {
 @media screen and (max-width: 1024px) {
 	#wrapper {
 		max-width: 800px;
-		min-width: 710px;
+		min-width: 750px;
 	}
 	
 	#wrapper > header {
@@ -541,7 +555,7 @@ footer {
 @media screen and (max-width: 480px) {
 	#wrapper {
 		max-width: 380px;
-		min-width: 300px;
+		min-width: 320px;
 	}
 	
 	#wrapper > header {
@@ -628,7 +642,7 @@ footer {
 
 	#slideshow { 
 		width: 70%; 
-		height: 45%;
+		height: 40%;
 		margin: 30px auto;
 	}
 
@@ -655,8 +669,6 @@ footer {
 	
 	#slidebuttons {
 		width: 330px;
-		margin: 0 auto;
-		text-align: center;
 	}
 	
 	#downloadContent {
@@ -697,7 +709,7 @@ footer {
 	}
 	
 	#faq {
-		padding-top: 470px;
+		padding-top: 380px;
 	}
 	
 }

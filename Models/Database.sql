@@ -20,7 +20,7 @@ CONSTRAINT FK_courses FOREIGN KEY (university_id) REFERENCES universities (id)
 CREATE TABLE IF NOT EXISTS users (
 	id INTEGER AUTO_INCREMENT,
 	username VARCHAR(25) NOT NULL,
-	password VARCHAR(25) NOT NULL,
+	password VARCHAR(40) NOT NULL,
 	api_key VARCHAR(50) NOT NULL,
 	email VARCHAR(60) NOT NULL,
 	sex SET('m', 'f') NOT NULL,

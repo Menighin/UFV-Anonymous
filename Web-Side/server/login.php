@@ -17,7 +17,7 @@
 	if (!$row)
 		print 0; // User doesn't exists
 	else {
-		if (strcmp($row['password'], strtolower($_POST['password'])) == 0) {
+		if (strcmp($row['password'], md5(strtolower($_POST['password']))) == 0) {
 			$_SESSION['user'] = strtolower($_POST['username']);
 			print 1; // Ok!
 		} else {

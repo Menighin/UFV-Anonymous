@@ -14,7 +14,7 @@
 			$stmt = $conn->prepare($query);
 			$stmt->execute(array(
 				'username' => strtolower($_POST['username']),
-				'password' => strtolower($_POST['password']),
+				'password' => md5(strtolower($_POST['password'])),
 				'sex' => $_POST['sex'],
 				'course' => $_POST['course'],
 				));
