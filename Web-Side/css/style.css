@@ -102,13 +102,6 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 /* HEADER ************************************************************/
-
-@media screen and (max-width: 480px) {
-	#logo {
-		display: none;
-	}
-}
-
 #wrapper > header {
 	height: 240px;
 	padding-top: 20px;
@@ -202,6 +195,10 @@ input[type=text]:focus, input[type=password]:focus {
 	float: right;
 }
 
+#login form input {
+	display: block;
+}
+
 #logged {
 	color: #777;
 	font-size: 12px;
@@ -238,7 +235,7 @@ input[type=text]:focus, input[type=password]:focus {
 .adsbygoogle {
 	display:inline-block;
 	width:250px;
-	height:70px
+	height:70px;
 }
 
 /* HOME PAGE *********************************************************/
@@ -251,7 +248,6 @@ input[type=text]:focus, input[type=password]:focus {
 
 #contentWrapper{
 	clear: both;
-	
 }
 
 #slide {
@@ -324,6 +320,7 @@ input[type=text]:focus, input[type=password]:focus {
 	margin: 0 auto;
 	text-align: center;
 }
+
 #slidebuttons li {
 	list-style:none;
 	display: inline;
@@ -492,7 +489,7 @@ footer {
 	}
 	
 	#wrapper > header {
-		height: 180px;
+		height: 200px;
 		padding-top: 20px;
 	}
 	
@@ -504,9 +501,8 @@ footer {
 	#menuWrapper {
 		position: relative;
 		float: left;
-		top: 100px;
-		width: 50%;
-		height: 50px;
+		top: 50px;
+		width: 420px;
 	}
 
 	#menu {
@@ -516,17 +512,14 @@ footer {
 		width: 400px;
 		height: 17px;
 		padding: 7px 0;
-		position: relative;
-		top: -50px;
-		left: 11px;
 	}
 
 	#menutip2 {
-		display: none;
+		opacity: 0;
 	}
 
 	#menutip1 {
-		display: none;
+		opacity: 0;
 	}
 	
 	#adTop {
@@ -545,10 +538,10 @@ footer {
 	}
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 480px) {
 	#wrapper {
-		max-width: 800px;
-		min-width: 710px;
+		max-width: 380px;
+		min-width: 300px;
 	}
 	
 	#wrapper > header {
@@ -556,58 +549,83 @@ footer {
 		padding-top: 20px;
 	}
 	
+	#login {
+		float: none;
+		text-align: center;
+		margin-bottom: 20px;
+	}
+	
+	#login form input {
+		display: inline;
+	}
+	
 	#logo img, #logo {
+		float: none;
 		width: 150px;
 		height: auto;
+		margin: 0 auto;
 	}
 	
 	#menuWrapper {
-		position: relative;
-		float: left;
-		top: 100px;
-		width: 50%;
-		height: 50px;
+		position: static;
+		float: none;
+		width: 325px;
+		margin: 0 auto;
 	}
 
 	#menu {
 		text-align: center;
 		border-top: 2px #d74c4c solid;
 		border-bottom: 6px #d74c4c solid;
-		width: 400px;
+		width: 300px;
 		height: 17px;
-		padding: 7px 0;
-		position: relative;
-		top: -50px;
-		left: 11px;
 	}
 
 	#menutip2 {
-		display: none;
+		opacity: 0;
 	}
 
 	#menutip1 {
-		display: none;
+		opacity: 0;
+	}
+	
+	.menuItem {
+		width: 33.33%;
+		height: 20px;
+		font-size: 12px;
+		display: block;
+		float: left;
+		font-weight: bold;
+		padding: 10px 0;
+		margin-top: -10px;
+		color: #9a1e1e;
 	}
 	
 	#adTop {
-		position: relative;
-		top: 60px;
-		right: -100px;
-		float: right;
-		text-align: right;
 		font-size: 10px;
+		float: none;
+		margin: 0 auto;
+		text-align: center;
+		position: relative;
+		left: 0;
+		top: -30px;
 	}
 	
 	.adsbygoogle {
 		display:inline-block;
 		width:250px;
-		height:50px
+		height:50px;
+		float: none;
+	}
+	
+	#contentWrapper {
+		margin-top: 50px;
 	}
 	
 	#slide {
-		height: 450px;
+		height: 350px;
 	}
-	
+
 	#slideshow { 
 		width: 70%; 
 		height: 45%;
@@ -621,27 +639,61 @@ footer {
 	}
 	
 	.slideImg {
-		height: 200px;
+		height: 130px;
 		width: auto;
 	}
 	
+	.slideTitle, .slideTitle a {
+		color: #ff7575;
+		font-size: 21px;
+	}
+
+	.slideText {
+		color: #ddd;
+		font-size: 12px;
+	}
+	
+	#slidebuttons {
+		width: 330px;
+		margin: 0 auto;
+		text-align: center;
+	}
+	
+	#downloadContent {
+		width: 320px;
+		height: 70px;
+		text-align: center;
+		margin: 0 auto;
+		padding: 20px;
+		padding-bottom: 30px;
+		border-bottom: 1px rgba(255, 255, 255, 0.3) dotted;
+	}
+	
 	#downloadPago, #downloadFree, #downloadPago img, #downloadFree img {
-		width: 123px;
-		height: 28px;
+		width: 101px;
+		height: 23px;
 	}
 	
 	#downloadPago {
 		position: relative;
-		left: 42px;
+		left: 54px;
 	}
 	
 	#downloadFree {
 		position: relative;
-		right: 42px;
+		right: 54px;
 	}
 	
 	#downloadContent {
 		height: 60px;
+	}
+	
+	#activeUsers {
+		clear: both;
+		padding: 10px;
+		font-weight: bold;
+		color: #84ba4a;
+		font-size: 12px;
 	}
 	
 	#faq {
