@@ -287,7 +287,7 @@ public class Chat extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Chave inv�lida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
 			} else if (result == -3) {
 				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
