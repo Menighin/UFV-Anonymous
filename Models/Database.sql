@@ -111,7 +111,3 @@ INSERT INTO courses (university_id, name) VALUES (1, 'Pedagogia');
 INSERT INTO courses (university_id, name) VALUES (1, 'Química');
 INSERT INTO courses (university_id, name) VALUES (1, 'Secreteriado Executivo Trilingue');
 INSERT INTO courses (university_id, name) VALUES (1, 'Zootecnia');
-
-/* users */
-INSERT INTO users (username, password, api_key, email, sex, university, course, valid, hash, last_seen, special) VALUES ('menighin', '12345', 'TesteAPIKey', 'joao.menighin@ufv.br', 'm', 1, 5, 1, 'TesteHASH', NULL, 1);
-INSERT INTO users (username, password, api_key, email, sex, university, course, valid, hash, last_seen, special) VALUES ('aline', '12345', 'TesteAPIKey2', 'aline@ufv.br', 'm', 1, 11, 1, 'TesteHASH', NULL, 0);
