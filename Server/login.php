@@ -31,7 +31,7 @@
 	if (!$row)
 		echo json_encode(array('response' => -4));
 	else {
-		if (strcmp($row['password'], $_POST['password']) == 0) {
+		if (strcmp($row['password'], md5(strtolower($_POST['password']))) == 0) {
 			if ($row['valid'] == true) {
 				if ($row['logged'] == 0) {
 					try {

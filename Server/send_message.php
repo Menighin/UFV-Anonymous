@@ -48,6 +48,7 @@
 			}
 			$stmt = $conn->prepare("INSERT INTO messages (conversation_id, message, time, author, is_read, END_FLAG) VALUES (:id, :msg, NOW(), :author, 0, :flag)");
 			$stmt->execute(array(':id' => $_POST['conversation_id'], ':msg' => $_POST['message'], ':author' => $_POST['author'], ':flag' => $_POST['flag']));
+			$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");
 		} catch (Exception $e) {
 			echo json_encode(array('response' => -1));
 			$conn = $database->disconnect();
