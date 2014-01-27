@@ -114,7 +114,7 @@ public class Login extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			
-			if (result == 1) {
+			if (result == 1 || result == -2) {
 				startActivity(new Intent(Login.this, MainMenu.class));
 				finish();
 			} else {
@@ -125,8 +125,6 @@ public class Login extends Activity {
 	        		Toast.makeText(Login.this, "Usuário não validado. Verifique seu email", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -1) {
 	        		Toast.makeText(Login.this, "Ocorreu um erro no servidor =S", Toast.LENGTH_SHORT).show();
-	        	} else if (result == -2) {
-	        		Toast.makeText(Login.this, "Esse usuário já está logado em outro dispositivo", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -3) {
 	        		Toast.makeText(Login.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 	        	} else if (result == -4) {
