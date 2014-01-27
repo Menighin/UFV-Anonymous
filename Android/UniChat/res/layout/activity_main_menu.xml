@@ -1,117 +1,124 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:gravity="center"
     tools:context=".MainMenu" >
 	
-    <LinearLayout 
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="vertical" >
+    	android:layout_height="match_parent">
     
-        <LinearLayout
-            android:id="@+id/paid_part"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-            
-		    <TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/choose_sex"
-		        android:textSize="21sp" />
-		    
-		    <LinearLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="center"
-		        android:layout_marginTop="20dp"
-		        android:layout_marginBottom="20dp">
-		        
-			    <Button
-			        android:id="@+id/whatever_btn"
-			        style="?android:attr/buttonStyleSmall"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="@string/whatever_btn"
-			        android:textSize="12sp"
-			        android:textColor="@color/dark_gray"
-			        android:drawableTop="@drawable/whatever_pressed"
-			        android:drawablePadding="10dp"
-			        android:background="@android:color/transparent"
-			        android:layout_marginRight="20dp"
-			        android:onClick="btnSelected" />
-			    
-			    <Button
-			        android:id="@+id/female_btn"
-			        style="?android:attr/buttonStyleSmall"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="@string/female_btn"
-			        android:textSize="12sp"
-			        android:textColor="@color/dark_gray"
-			        android:drawableTop="@drawable/female"
-			        android:drawablePadding="10dp"
-			        android:background="@android:color/transparent"
-			        android:onClick="btnSelected" />
-			    
-			    <Button
-			        android:id="@+id/male_btn"
-			        style="?android:attr/buttonStyleSmall"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="@string/male_btn"
-			        android:textSize="12sp"
-			        android:textColor="@color/dark_gray"
-			        android:drawableTop="@drawable/male"
-			        android:drawablePadding="10dp"
-			        android:background="@android:color/transparent"
-			        android:layout_marginLeft="20dp"
-			        android:onClick="btnSelected" />
-		    
-		    </LinearLayout>
-		    
-		    <TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/choose_course"
-		        android:textSize="21sp" />
-		    
-		    <Spinner
-		        android:id="@+id/courses_spinner"
-		        android:layout_width="250dp"
-		        android:layout_height="wrap_content"
-		        android:layout_marginTop="20dp" />
-		</LinearLayout>
-	    
-	    <Button
-	        android:id="@+id/connect_btn"
-	        style="?android:attr/buttonStyleSmall"
-	        android:layout_width="wrap_content"
+	    <LinearLayout 
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:text="@string/connect_btn"
-	        android:textSize="14sp"
-	        android:drawableTop="@drawable/connect_btn"
-	        android:textStyle="bold"
-	        android:drawablePadding="10dp"
-	        android:background="@android:color/transparent"
-	        android:layout_marginTop="20dp"
-	        android:onClick="connect" />
+	        android:layout_gravity="center"
+	        android:gravity="center"
+	        android:orientation="vertical" >
 	    
-	    <com.google.android.gms.ads.AdView
-	       android:id="@+id/adView"
-	       android:layout_width="match_parent"
-	       android:layout_height="wrap_content"
-	       ads:adSize="BANNER"
-	       ads:adUnitId="@string/ad_unit_id" />
+	        <LinearLayout
+	            android:id="@+id/paid_part"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:gravity="center"
+	            android:orientation="vertical">
+	            
+			    <TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/choose_sex"
+			        android:textSize="21sp" />
+			    
+			    <LinearLayout
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:layout_marginTop="20dp"
+			        android:layout_marginBottom="20dp">
+			        
+				    <Button
+				        android:id="@+id/whatever_btn"
+				        style="?android:attr/buttonStyleSmall"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/whatever_btn"
+				        android:textSize="12sp"
+				        android:textColor="@color/dark_gray"
+				        android:drawableTop="@drawable/whatever_pressed"
+				        android:drawablePadding="10dp"
+				        android:background="@android:color/transparent"
+				        android:layout_marginRight="20dp"
+				        android:onClick="btnSelected" />
+				    
+				    <Button
+				        android:id="@+id/female_btn"
+				        style="?android:attr/buttonStyleSmall"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/female_btn"
+				        android:textSize="12sp"
+				        android:textColor="@color/dark_gray"
+				        android:drawableTop="@drawable/female"
+				        android:drawablePadding="10dp"
+				        android:background="@android:color/transparent"
+				        android:onClick="btnSelected" />
+				    
+				    <Button
+				        android:id="@+id/male_btn"
+				        style="?android:attr/buttonStyleSmall"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/male_btn"
+				        android:textSize="12sp"
+				        android:textColor="@color/dark_gray"
+				        android:drawableTop="@drawable/male"
+				        android:drawablePadding="10dp"
+				        android:background="@android:color/transparent"
+				        android:layout_marginLeft="20dp"
+				        android:onClick="btnSelected" />
+			    
+			    </LinearLayout>
+			    
+			    <TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/choose_course"
+			        android:textSize="21sp" />
+			    
+			    <Spinner
+			        android:id="@+id/courses_spinner"
+			        android:layout_width="250dp"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="20dp" />
+			</LinearLayout>
+		    
+		    <Button
+		        android:id="@+id/connect_btn"
+		        style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/connect_btn"
+		        android:textSize="14sp"
+		        android:drawableTop="@drawable/connect_btn"
+		        android:textStyle="bold"
+		        android:drawablePadding="10dp"
+		        android:background="@android:color/transparent"
+		        android:layout_marginTop="20dp"
+		        android:onClick="connect" />
+		    
+		</LinearLayout>
+		    
+    </ScrollView>
+    
+    <com.google.android.gms.ads.AdView
+       android:id="@+id/adView"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       ads:adSize="BANNER"
+       android:layout_alignParentBottom="true"
+       ads:adUnitId="@string/ad_unit_id" />
 
-	 </LinearLayout>
-
-</ScrollView>
+</RelativeLayout>
 
 

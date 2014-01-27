@@ -81,7 +81,7 @@ public class Chat extends Activity {
 		}
 		else {
 			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
-			talkingTo.setTextColor(Color.GREEN);
+			talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
 			connected = true;
 			getMessagesFrom = 0;
 			sentMessagesFrom = 1;
@@ -164,7 +164,7 @@ public class Chat extends Activity {
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
 				talkingTo.setText("Falando com: " + talkingToName);
-				talkingTo.setTextColor(Color.GREEN);
+				talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
 				message.setEnabled(true);
 				myTimer.cancel();
 				myTimer = new Timer();

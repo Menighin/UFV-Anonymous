@@ -10,9 +10,6 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,23 +17,27 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import br.com.unichat.classes.SaveSharedPreferences;
 import br.com.unichat.classes.User;
 import br.com.unichat.settings.Settings;
 
-import br.com.unichat.activities.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class Login extends Activity {
 
 	private EditText user;
 	private EditText password;
+	private TextView registerButton;
 	private Button login;
 	private LoginAsync loginAsync = null;
 	
@@ -52,6 +53,10 @@ public class Login extends Activity {
 		user = (EditText) findViewById(R.id.login_user);
 		password = (EditText) findViewById(R.id.login_password);
 		login = (Button) findViewById(R.id.login_btn);
+		registerButton = (TextView) findViewById(R.id.register);
+		
+		registerButton.setMovementMethod(LinkMovementMethod.getInstance());
+		registerButton.setTextColor(getResources().getColor(R.color.uniChatRed));
 		
 		mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(new AdRequest.Builder().build());
