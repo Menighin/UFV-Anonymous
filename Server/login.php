@@ -47,7 +47,7 @@
 					try {
 						$key = md5(uniqid(rand(), true));
 						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1, api_key = '". $key ."' WHERE username = '" . $_POST['username'] . "'");
-						echo json_encode(array('response' => -2));
+						echo json_encode(array('response' => -2, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $key));
 					} catch (Exception $e) {
 						echo $e->getMessage();
 						echo json_encode(array('response' => -1));

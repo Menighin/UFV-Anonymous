@@ -172,7 +172,7 @@ public class Login extends Activity {
 	    JSONObject json = new JSONObject(response.toString());
 	    
 	    //Set new global user
-	    if (json.getInt("response") == 1) {
+	    if (json.getInt("response") == 1 || json.getInt("response") == -2) {
 	    	Settings.me = new User (
 	    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), json.getString("sex"), json.getInt("universityID"), json.getString("apikey"));
 	    	SaveSharedPreferences.createPreferences(
