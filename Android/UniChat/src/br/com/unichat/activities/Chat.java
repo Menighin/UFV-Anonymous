@@ -236,7 +236,7 @@ public class Chat extends Activity {
 						adapter.add(msg);
 					else {
 						talkingTo.setText("Anônimo se desconectou :( ...");
-						talkingTo.setTextColor(Color.RED);
+						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
 						message.setText("");
 						message.setEnabled(false);
 					}
