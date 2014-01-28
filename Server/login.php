@@ -42,8 +42,16 @@
 						echo $e->getMessage();
 						echo json_encode(array('response' => -1));
 					}
-				} else {
-					echo json_encode(array('response' => -2));
+				} else { // User logged in other device
+					// It changes de API Key so it allows the user to log in another device
+					try {
+						$key = md5(uniqid(rand(), true));
+						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1, api_key = '". $key ."' WHERE username = '" . $_POST['username'] . "'");
+						echo json_encode(array('response' => -2));
+					} catch (Exception $e) {
+						echo $e->getMessage();
+						echo json_encode(array('response' => -1));
+					}
 				}
 			} else {
 				echo json_encode(array('response' => 0));
