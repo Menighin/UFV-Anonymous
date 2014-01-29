@@ -22,7 +22,7 @@
 	$conn = $database->connect();
 	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
 	
-	if (isset($_POST['conversation_id']) && isset($_POST['user']) && isset($_POST['api_key']) && isset($_POST['author'])) {
+	if (isset($_POST['conversation_id']) && isset($_POST['user']) && isset($_POST['api_key'])) {
 		$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
 		// Invalid API Key
 		if (!$validate->isValid()) {
