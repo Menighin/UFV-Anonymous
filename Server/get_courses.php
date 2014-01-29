@@ -17,7 +17,7 @@
 	
 	include "Database.class.php";
 	include "Validate.class.php";
-	include "Log.class.php"
+	include "Log.class.php";
 	$database = new Database();
 	$conn = $database->connect();
 	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
