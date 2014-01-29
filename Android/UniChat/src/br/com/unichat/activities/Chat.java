@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -48,6 +48,7 @@ public class Chat extends Activity {
 	private short sentMessagesFrom;
 	private Handler handler;
 	private GetMessagesAsync getMessage = null;
+	private boolean result_ok = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -180,7 +181,11 @@ public class Chat extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Chave inválida para usuário. Talvez você logou em outro dispositivo?", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Chat.this, "Este usuário fez login em outro dispositivo", Toast.LENGTH_SHORT).show();
+				result_ok = false;
+				Intent returnIntent = new Intent();
+				setResult(RESULT_CANCELED, returnIntent);     
+				finish();
 			} else if (result == -3) {
 				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
@@ -198,7 +203,6 @@ public class Chat extends Activity {
 			
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	msgs = new ArrayList<Message>();
 		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&author=" + getMessagesFrom + 
 		        			"&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 		    		URL url = new URL(Settings.API_URL + "/get_message");
@@ -206,13 +210,19 @@ public class Chat extends Activity {
 		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
 		    	    JSONArray jsonmsgs;
 		    	    
-		    	    if (json.getInt("response") == 1) {
+		    	    if (json.getInt("response") == 0)
+		    	    	msgs = new ArrayList<Message>();
+		    	    else if (json.getInt("response") == 1) {
+		    	    	msgs = new ArrayList<Message>();
 		    	    	jsonmsgs = json.getJSONArray("messages");
 		    	    	
 		    	    	for (int i = 0; i < jsonmsgs.length(); i++) {
 		    	    		JSONObject msg = jsonmsgs.getJSONObject(i);
 		    	    		msgs.add(new Message(true, msg.getString("message"), msg.getString("time").substring(11, 16), (short)msg.getInt("END_FLAG")));
 		    	    	}
+		    	    } else if (json.getInt("response") == -2) { // API key validation fail
+		    	    	msgs = new ArrayList<Message>();
+		    	    	msgs.add(new Message(true, "null", "00:00", (short)2));
 		    	    }
 		    	    
 		    	    return msgs;
@@ -234,13 +244,19 @@ public class Chat extends Activity {
 				for (Message msg : msgs) {
 					if (msg.FLAG == 0)
 						adapter.add(msg);
+					else if (msg.FLAG == 2) {
+						Toast.makeText(Chat.this, "Este usuário fez login em outro dispositivo", Toast.LENGTH_SHORT).show();
+						result_ok = false;
+						Intent returnIntent = new Intent();
+						setResult(RESULT_CANCELED, returnIntent);
+						finish();
+					}
 					else {
 						talkingTo.setText("Anônimo se desconectou :( ...");
 						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
 						message.setText("");
 						message.setEnabled(false);
 					}
-
 				}
 				if (msgs.size() > 0)
 					conversation.setSelection(conversation.getCount() - 1);
@@ -328,19 +344,27 @@ public class Chat extends Activity {
 	}
 	
 	@Override
+	public void onBackPressed() {
+		Intent returnIntent = new Intent();
+		setResult(RESULT_OK, returnIntent);     
+		finish();
+	}
+	
+	@Override
 	public void onDestroy() {
-		super.onDestroy();
 		if(isFinishing()) {
 			myTimer.cancel();
-			try {
-				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=end&author=" + sentMessagesFrom + "&flag=1"
-						+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
-				new SendMessageAsync().execute(urlParameters, "-1");
-			} catch (Exception e) {
-				Log.e("Error onDestroy", e.getMessage());
+			if (result_ok) {
+				try {
+					String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=end&author=" + sentMessagesFrom + "&flag=1"
+							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
+					new SendMessageAsync().execute(urlParameters, "-1");
+				} catch (Exception e) {
+					Log.e("Error onDestroy", e.getMessage());
+				}
 			}
 		}
-		
+		super.onDestroy();
 	}
 	
 	@Override

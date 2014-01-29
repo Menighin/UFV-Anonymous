@@ -152,11 +152,11 @@ public class MainMenu extends Activity {
 		protected void onPostExecute (Integer result) {
 			if (result == 0 || result == 1) {
 				intent.putExtra("type", result);
-				startActivity(intent);
+				startActivityForResult(intent, 1);
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário. Esse usuário fez login em outro aparelho.", Toast.LENGTH_LONG).show();
 			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
@@ -210,9 +210,18 @@ public class MainMenu extends Activity {
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
-				Toast.makeText(MainMenu.this, "Chave inválida para usuário", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário. Esse usuário fez login em outro aparelho.", Toast.LENGTH_LONG).show();
 			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+	
+	// Result from Chat Activity
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 1) {
+			if (resultCode == RESULT_CANCELED) {    
+				logout();
 			}
 		}
 	}
