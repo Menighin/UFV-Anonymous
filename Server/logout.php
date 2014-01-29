@@ -16,6 +16,7 @@
 	session_start(); 
 	include 'Database.class.php';
 	include "Validate.class.php";
+	include "Log.class.php";
 	$database = new Database();
 	$conn = $database->connect();
 	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
@@ -29,8 +30,10 @@
 		try {
 			$key = md5(uniqid(rand(), true));
 			$conn->query("UPDATE users SET logged = 0, api_key = '" . $key . "' WHERE id = " . $_POST['user']);
+			Log::writeLog($_POST['user'] . " fez LOGOUT");
 			echo json_encode(array("response" => 1));
 		} catch (Exception $e) {
+			Log::writeLog("Erro em LOGOUT: " . $e->getMessage());
 			echo json_encode(array("response" => -1));
 		}
 	}

@@ -22,6 +22,7 @@
 	
 	include "Database.class.php";
 	include "Validate.class.php";
+	include "Log.class.php";
 	$database = new Database();
 	$conn = $database->connect();
 	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
@@ -42,6 +43,7 @@
 					$stmt->execute(array(':id' => $_POST['conversation_id']));
 				} catch (Exception $e) {
 					echo json_encode(array('response' => -1));
+					Log::writeLog("Erro na validação em SEND_MESSAGE: " . $e->getMessage());
 					$conn = $database->disconnect();
 					exit(1);
 				}
@@ -51,6 +53,7 @@
 			$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");
 		} catch (Exception $e) {
 			echo json_encode(array('response' => -1));
+			Log::writeLog("Erro em SEND_MESSAGE: " . $e->getMessage() . " na conversa " . $_POST['conversation_id']);
 			$conn = $database->disconnect();
 			exit(1);
 		}

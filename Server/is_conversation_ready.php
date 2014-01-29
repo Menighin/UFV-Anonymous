@@ -2,7 +2,7 @@
 	
 	/**
 	* API function to constantly check if another user connected into a created conversation
-	* Author: João Menighin
+	* Author: JoÃ£o Menighin
 	* Parameters:
 	*	METHOD      => POST
 	*	user        => int
@@ -18,6 +18,7 @@
 	
 	include "Database.class.php";
 	include "Validate.class.php";
+	include "Log.class.php";
 	$database = new Database();
 	$conn = $database->connect();
 	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
@@ -31,6 +32,7 @@
 				$stmt->execute(array(':id' => $_POST['conversation_id']));
 			} catch (Exception $e) {
 				echo json_encode(array('response' => -1));
+				Log::writeLog("Erro em IS_READY: " . $e->getMessage() . " na conversa " . $_POST['conversation_id']);
 				$conn = $database->disconnect();
 				exit(1);
 			}
@@ -50,6 +52,7 @@
 			} catch (Exception $e) {
 				echo $e->getMessage();
 				echo json_encode(array('response' => -1));
+				Log::writeLog("Erro em IS_READY: " . $e->getMessage() . " na conversa " . $_POST['conversation_id']);
 				$conn = $database->disconnect();
 				exit(1);
 			}

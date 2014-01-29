@@ -2,7 +2,7 @@
 	
 	/**
 	* API get_courses function: return the list of the courses of the university the user belongs to
-	* Author: Jo�o Menighin
+	* Author: João Menighin
 	* Parameters:
 	*	METHOD      => POST
 	*	user        => int
@@ -17,6 +17,7 @@
 	
 	include "Database.class.php";
 	include "Validate.class.php";
+	include "Log.class.php"
 	$database = new Database();
 	$conn = $database->connect();
 	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
@@ -34,6 +35,7 @@
 			$stmt->execute(array(':id' => $_POST['user']));
 		} catch (Exception $e) {
 			echo json_encode (array('response' => -1));
+			Log::writeLog("Erro na validação em GET_COURSES: " . $e->getMessage());
 			$conn = $database->disconnect();
 			exit(1);
 		}

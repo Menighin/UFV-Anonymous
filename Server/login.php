@@ -2,7 +2,7 @@
 
 	/**
 	* API login function
-	* Author: Jo�o Menighin
+	* Author: João Menighin
 	* Parameters:
 	*	METHOD   => POST
 	*	username => string
@@ -15,6 +15,7 @@
 	*    1 ==> User correct (do the login)
 	**/
 	include 'Database.class.php';
+	include 'Log.class.php';
 	$database = new Database();
 	$conn = $database->connect();
 	
@@ -23,6 +24,7 @@
 		$stmt->execute(array('username' => $_POST['username']));
 	} catch (Exception $e) {
 		echo json_encode(array('response' => -1));
+		Log::writeLog("Erro em LOGIN na validação: " . $e->getMessage());
 		$conn = $database->disconnect();
 		exit(1);
 	}
@@ -40,6 +42,7 @@
 						echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $key));
 					} catch (Exception $e) {
 						echo $e->getMessage();
+						Log::writeLog("Erro em LOGIN: " . $e->getMessage());
 						echo json_encode(array('response' => -1));
 					}
 				} else { // User logged in other device
@@ -50,9 +53,11 @@
 						echo json_encode(array('response' => -2, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $key));
 					} catch (Exception $e) {
 						echo $e->getMessage();
+						Log::writeLog("Erro em LOGIN: " . $e->getMessage());
 						echo json_encode(array('response' => -1));
 					}
 				}
+				Log::writeLog($_POST['username'] . " fez LOGIN no sistema");
 			} else {
 				echo json_encode(array('response' => 0));
 			}

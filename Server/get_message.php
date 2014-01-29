@@ -2,7 +2,7 @@
 	
 	/**
 	* API get_message function: return the message to the user if there is a message to return
-	* Author: Jo�o Menighin
+	* Author: João Menighin
 	* Parameters:
 	*	METHOD          => POST
 	*	conversation_id => int
@@ -22,6 +22,7 @@
 
 	include "Database.class.php";
 	include "Validate.class.php";
+	include "Log.class.php";
 	$database = new Database();
 	$conn = $database->connect();
 	
@@ -35,6 +36,7 @@
 				$stmt->execute(array(':id' => $_POST['conversation_id']));
 			} catch (Exception $e) {
 				echo json_encode(array('response' => -1));
+				Log::writeLog("Erro na validação em GET_MESSAGE: " . $e->getMessage());
 				$conn = $database->disconnect();
 				exit(1);
 			}
@@ -49,6 +51,7 @@
 				$stmt->execute(array(':id' => $_POST['conversation_id'], ':author' => $_POST['author']));
 			} catch (Exception $e) {
 				echo json_encode (array('response' => -1));
+				Log::writeLog("Erro em GET_MESSAGE: " . $e->getMessage() . " na conversa " . $_POST['conversation_id']);
 				$conn = $database->disconnect();
 				exit(1);
 			}
