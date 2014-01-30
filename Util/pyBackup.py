@@ -21,7 +21,7 @@ database = 'unichat'
 filename_database = '{0}-backup-{1}-{2}-{3}.dump'.format(database, today.day, today.month, today.year)
 
 #Zip file configs
-path_backup_files = '/var/www/*'
+path_backup_files = '/var/www/'
 zip_filename = 'backup-{0}-{1}-{2}.zip'.format(today.day, today.month, today.year)
 
 def backup_database():
@@ -33,9 +33,13 @@ def backup_database():
 def bacup_files():
     print 'Executando backup dos arquivos...'
     with zipfile.ZipFile(zip_filename, 'w') as zip_file:
-        for item in glob.glob(path_backup_files):
-            with open(item, 'r') as file_to_backup:
-                zip_file.writestr(item, file_to_backup.read())
+        for root, dirs, files in os.walk(path_backup_files):
+            print len(files)
+            for file_name_path in files:
+                item_path =  os.path.join(root, file_name_path)
+                print item_path
+                with open(item_path, 'r') as file_to_backup:
+                    zip_file.writestr(item_path, file_to_backup.read())
         with open(filename_database, 'r') as dump_file:
             zip_file.writestr(filename_database, dump_file.read())
 
@@ -67,7 +71,7 @@ attachment.set_payload(f.read())
 encoders.encode_base64(attachment)
 attachment.add_header('Content-Disposition', 'attachment', filename=zip_filename)
 
-#Attache zip
+Attache zip
 message.attach(attachment)
 
 server.sendmail(fromaddr, toaddrs, message.as_string())  
