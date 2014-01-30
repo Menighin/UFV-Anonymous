@@ -71,7 +71,7 @@ attachment.set_payload(f.read())
 encoders.encode_base64(attachment)
 attachment.add_header('Content-Disposition', 'attachment', filename=zip_filename)
 
-Attache zip
+#Attache zip
 message.attach(attachment)
 
 server.sendmail(fromaddr, toaddrs, message.as_string())  
