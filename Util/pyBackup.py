@@ -34,10 +34,8 @@ def bacup_files():
     print 'Executando backup dos arquivos...'
     with zipfile.ZipFile(zip_filename, 'w') as zip_file:
         for root, dirs, files in os.walk(path_backup_files):
-            print len(files)
             for file_name_path in files:
                 item_path =  os.path.join(root, file_name_path)
-                print item_path
                 with open(item_path, 'r') as file_to_backup:
                     zip_file.writestr(item_path, file_to_backup.read())
         with open(filename_database, 'r') as dump_file:
