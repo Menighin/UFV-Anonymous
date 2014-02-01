@@ -60,12 +60,29 @@
 			$result= $stmt->fetchAll();
 			
 			foreach ($result as $row)
-				$conn->query("UPDATE messages SET is_read = 1 WHERE id = '" . $row['id'] . "'");
+				try {
+					$conn->query("UPDATE messages SET is_read = 1 WHERE id = '" . $row['id'] . "'");
+				} catch (Exception $e) {
+					echo json_encode (array('response' => -1));
+					Log::writeLog("Erro em GET_MESSAGE: " . $e->getMessage() . " na conversa " . $_POST['conversation_id']);
+					$conn = $database->disconnect();
+					exit(1);
+				}
 			
 			if (!$result)
 				echo json_encode(array('response' => 0));
 			else
 				echo json_encode(array('response' => 1, 'messages' => $result));
+			
+			// Update last seen on database to keep tracking user online
+			try {
+				$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");
+			} catch (Exception $e) {
+				echo json_encode (array('response' => -1));
+				Log::writeLog("Erro em GET_MESSAGE: " . $e->getMessage() . " na conversa " . $_POST['conversation_id']);
+				$conn = $database->disconnect();
+				exit(1);
+			}
 		}
 	}
 	

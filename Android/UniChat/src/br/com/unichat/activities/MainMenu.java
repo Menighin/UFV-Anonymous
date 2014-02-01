@@ -238,7 +238,7 @@ public class MainMenu extends Activity {
 			
 			if (networkInfo != null && networkInfo.isConnected()) {
 				try {
-					String urlParameters = "user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey();
+					String urlParameters = "user=" + Settings.me.getUserID() + "&api_key=" + Settings.me.getAPIKey() + "&username=" + Settings.me.getUsername();
 					URL url = new URL(Settings.API_URL + "/logout");
 				    
 				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));

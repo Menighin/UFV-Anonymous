@@ -22,6 +22,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -164,6 +165,10 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
+				
+				Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				v.vibrate(300);
+				
 				talkingTo.setText("Falando com: " + talkingToName);
 				talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
 				message.setEnabled(true);
@@ -252,6 +257,9 @@ public class Chat extends Activity {
 						finish();
 					}
 					else {
+						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						v.vibrate(300);
+						
 						talkingTo.setText("Anônimo se desconectou :( ...");
 						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
 						message.setText("");

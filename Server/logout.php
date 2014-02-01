@@ -30,7 +30,7 @@
 		try {
 			$key = md5(uniqid(rand(), true));
 			$conn->query("UPDATE users SET logged = 0, api_key = '" . $key . "' WHERE id = " . $_POST['user']);
-			Log::writeLog($_POST['user'] . " fez LOGOUT");
+			Log::writeLog($_POST['username'] . " fez LOGOUT");
 			echo json_encode(array("response" => 1));
 		} catch (Exception $e) {
 			Log::writeLog("Erro em LOGOUT: " . $e->getMessage());

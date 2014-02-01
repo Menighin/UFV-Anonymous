@@ -64,6 +64,16 @@
 				echo json_encode(array('response' => 0));
 			else
 				echo json_encode(array('response' => 1, 'username' => $row['username'], 'special' => $row['special']));
+			
+			// Update last seen on database to keep tracking user online
+			try {
+				$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");
+			} catch (Exception $e) {
+				echo json_encode (array('response' => -1));
+				Log::writeLog("Erro em IS_READY: " . $e->getMessage() . " na conversa " . $_POST['conversation_id']);
+				$conn = $database->disconnect();
+				exit(1);
+			}
 		}
 	}
 	
