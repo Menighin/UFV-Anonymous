@@ -330,8 +330,9 @@ function resendMail() {
 	var username = $("input[name=username]").val();
 	var email = $("input[name=email]").val();
 	var hash = $("input[name=hash]").val();
+	var type = 1;
 	
-	var POSTdata = {username: username, email: email, hash: hash};
+	var POSTdata = {username: username, email: email, hash: hash, type : type};
 	$.ajax({
 		type: "POST",
 		url: "server/sendMail.php", 
@@ -382,6 +383,32 @@ function updateUser() {
 				}
 			});
 		}
+	}
+}
+
+/* REPORTAR BUG *******************************************************************************/
+function report() {
+	var name = $("input[name=name]").val();
+	var email = $("input[name=email]").val();
+	var message = $("#bugDesc").val();
+	var type = 2;
+	
+	if (message.length < 15)
+		alert("Nos dê uma melhor descrição do bug, faz favor ;)");
+	else {
+		var POSTdata = {name: name, email: email, message: message, type : type};
+		$.ajax({
+			type: "POST",
+			url: "server/sendMail.php", 
+			data: POSTdata,
+			success: function(msg) {
+				if (msg == 1) {
+					$("#content").html('<div id="successMsg">Seu bug foi reportado com sucesso!</div>');
+				} else {
+					alert("Um error ocorreu no servidor. Por favor tente mais tarde.");
+				}
+			}
+		});
 	}
 }
 

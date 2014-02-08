@@ -9,10 +9,12 @@
 						<div id="formDiv">
 							<h2> Reportar bug </h2><br />
 							<span>Descrição*: </span> <br />
-							<textarea name="desc" required></textarea> <br /><br />
+							<textarea id="bugDesc" required></textarea> <br /><br />
 							Seu nome: <br />
 							<input name="name" maxlength="40" type="text" > <br /><br />
-							<div id="registerButton" class="button">Reportar</div>
+							Seu email*: <br />
+							<input name="email" maxlength="40" type="text" > <br /><br />
+							<div id="reportButton" class="button" onclick="report();">Reportar</div>
 						</div>
 					</form>
 				</div>

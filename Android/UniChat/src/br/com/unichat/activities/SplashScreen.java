@@ -95,7 +95,7 @@ public class SplashScreen extends Activity {
 
 					return json.getInt("response");
 				} catch (Exception e) {
-					Log.e("GetCoursesAsync", e.getMessage());
+					Log.e("GetCoursesAsync", e.toString());
 					return -1;
 				}
 			} else {

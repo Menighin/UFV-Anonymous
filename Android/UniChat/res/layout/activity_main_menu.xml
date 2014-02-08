@@ -8,15 +8,30 @@
 	
     <ScrollView
         android:layout_width="match_parent"
-    	android:layout_height="match_parent">
+    	android:layout_height="match_parent"
+    	android:fillViewport="true">
     
 	    <LinearLayout 
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_gravity="center"
-	        android:gravity="center"
+	        android:layout_gravity="center_horizontal"
+	        android:gravity="center_horizontal"
 	        android:orientation="vertical" >
-	    
+	    	
+	        <TextView
+			    android:id="@+id/logoutText"
+			    android:textColorLink="@color/uniChatRed"
+			    android:textColor="@color/dark_gray"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_marginRight="10dp"
+			    android:layout_marginTop="20dp"
+			    android:layout_marginBottom="10dp"
+			    android:text="@string/action_logout"
+			    android:layout_gravity="right"
+			    android:onClick="logoutText"
+			    android:clickable="true"/>
+	        
 	        <LinearLayout
 	            android:id="@+id/paid_part"
 	            android:layout_width="match_parent"

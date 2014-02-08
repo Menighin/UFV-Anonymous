@@ -125,7 +125,7 @@ public class Chat extends Activity {
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
-				Log.e ("SEND BUTTON", e.getMessage());
+				Log.e ("SEND BUTTON", e.toString());
 			}
 			
 			conversation.setSelection(conversation.getCount() - 1);
@@ -153,7 +153,6 @@ public class Chat extends Activity {
 		    	    
 		    	    return json.getInt("response");
 		        } catch (Exception e) {
-		        	Log.e("IsReadyException", e.getMessage());
 		        	Log.e("IsReadyException", e.toString());
 		        	return -1;
 		        }
@@ -232,7 +231,6 @@ public class Chat extends Activity {
 		    	    
 		    	    return msgs;
 		        } catch (Exception e) {
-		        	Log.e("GetMessageException", e.getMessage());
 		        	Log.e("GetMessageException", e.toString());
 		        	return msgs;
 		        }
@@ -295,7 +293,6 @@ public class Chat extends Activity {
 		    	    
 		    	    return json.getInt("response");
 		        } catch (Exception e) {
-		        	Log.e("SendMessageException", e.getMessage());
 		        	Log.e("SendMessageException", e.toString());
 		        	return -1;
 		        }
@@ -368,7 +365,7 @@ public class Chat extends Activity {
 							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 					new SendMessageAsync().execute(urlParameters, "-1");
 				} catch (Exception e) {
-					Log.e("Error onDestroy", e.getMessage());
+					Log.e("Error onDestroy", e.toString());
 				}
 			}
 		}

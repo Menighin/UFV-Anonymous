@@ -12,13 +12,7 @@
 		<script type="text/JavaScript" src="js/jquery.js"></script> 
 		<script type="text/JavaScript" src="js/script.js"></script> 
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
-		
-		<meta name="author" content="João Menighin, Thiago Silva">
-		<meta name="description" content="O UniChat é um aplicativo mobile lançado (até agora) somente para Android. 
-		O UniChat é um ambiente de bate-papo que permite com que você converse com uma pessoa da sua universidade anonimamente e aleatoriamente. 
-		Suas conversas não são salvas. É perfeito para conhecer novas pessoas, fazer novas amizades e falar sobre os mais diversos assuntos.">
-	  <meta name="keywords" content="chat, universidade, chat anônimo">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 	</head>
 	<body>
 		<div id="wrapper">

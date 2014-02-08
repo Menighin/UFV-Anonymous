@@ -6,8 +6,10 @@
 	
 	try {
 		
-		if (!isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['sex']) || !isset($_POST['university']) || !isset($_POST['course']))
+		if (!isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['sex']) || !isset($_POST['university']) || !isset($_POST['course'])) {
 			throw new Exception ("Missing parameters");
+			exit(1);
+		}
 		
 		$query = "INSERT INTO users (username, password, api_key, email, sex, university, course, hash) 
 			VALUES (:username, :password, :api_key, :email, :sex, :university, :course, :hash)";

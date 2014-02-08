@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,9 +27,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import br.com.unichat.classes.SaveSharedPreferences;
 import br.com.unichat.settings.Settings;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class MainMenu extends Activity {
 	
@@ -45,6 +46,7 @@ public class MainMenu extends Activity {
 	private boolean backActivated = true;
 	private ArrayAdapter<String> adapter;
 	private Intent intent;
+	private TextView logout;
 	
 	private AdView mAdView;
 	
@@ -59,6 +61,7 @@ public class MainMenu extends Activity {
 		maleBtn = (Button) findViewById(R.id.male_btn);
 		courses = (Spinner)findViewById(R.id.courses_spinner);
 		paid = (LinearLayout) findViewById(R.id.paid_part);
+		logout = (TextView) findViewById(R.id.logoutText);
 		
 		if (Settings.FREE_VERSION)
 			paid.setVisibility(View.GONE);
@@ -109,6 +112,12 @@ public class MainMenu extends Activity {
 		new ConnectAsync().execute();
 	}
 	
+	//Logout text clicked
+	public void logoutText (View v) {
+		logout.setTextColor(getResources().getColor(R.color.uniChatRed));
+		logout();
+	}
+	
 	//AsyncTask to manage the connection with the API
 	private class ConnectAsync extends AsyncTask<Void, Void, Integer> {
 		
@@ -140,7 +149,7 @@ public class MainMenu extends Activity {
 				    
 				    return json.getInt("response");
 		        } catch (Exception e) {
-		        	Log.e("doConnectException", e.getMessage());
+		        	Log.e("doConnectException", e.toString());
 		        	return -1;
 		        }
 		    } else {
@@ -192,7 +201,7 @@ public class MainMenu extends Activity {
 				    
 					return json.getInt("response");
 				} catch (Exception e) {
-					Log.e("GetCoursesAsync", e.getMessage());
+					Log.e("GetCoursesAsync", e.toString());
 					return -1;
 				}
 			} else {
@@ -245,7 +254,7 @@ public class MainMenu extends Activity {
 				    
 					return json.getInt("response");
 				} catch (Exception e) {
-					Log.e("LogoutAsync", e.getMessage());
+					Log.e("LogoutAsync", e.toString());
 					return -3;
 				}
 			} else {

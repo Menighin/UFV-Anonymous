@@ -107,7 +107,6 @@ public class Login extends Activity {
 		        	else
 		        		return -2;
 		        } catch (Exception e) {
-		        	Log.e("doLoginException", e.getMessage());
 		        	Log.e("doLoginException", e.toString());
 		        	return -2;
 		        }
