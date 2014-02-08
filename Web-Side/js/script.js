@@ -396,6 +396,8 @@ function report() {
 	if (message.length < 15)
 		alert("Nos dê uma melhor descrição do bug, faz favor ;)");
 	else {
+		$(".loading").css("display", "block");
+		
 		var POSTdata = {name: name, email: email, message: message, type : type};
 		$.ajax({
 			type: "POST",
@@ -407,6 +409,7 @@ function report() {
 				} else {
 					alert("Um error ocorreu no servidor. Por favor tente mais tarde.");
 				}
+				$(".loading").css("display", "none");
 			}
 		});
 	}
