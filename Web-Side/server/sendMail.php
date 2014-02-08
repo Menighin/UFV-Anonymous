@@ -17,7 +17,7 @@
 	
 		$to = $_POST['email'];
 		$subject = "Bem-vindo ao UniChat!";
-		$message = "Seu cadastro está quase terminado. Basta clicar no link abaixo para validar a sua conta no UniChat. Se você não fez esse cadastro favor ignorar este e-mail.
+		$message = "Seu cadastro estÃ¡ quase terminado. Basta clicar no link abaixo para validar a sua conta no UniChat. Se vocÃª nÃ£o fez esse cadastro favor ignorar este e-mail.
 		
 	http://www.unichat.com.br/validate.php?u=" . strtolower($_POST['username']) . "&h=" . $_POST['hash'];
 		$from = "noreply@unichat.com.br";
@@ -31,11 +31,11 @@
 			exit(1);
 		}
 		
-		$name = "Nome: Anônimo";
+		$name = "Nome: AnÃ´nimo";
 		if (isset($_POST['name']))
 			$name = "Nome: " . $_POST['name'];
 		
-		$email = "Email: Não informado";
+		$email = "Email: NÃ£o informado";
 		if (isset($_POST['email']))
 			$email = "Email: " . $_POST['email'];
 		
