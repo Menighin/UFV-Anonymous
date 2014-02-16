@@ -14,7 +14,7 @@
         android:paddingLeft="14dp"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
-        android:background="@color/darker_gray"/>
+        android:background="@color/dark_gray"/>
     
     <ListView
         android:id="@+id/list_messages"
@@ -37,7 +37,8 @@
         android:layout_alignParentLeft="true"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="7dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:background="@drawable/border_red">
 		
             
@@ -45,14 +46,15 @@
 	            android:id="@+id/message"
 	            android:layout_width="0dip"
 	            android:layout_height="wrap_content"
+	            android:hint="@string/message_here"
 	            android:ems="10"
 	            android:inputType="text"
 	            android:layout_weight="1" />
 	        
 	        <Button
 	            android:id="@+id/send_btn"
-	            android:layout_width="24dp"
-	            android:layout_height="20dp"
+	            android:layout_width="30dp"
+	            android:layout_height="30dp"
 	            android:background="@drawable/send_btn"
 	            android:layout_marginLeft="10dp"
 	            android:onClick="sendMessage" />

@@ -27,4 +27,7 @@
     
     <!-- Menu -->
     <string name="action_logout">Logout</string>
+    
+    <!--  Chat -->
+    <string name="message_here">Escreva uma mensagem</string>
 </resources>
