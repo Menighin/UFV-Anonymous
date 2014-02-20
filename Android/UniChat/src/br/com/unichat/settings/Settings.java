@@ -16,4 +16,6 @@ public class Settings {
 	public static ArrayList<Integer> COURSES_ID = null;
 	public static User me;
 	public static int CONVERSATION_ID;
+	
+	public static final String ID_GCM = "";
 }
