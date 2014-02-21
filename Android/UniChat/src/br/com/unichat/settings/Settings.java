@@ -18,4 +18,8 @@ public class Settings {
 	public static int CONVERSATION_ID;
 	
 	public static final String ID_GCM = "";
+	public static final String PROJECT_NUMBER = "1054618264919";
+	public static final String PROJECT_API_KEY = "AIzaSyCBoxJI3zZOees6L3dUcZiXlPNZfJ_sELA";
+	public static final String GOOGLE_REGISTER_KEY = "registration_id";
+	public static final String APP_VERSION = "application_version";
 }
