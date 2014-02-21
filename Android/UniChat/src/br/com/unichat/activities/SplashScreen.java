@@ -59,8 +59,9 @@ public class SplashScreen extends Activity {
 		String registrationKey = getRegistrationKey(getApplicationContext());
 		if(registrationKey == null) {
 			new RegisterInGCM().execute();
+		} else {
+			Log.i("Informações do GCM", registrationKey);
 		}
-		Log.i("Informações do GCM", registrationKey);
 		
 		hand = new Handler();
 		r = new Runnable () {
