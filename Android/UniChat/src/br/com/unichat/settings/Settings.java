@@ -21,5 +21,5 @@ public class Settings {
 	public static final String PROJECT_NUMBER = "1054618264919";
 	public static final String PROJECT_API_KEY = "AIzaSyCBoxJI3zZOees6L3dUcZiXlPNZfJ_sELA";
 	public static final String GOOGLE_REGISTER_KEY = "registration_id";
-	public static final String APP_VERSION = "application_version";
+	public static int APP_VERSION = 0;
 }

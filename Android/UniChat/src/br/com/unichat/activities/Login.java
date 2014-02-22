@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -32,6 +33,7 @@ import br.com.unichat.settings.Settings;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class Login extends Activity {
 
@@ -42,6 +44,8 @@ public class Login extends Activity {
 	private LoginAsync loginAsync = null;
 	
 	private AdView mAdView;
+	
+	private GoogleCloudMessaging googleCloud;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,8 @@ public class Login extends Activity {
 		
 		mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(new AdRequest.Builder().build());
+        
+        googleCloud = GoogleCloudMessaging.getInstance(getApplicationContext());
 	}
 	
 	public void loginButton (View v) {
@@ -170,12 +176,22 @@ public class Login extends Activity {
 	    
 	    JSONObject json = new JSONObject(response.toString());
 	    
-	    //Set new global user
+	    //App version code
+		PackageInfo packageInfo = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
+		
+	    //Set new global user and settings
 	    if (json.getInt("response") == 1 || json.getInt("response") == -2) {
+	    	//Get GCM Registration key
+		    String registrationId = googleCloud.register(Settings.PROJECT_NUMBER);
+		    
+			Log.i("Informações do GCM", registrationId);
 	    	Settings.me = new User (
-	    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), json.getString("sex"), json.getInt("universityID"), json.getString("apikey"));
+	    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), 
+	    			json.getString("sex"), json.getInt("universityID"), json.getString("apikey"), registrationId);
+	    	Settings.APP_VERSION = packageInfo.versionCode;
 	    	SaveSharedPreferences.createPreferences(
-	    			Login.this, true, json.getString("username"), json.getInt("id"), json.getInt("courseID"), json.getInt("universityID"), json.getString("sex"), json.getString("apikey"));
+	    			Login.this, true, json.getString("username"), json.getInt("id"), json.getInt("courseID"), 
+	    			json.getInt("universityID"), json.getString("sex"), json.getString("apikey"), registrationId, packageInfo.versionCode);
 	    }
 	    return json.getInt("response");
 	    

@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -43,25 +41,12 @@ public class SplashScreen extends Activity {
 	private Runnable r;
 	private Intent i;
 	
-	private GoogleCloudMessaging googleCloud;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_splash_screen);
-		
-		if(this.googleCloud == null) {
-			this.googleCloud = GoogleCloudMessaging.getInstance(getApplicationContext());
-		}
-		
-		String registrationKey = getRegistrationKey(getApplicationContext());
-		if(registrationKey == null) {
-			new RegisterInGCM().execute();
-		} else {
-			Log.i("Informações do GCM", registrationKey);
-		}
 		
 		hand = new Handler();
 		r = new Runnable () {
@@ -73,8 +58,8 @@ public class SplashScreen extends Activity {
         	}
 		};
 		
-		if (SaveSharedPreferences.getLoggedState(SplashScreen.this)) {
-    		SaveSharedPreferences.setUser(SplashScreen.this);
+		if (SaveSharedPreferences.getLoggedState(SplashScreen.this, getAppVersion(SplashScreen.this))) {
+    		SaveSharedPreferences.retrievePreferences(SplashScreen.this);
     		Settings.COURSES = new ArrayList<String>();
     		Settings.COURSES_ID = new ArrayList<Integer>();
     		Settings.COURSES.add("Qualquer");
@@ -84,51 +69,7 @@ public class SplashScreen extends Activity {
     		hand.postDelayed(r, Settings.SPLASH_TIME);
 	}
 	
-	/**
-	 * Método que extrai do SharedPreferences da aplicação a registration key do GCM.
-	 * @param context Context da aplicação.
-	 * @return Null caso não seja encontrada a registration key ou retorna o valor da user key
-	 */
-	private String getRegistrationKey(Context context) {
-		/* Pega o SharedPreferences da APP. Esse objeto salvará a registration key do GCM. Será usado SharedPreferences para não
-		 * precisar criar um banco de dados apenas para guardar essa key. Não pode ser guardada em uma constante no Settings
-		 * porque cada usuário terá a sua. */
-		final SharedPreferences preferences = getSharedPreferences();
-		String registrationId = preferences.getString(Settings.GOOGLE_REGISTER_KEY, "");
-		
-		if(registrationId.length() == 0) {
-			Log.i("Informações do GCM", "Nenhuma user key encontrada.");
-			return null;
-		}
-		
-		int appVersion = preferences.getInt(Settings.APP_VERSION, Integer.MIN_VALUE);
-		int currenteVersion = getAppVersion(getApplicationContext());
-		if(appVersion != currenteVersion) {
-			Log.i("Informações do GCM", "Aplicativo atualizado, uma nova chave será gerada.");
-			return null;
-		}
-		
-		return registrationId;
-	}
 	
-	/**
-	 * Guarda no SharedPreferences da aplicação a registration key do GCM.
-	 * @param context Context da aplicação
-	 * @param registrationKey Registration key para ser armazenada
-	 */
-	private void storeRegistrationKey(Context context, String registrationKey) {
-		final SharedPreferences preferences = getSharedPreferences();
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putString(Settings.GOOGLE_REGISTER_KEY, registrationKey);
-		editor.putInt(Settings.APP_VERSION, getAppVersion(getApplicationContext()));
-		editor.commit();
-	}
-	
-	/**
-	 * 
-	 * @param context
-	 * @return
-	 */
 	private int getAppVersion(Context context) {
 		try {
 			PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
@@ -137,38 +78,6 @@ public class SplashScreen extends Activity {
 			throw new RuntimeException("Não foi possível recuperar a app version: " + ex);
 		}
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private SharedPreferences getSharedPreferences() {
-		return getSharedPreferences(SplashScreen.class.getSimpleName(), Context.MODE_PRIVATE);
-	}	
-	
-	public class RegisterInGCM extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			try
-			{
-				String registrationId;
-				if(googleCloud == null) {
-					googleCloud = GoogleCloudMessaging.getInstance(getApplicationContext());
-				}
-				
-				registrationId = googleCloud.register(Settings.PROJECT_NUMBER);
-				Log.i("Informações do GCM", registrationId);
-				
-				storeRegistrationKey(getApplicationContext(), registrationId);
-				
-			}catch(Exception ex) {
-				Log.i("Informações do GCM", ex.toString());
-			}
-			return null;
-		}		
-	}
-
 	
 	public class GetCoursesAsync extends AsyncTask <Void, Void, Integer> {
 		@Override
