@@ -28,7 +28,10 @@ header("Content-Type: application/json; charset=utf-8");
 		 
 			$result = $gcm->send_notification($registatoin_ids, $message);
 		 
-			echo $result;
+			//echo $result;
+			
+			date_default_timezone_set('Brazil/East');
+			echo json_encode(array('response' => 1, 'time' => date('H:i'), 'debug' => $_POST['message']));
 		}
 	}
 ?>
