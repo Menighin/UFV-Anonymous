@@ -63,7 +63,7 @@
 			if (!$row)
 				echo json_encode(array('response' => 0));
 			else
-				echo json_encode(array('response' => 1, 'username' => $row['username'], 'special' => $row['special']));
+				echo json_encode(array('response' => 1, 'username' => $row['username'], 'special' => $row['special'], 'regId' => $row['regId2']));
 			
 			// Update last seen on database to keep tracking user online
 			try {

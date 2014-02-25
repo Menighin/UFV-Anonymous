@@ -40,6 +40,7 @@ public class Chat extends Activity {
 	private EditText message;
 	private TextView talkingTo;
 	private String talkingToName = "Anônimo";
+	private String sendToRegId;
 	private Bundle extras;
 	private ListView conversation;
 	private ConversationArrayAdapter adapter;
@@ -87,6 +88,7 @@ public class Chat extends Activity {
 			connected = true;
 			getMessagesFrom = 0;
 			sentMessagesFrom = 1;
+			sendToRegId = extras.getString("sendToRegId");
 		}
 		
 		// Setting function to be called from time to time
@@ -121,7 +123,8 @@ public class Chat extends Activity {
 			
 			try {
 				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + URLEncoder.encode(message.getText().toString(), "UTF-8") + 
-						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
+						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
+						+ "&regId=" + sendToRegId;
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
@@ -150,6 +153,8 @@ public class Chat extends Activity {
 		    	    
 		    	    if (json.getInt("response") == 1 && json.getInt("special") == 1)
 		    	    	talkingToName = json.getString("username");
+		    	    if (json.getInt("response") == 1)
+		    	    	sendToRegId = json.getString("regId");
 		    	    
 		    	    return json.getInt("response");
 		        } catch (Exception e) {

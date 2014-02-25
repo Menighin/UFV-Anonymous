@@ -145,6 +145,8 @@ public class MainMenu extends Activity {
 					    if (json.getInt("response") == 1 && json.getInt("special") == 1)
 					    	talkingTo = json.getString("username");
 					    intent.putExtra("talkingTo", talkingTo);
+					    if (json.getInt("response") == 1)
+					    	intent.putExtra("sendToRegId", json.getString("regId"));
 				    }
 				    
 				    return json.getInt("response");

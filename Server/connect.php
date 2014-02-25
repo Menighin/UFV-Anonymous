@@ -80,12 +80,12 @@
 		if (count($result) <= 0) {
 			// Open new conversation
 			$query = 'INSERT INTO conversations (
-						user1, u1wantssex, u1wantscourse, ready, participants, started_on)
-						VALUES (:user, :wantssex, :wantscourse, 0, 1, NOW())';
+						user1, u1wantssex, u1wantscourse, regId1, ready, participants, started_on)
+						VALUES (:user, :wantssex, :wantscourse, :regId1, 0, 1, NOW())';
 						
 			try {
 				$stmt = $conn->prepare($query);
-				$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $wantscourse));
+				$stmt->execute(array (':user' => $_POST['user'], ':wantssex' => $_POST['wantssex'], ':wantscourse' => $wantscourse, ':regId1' => $_POST['regId']));
 				echo json_encode (array('response' => 0, 'conversation_id' => $conn->lastInsertId()));
 			} catch (Exception $e) {
 				//echo $e->getMessage();
@@ -95,8 +95,10 @@
 			// Select random conversation to talk with
 			
 			try {
-				$conn->query("UPDATE conversations SET user2 = '" . $_POST['user'] . "', ready = 1, participants = 2 WHERE id = " . $result[$random = mt_rand(0, count($result) - 1)]['id'] . " AND ready = 0");
-				echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id'], 'username' => $result[$random]['user1'], 'special' => $result[$random]['u1special']));
+				$conn->query("UPDATE conversations SET user2 = '" . $_POST['user'] . "', ready = 1, participants = 2, regId2 = " . $_POST['regId'] . 
+					" WHERE id = " . $result[$random = mt_rand(0, count($result) - 1)]['id'] . " AND ready = 0");
+				echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id'], 'username' => $result[$random]['user1'], 'special' => $result[$random]['u1special'],
+					'regId' => $result[$random]['regId1']));
 			} catch (Exception $e) {
 				//echo $e->getMessage();
 				echo json_encode(array('response' => -1));
