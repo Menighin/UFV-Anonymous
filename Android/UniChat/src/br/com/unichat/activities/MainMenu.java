@@ -130,7 +130,8 @@ public class MainMenu extends Activity {
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
 		        	String urlParameters = "user=" + Settings.me.getUserID() +
-							"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey();
+							"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey()
+							+ "&regId=" + Settings.me.getGCMRegisterKey();
 					URL url = new URL(Settings.API_URL + "/connect");
 				    
 				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));

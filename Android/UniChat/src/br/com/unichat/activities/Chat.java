@@ -149,7 +149,7 @@ public class Chat extends Activity {
 		        			URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 		    		URL url = new URL(Settings.API_URL + "/is_conversation_ready");
 		    	    
-		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
+		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));		    
 		    	    
 		    	    if (json.getInt("response") == 1 && json.getInt("special") == 1)
 		    	    	talkingToName = json.getString("username");
@@ -288,6 +288,7 @@ public class Chat extends Activity {
 		        	URL url = new URL(Settings.API_URL + "/send_message");
 		    	    JSONObject json = new JSONObject(POSTConnection (params[0], url));
 		    	    
+		    	    Log.i("SEND_MESSAGE", json.toString());
 		    	    
 		    	    if (Integer.parseInt(params[1]) != -1) {
 			    	    android.os.Message msg = new android.os.Message();
@@ -309,7 +310,7 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
-
+				Log.i("SEND MESAGE", "OK");
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
