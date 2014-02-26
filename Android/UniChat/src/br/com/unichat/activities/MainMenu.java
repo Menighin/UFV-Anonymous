@@ -41,6 +41,7 @@ public class MainMenu extends Activity {
 	private Button whateverBtn;
 	private Button femaleBtn;
 	private Button maleBtn;
+	private Button connectBtn;
 	private Spinner courses;
 	private char selectedSex = 'w';
 	private boolean backActivated = true;
@@ -59,6 +60,7 @@ public class MainMenu extends Activity {
 		whateverBtn = (Button) findViewById(R.id.whatever_btn);
 		femaleBtn = (Button) findViewById(R.id.female_btn);
 		maleBtn = (Button) findViewById(R.id.male_btn);
+		connectBtn = (Button) findViewById(R.id.connect_btn);
 		courses = (Spinner)findViewById(R.id.courses_spinner);
 		paid = (LinearLayout) findViewById(R.id.paid_part);
 		logout = (TextView) findViewById(R.id.logoutText);
@@ -109,6 +111,7 @@ public class MainMenu extends Activity {
 	//Connect button clicked
 	public void connect (View v) {
 		backActivated = false;
+		connectBtn.setEnabled(false);
 		new ConnectAsync().execute();
 	}
 	
@@ -134,7 +137,8 @@ public class MainMenu extends Activity {
 							+ "&regId=" + Settings.me.getGCMRegisterKey();
 					URL url = new URL(Settings.API_URL + "/connect");
 				    
-				    JSONObject json = new JSONObject(POSTConnection(urlParameters, url));
+					String res = POSTConnection(urlParameters, url);
+				    JSONObject json = new JSONObject(res);
 				    
 				    //Set new global id conversation
 				    if (json.getInt("response") == 1 || json.getInt("response") == 0) {
@@ -172,6 +176,7 @@ public class MainMenu extends Activity {
 			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
+			connectBtn.setEnabled(true);
 			backActivated = true;
 		}
 		

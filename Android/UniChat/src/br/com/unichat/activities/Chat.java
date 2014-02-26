@@ -46,10 +46,8 @@ public class Chat extends Activity {
 	private ConversationArrayAdapter adapter;
 	private boolean connected;
 	private Timer myTimer;
-	private short getMessagesFrom;
-	private short sentMessagesFrom;
 	private Handler handler;
-	private GetMessagesAsync getMessage = null;
+	private IsReadyAsync isReady = null;
 	private boolean result_ok = true;
 	
 	@Override
@@ -78,16 +76,11 @@ public class Chat extends Activity {
 		if (extras.getInt("type") == 0) {
 			talkingTo.setText("Esperando o anônimo(a) se conectar...");
 			connected = false;
-			getMessagesFrom = 1;
-			sentMessagesFrom = 0;
 			message.setEnabled(false);
-		}
-		else {
+		} else {
 			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
 			talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
 			connected = true;
-			getMessagesFrom = 0;
-			sentMessagesFrom = 1;
 			sendToRegId = extras.getString("sendToRegId");
 		}
 		
@@ -97,19 +90,12 @@ public class Chat extends Activity {
 		    myTimer.schedule(new TimerTask() {          
 		        @Override
 		        public void run() {
-		            new IsReadyAsync().execute();
-		        }
-		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);
-		else // Client
-			myTimer.schedule(new TimerTask() {          
-		        @Override
-		        public void run() {
-		        	if (getMessage == null || getMessage.getStatus() == AsyncTask.Status.FINISHED) {
-			            getMessage = new GetMessagesAsync();
-			            getMessage.execute();
+		        	if (isReady == null || isReady.getStatus() == AsyncTask.Status.FINISHED) {
+		        		isReady = new IsReadyAsync();
+		        		isReady.execute();
 		        	}
 		        }
-		    }, 0, Settings.CHECK_MESSAGES_TIME);
+		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);
 		
 		
 	}
@@ -123,7 +109,7 @@ public class Chat extends Activity {
 			
 			try {
 				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + URLEncoder.encode(message.getText().toString(), "UTF-8") + 
-						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
+						"&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
 						+ "&regId=" + sendToRegId;
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
@@ -156,6 +142,8 @@ public class Chat extends Activity {
 		    	    if (json.getInt("response") == 1)
 		    	    	sendToRegId = json.getString("regId");
 		    	    
+		    	    Log.i("READY", json.toString());
+		    	    
 		    	    return json.getInt("response");
 		        } catch (Exception e) {
 		        	Log.e("IsReadyException", e.toString());
@@ -177,16 +165,6 @@ public class Chat extends Activity {
 				talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
 				message.setEnabled(true);
 				myTimer.cancel();
-				myTimer = new Timer();
-				myTimer.schedule(new TimerTask() {          
-			        @Override
-			        public void run() {
-			        	if (getMessage == null || getMessage.getStatus() == AsyncTask.Status.FINISHED) {
-				            getMessage = new GetMessagesAsync();
-				            getMessage.execute();
-			        	}
-			        }
-			    }, 0, Settings.CHECK_MESSAGES_TIME);
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
@@ -197,80 +175,6 @@ public class Chat extends Activity {
 				finish();
 			} else if (result == -3) {
 				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
-			}
-		}
-	}
-	
-	// AsyncTask to constantly check if the other user sent messages
-	private class GetMessagesAsync extends AsyncTask<Void, Void, ArrayList<Message>> {
-		@Override
-		protected ArrayList<Message> doInBackground (Void... params) {
-			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		   
-			ArrayList<Message> msgs = null;
-			
-			if (networkInfo != null && networkInfo.isConnected()) {
-		        try {
-		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&author=" + getMessagesFrom + 
-		        			"&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
-		    		URL url = new URL(Settings.API_URL + "/get_message");
-		    	    
-		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
-		    	    JSONArray jsonmsgs;
-		    	    
-		    	    if (json.getInt("response") == 0)
-		    	    	msgs = new ArrayList<Message>();
-		    	    else if (json.getInt("response") == 1) {
-		    	    	msgs = new ArrayList<Message>();
-		    	    	jsonmsgs = json.getJSONArray("messages");
-		    	    	
-		    	    	for (int i = 0; i < jsonmsgs.length(); i++) {
-		    	    		JSONObject msg = jsonmsgs.getJSONObject(i);
-		    	    		msgs.add(new Message(true, msg.getString("message"), msg.getString("time").substring(11, 16), (short)msg.getInt("END_FLAG")));
-		    	    	}
-		    	    } else if (json.getInt("response") == -2) { // API key validation fail
-		    	    	msgs = new ArrayList<Message>();
-		    	    	msgs.add(new Message(true, "null", "00:00", (short)2));
-		    	    }
-		    	    
-		    	    return msgs;
-		        } catch (Exception e) {
-		        	Log.e("GetMessageException", e.toString());
-		        	return msgs;
-		        }
-		    } else {
-		    	return msgs;
-		    }
-		}
-		
-		@Override
-		protected void onPostExecute (ArrayList<Message> msgs) {
-			if (msgs == null) {
-				Toast.makeText(Chat.this, "Vish, deu merda, desculpa :( (Você tá conectado na internet?)", Toast.LENGTH_SHORT).show();
-			} else {
-				for (Message msg : msgs) {
-					if (msg.FLAG == 0)
-						adapter.add(msg);
-					else if (msg.FLAG == 2) {
-						Toast.makeText(Chat.this, "Este usuário fez login em outro dispositivo", Toast.LENGTH_SHORT).show();
-						result_ok = false;
-						Intent returnIntent = new Intent();
-						setResult(RESULT_CANCELED, returnIntent);
-						finish();
-					}
-					else {
-						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-						v.vibrate(300);
-						
-						talkingTo.setText("Anônimo se desconectou :( ...");
-						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
-						message.setText("");
-						message.setEnabled(false);
-					}
-				}
-				if (msgs.size() > 0)
-					conversation.setSelection(conversation.getCount() - 1);
 			}
 		}
 	}
@@ -367,8 +271,8 @@ public class Chat extends Activity {
 			myTimer.cancel();
 			if (result_ok) {
 				try {
-					String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=end&author=" + sentMessagesFrom + "&flag=1"
-							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
+					String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=end&flag=1"
+							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId;
 					new SendMessageAsync().execute(urlParameters, "-1");
 				} catch (Exception e) {
 					Log.e("Error onDestroy", e.toString());
