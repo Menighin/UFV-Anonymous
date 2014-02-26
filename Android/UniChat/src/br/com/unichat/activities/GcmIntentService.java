@@ -8,6 +8,8 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmIntentService extends IntentService {
+	
+	private String message;
 
 	public GcmIntentService() {
 		super("GcmIntentService");
@@ -25,10 +27,18 @@ public class GcmIntentService extends IntentService {
 			} else if(GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
 				Log.i("Informações do GCM - DELETED", extras.toString());
 			} else if(GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-				Log.i("Informações do GCM - Mensagem", extras.toString());
+				Log.i("Informações do GCM - Mensagem", extras.getString("price"));
+				message =  extras.getString("price");
+				sendMessageToActivity();
 			}
 		}
 		
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
+	}
+	
+	private void sendMessageToActivity() {
+		Intent intent = new Intent(Chat.class.getName());
+	    intent.putExtra("message", message);
+	    sendBroadcast(intent);
 	}
 }

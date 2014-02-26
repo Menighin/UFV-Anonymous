@@ -7,16 +7,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -49,6 +51,7 @@ public class Chat extends Activity {
 	private Handler handler;
 	private IsReadyAsync isReady = null;
 	private boolean result_ok = true;
+	private BroadcastReceiver messageReceiver;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +100,41 @@ public class Chat extends Activity {
 		        }
 		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);
 		
-		
+		this.messageReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Bundle bundle = intent.getExtras();
+				String messageString = bundle.getString("message");
+				
+				if(messageString.equals("[fechaOChatUniChat]")) {
+					Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+					v.vibrate(300);
+
+					talkingTo.setText("Anônimo se desconectou :( ...");
+					talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
+					message.setText("");
+					message.setEnabled(false);
+				} else {
+					Date date = new Date();
+					DateFormat format = DateFormat.getTimeInstance();
+					Message message = new Message(true, messageString, format.format(date));
+					adapter.add(message);
+				}
+			}
+		};		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(this.messageReceiver, new IntentFilter(Chat.class.getName()));
 	}
 
 	// Function called when user hit the send button on screen
 	public void sendMessage (View v) {
 		if (message.getText().length() > 0) {
-			Message msg = new Message(false, message.getText().toString(), "", (short)0);
+			Message msg = new Message(false, message.getText().toString(), "");
 			adapter.add(msg);
 			Integer lastMsg = adapter.getItem(msg);
 			
@@ -223,8 +254,7 @@ public class Chat extends Activity {
 				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
-	}
-	
+	}	
 	
 	// Function to make the POST request to the server
 	private String POSTConnection (String urlParameters, URL url) throws Exception{
@@ -271,7 +301,7 @@ public class Chat extends Activity {
 			myTimer.cancel();
 			if (result_ok) {
 				try {
-					String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=end&flag=1"
+					String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=[fechaOChatUniChat]&flag=1"
 							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId;
 					new SendMessageAsync().execute(urlParameters, "-1");
 				} catch (Exception e) {

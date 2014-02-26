@@ -51,6 +51,12 @@
             android:label="@string/title_activity_server"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|screenSize" >
+            
+            <intent-filter>
+                <action android:name="android.intent.action.chat" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
