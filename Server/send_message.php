@@ -24,7 +24,10 @@ header("Content-Type: application/json; charset=utf-8");
 			$gcm = new GCM();
 		 
 			$registatoin_ids = array($regId);
-			$message = array("price" => $message);
+			$message = array("message" => $message);
+			
+			if (isset($_POST["user"]))
+				$message["user"] = $_POST["user"]);
 		 
 			$result = $gcm->send_notification($registatoin_ids, $message);
 		 

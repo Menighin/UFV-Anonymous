@@ -88,7 +88,7 @@ public class Chat extends Activity {
 		}
 		
 		// Setting function to be called from time to time
-		myTimer = new Timer();
+		/*myTimer = new Timer();
 		if (!connected) // Server
 		    myTimer.schedule(new TimerTask() {          
 		        @Override
@@ -98,29 +98,48 @@ public class Chat extends Activity {
 		        		isReady.execute();
 		        	}
 		        }
-		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);
+		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);*/
 		
 		this.messageReceiver = new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				Bundle bundle = intent.getExtras();
-				String messageString = bundle.getString("message");
-				
-				if(messageString.equals("[fechaOChatUniChat]")) {
-					Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-					v.vibrate(300);
-
-					talkingTo.setText("Anônimo se desconectou :( ...");
-					talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
-					message.setText("");
-					message.setEnabled(false);
-				} else {
-					Date date = new Date();
-					DateFormat format = DateFormat.getTimeInstance();
-					Message message = new Message(true, messageString, format.format(date));
-					adapter.add(message);
+				//String messageString = bundle.getString("message");
+				try {
+					JSONObject messageJSON = new JSONObject(bundle.getString("message"));
+					
+					if(messageJSON.getString("message").equals("[fechaOChatUniChat]")) {
+						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						v.vibrate(300);
+	
+						talkingTo.setText("Anônimo se desconectou :( ...");
+						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
+						message.setText("");
+						message.setEnabled(false);
+					} else if (messageJSON.getString("message").equals("[abreOChatUniChat]")) {
+						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						v.vibrate(300);
+						
+						talkingTo.setText("Falando com: " + messageJSON.getString("user"));
+						talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
+						message.setEnabled(true);
+						sendToRegId = messageJSON.getString("regId");
+						
+					} else {
+						Date date = new Date();
+						DateFormat format = DateFormat.getTimeInstance();
+						Message message = new Message(true, messageJSON.getString("message"), format.format(date).substring(0, 5));
+						adapter.add(message);
+					}
+				} catch (Exception e) {
+					Log.e("RECEIVE MESSAGE", "INVALID JSON");
 				}
+				
+				// Focus on last received message
+				if (conversation.getCount() > 1)
+					conversation.setSelection(conversation.getCount() - 1);
+
 			}
 		};		
 	}

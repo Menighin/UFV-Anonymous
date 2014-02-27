@@ -179,6 +179,7 @@ public class Login extends Activity {
 	    //App version code
 		PackageInfo packageInfo = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
 		
+		
 	    //Set new global user and settings
 	    if (json.getInt("response") == 1 || json.getInt("response") == -2) {
 	    	//Get GCM Registration key

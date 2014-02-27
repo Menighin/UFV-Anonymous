@@ -277,7 +277,7 @@ public class MainMenu extends Activity {
 				startActivity(new Intent(MainMenu.this, Login.class));
 				finish();
 			} else if (result == -1) {
-				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_LONG).show();
 			} else if (result == -3) {
 				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}

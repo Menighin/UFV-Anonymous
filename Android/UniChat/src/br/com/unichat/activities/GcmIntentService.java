@@ -9,7 +9,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmIntentService extends IntentService {
 	
-	private String message;
+	private String json;
 
 	public GcmIntentService() {
 		super("GcmIntentService");
@@ -21,14 +21,25 @@ public class GcmIntentService extends IntentService {
 		GoogleCloudMessaging googleCloud = GoogleCloudMessaging.getInstance(getApplicationContext());
 		String messageType = googleCloud.getMessageType(intent);
 		
+		// Parsing bundle to JSON
+		json = "{";
+		int i = 0;
+		for (String key : extras.keySet()) {
+			if (i == 0)
+				json += "\"" + key + "\":\"" + extras.get(key) + "\"";
+			else
+				json += ",\"" + key + "\":\"" + extras.get(key) + "\"";
+			i++;
+		}
+		json += "}";
+		
 		if(!extras.isEmpty()) {
 			if(GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
 				Log.i("Informações do GCM - ERRO", extras.toString());
 			} else if(GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
 				Log.i("Informações do GCM - DELETED", extras.toString());
 			} else if(GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-				Log.i("Informações do GCM - Mensagem", extras.getString("price"));
-				message =  extras.getString("price");
+				Log.i("Informações do GCM - Mensagem", json);
 				sendMessageToActivity();
 			}
 		}
@@ -38,7 +49,7 @@ public class GcmIntentService extends IntentService {
 	
 	private void sendMessageToActivity() {
 		Intent intent = new Intent(Chat.class.getName());
-	    intent.putExtra("message", message);
+	    intent.putExtra("message", json);
 	    sendBroadcast(intent);
 	}
 }
