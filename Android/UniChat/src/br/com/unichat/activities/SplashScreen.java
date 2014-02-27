@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -56,8 +58,8 @@ public class SplashScreen extends Activity {
         	}
 		};
 		
-		if (SaveSharedPreferences.getLoggedState(SplashScreen.this)) {
-    		SaveSharedPreferences.setUser(SplashScreen.this);
+		if (SaveSharedPreferences.getLoggedState(SplashScreen.this, getAppVersion(SplashScreen.this))) {
+    		SaveSharedPreferences.retrievePreferences(SplashScreen.this);
     		Settings.COURSES = new ArrayList<String>();
     		Settings.COURSES_ID = new ArrayList<Integer>();
     		Settings.COURSES.add("Qualquer");
@@ -66,7 +68,16 @@ public class SplashScreen extends Activity {
     	} else
     		hand.postDelayed(r, Settings.SPLASH_TIME);
 	}
-
+	
+	
+	private int getAppVersion(Context context) {
+		try {
+			PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+			return packageInfo.versionCode;
+		} catch(Exception ex) {
+			throw new RuntimeException("Não foi possível recuperar a app version: " + ex);
+		}
+	}
 	
 	public class GetCoursesAsync extends AsyncTask <Void, Void, Integer> {
 		@Override

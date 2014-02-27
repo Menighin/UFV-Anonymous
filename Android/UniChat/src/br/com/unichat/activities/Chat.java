@@ -7,16 +7,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.text.DateFormat;
+import java.util.Date;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -39,17 +39,13 @@ public class Chat extends Activity {
 	
 	private EditText message;
 	private TextView talkingTo;
-	private String talkingToName = "Anônimo";
+	private String sendToRegId;
 	private Bundle extras;
 	private ListView conversation;
 	private ConversationArrayAdapter adapter;
-	private boolean connected;
-	private Timer myTimer;
-	private short getMessagesFrom;
-	private short sentMessagesFrom;
 	private Handler handler;
-	private GetMessagesAsync getMessage = null;
 	private boolean result_ok = true;
+	private BroadcastReceiver messageReceiver;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +59,6 @@ public class Chat extends Activity {
 		conversation = (ListView) findViewById(R.id.list_messages);
 		conversation.setAdapter(adapter);
 		
-		// Handler to update time on messages sent by this user
 		handler = new Handler(new Handler.Callback() { 
 			@Override
 			public boolean handleMessage (android.os.Message msg) { 
@@ -72,56 +67,79 @@ public class Chat extends Activity {
 			} 
 		});
 		
+		
 		// Solving if the activity is either a client or server type
 		extras = getIntent().getExtras();
 		if (extras.getInt("type") == 0) {
 			talkingTo.setText("Esperando o anônimo(a) se conectar...");
-			connected = false;
-			getMessagesFrom = 1;
-			sentMessagesFrom = 0;
 			message.setEnabled(false);
-		}
-		else {
+		} else {
 			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
 			talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
-			connected = true;
-			getMessagesFrom = 0;
-			sentMessagesFrom = 1;
+			sendToRegId = extras.getString("sendToRegId");
 		}
 		
-		// Setting function to be called from time to time
-		myTimer = new Timer();
-		if (!connected) // Server
-		    myTimer.schedule(new TimerTask() {          
-		        @Override
-		        public void run() {
-		            new IsReadyAsync().execute();
-		        }
-		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);
-		else // Client
-			myTimer.schedule(new TimerTask() {          
-		        @Override
-		        public void run() {
-		        	if (getMessage == null || getMessage.getStatus() == AsyncTask.Status.FINISHED) {
-			            getMessage = new GetMessagesAsync();
-			            getMessage.execute();
-		        	}
-		        }
-		    }, 0, Settings.CHECK_MESSAGES_TIME);
-		
-		
+		this.messageReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Bundle bundle = intent.getExtras();
+				//String messageString = bundle.getString("message");
+				try {
+					JSONObject messageJSON = new JSONObject(bundle.getString("message"));
+					
+					if(messageJSON.getString("message").equals("[fechaOChatUniChat]")) {
+						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						v.vibrate(300);
+	
+						talkingTo.setText("Anônimo se desconectou :( ...");
+						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
+						message.setText("");
+						message.setEnabled(false);
+					} else if (messageJSON.getString("message").equals("[abreOChatUniChat]")) {
+						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						v.vibrate(300);
+						
+						talkingTo.setText("Falando com: " + messageJSON.getString("user"));
+						talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
+						message.setEnabled(true);
+						sendToRegId = messageJSON.getString("regId");
+						
+					} else {
+						Date date = new Date();
+						DateFormat format = DateFormat.getTimeInstance();
+						Message message = new Message(true, messageJSON.getString("message"), format.format(date).substring(0, 5));
+						adapter.add(message);
+					}
+				} catch (Exception e) {
+					Log.e("RECEIVE MESSAGE", "INVALID JSON");
+				}
+				
+				// Focus on last received message
+				if (conversation.getCount() > 1)
+					conversation.setSelection(conversation.getCount() - 1);
+
+			}
+		};		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(this.messageReceiver, new IntentFilter(Chat.class.getName()));
 	}
 
 	// Function called when user hit the send button on screen
 	public void sendMessage (View v) {
 		if (message.getText().length() > 0) {
-			Message msg = new Message(false, message.getText().toString(), "", (short)0);
+			Message msg = new Message(false, message.getText().toString(), "");
 			adapter.add(msg);
 			Integer lastMsg = adapter.getItem(msg);
 			
 			try {
-				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + URLEncoder.encode(message.getText().toString(), "UTF-8") + 
-						"&author=" + sentMessagesFrom + "&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
+				String urlParameters = "message=" + URLEncoder.encode(message.getText().toString(), "UTF-8")
+						+ "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
+						+ "&regId=" + sendToRegId;
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
@@ -129,144 +147,6 @@ public class Chat extends Activity {
 			}
 			
 			conversation.setSelection(conversation.getCount() - 1);
-		}
-	}
-	
-	// AsyncTask to check if another user connected
-	private class IsReadyAsync extends AsyncTask<Void, Void, Integer> {
-		
-		@Override
-		protected Integer doInBackground(Void...params) {
-			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		   
-			if (networkInfo != null && networkInfo.isConnected()) {
-		        try {
-		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&user=" + Settings.me.getUserID() + "&api_key=" + 
-		        			URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
-		    		URL url = new URL(Settings.API_URL + "/is_conversation_ready");
-		    	    
-		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
-		    	    
-		    	    if (json.getInt("response") == 1 && json.getInt("special") == 1)
-		    	    	talkingToName = json.getString("username");
-		    	    
-		    	    return json.getInt("response");
-		        } catch (Exception e) {
-		        	Log.e("IsReadyException", e.toString());
-		        	return -1;
-		        }
-		    } else {
-		    	return -3;
-		    }
-		}
-		
-		@Override
-		protected void onPostExecute(Integer result) {
-			if (result == 1) {
-				
-				Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-				v.vibrate(300);
-				
-				talkingTo.setText("Falando com: " + talkingToName);
-				talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
-				message.setEnabled(true);
-				myTimer.cancel();
-				myTimer = new Timer();
-				myTimer.schedule(new TimerTask() {          
-			        @Override
-			        public void run() {
-			        	if (getMessage == null || getMessage.getStatus() == AsyncTask.Status.FINISHED) {
-				            getMessage = new GetMessagesAsync();
-				            getMessage.execute();
-			        	}
-			        }
-			    }, 0, Settings.CHECK_MESSAGES_TIME);
-			} else if (result == -1) {
-				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
-			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Este usuário fez login em outro dispositivo", Toast.LENGTH_SHORT).show();
-				result_ok = false;
-				Intent returnIntent = new Intent();
-				setResult(RESULT_CANCELED, returnIntent);     
-				finish();
-			} else if (result == -3) {
-				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
-			}
-		}
-	}
-	
-	// AsyncTask to constantly check if the other user sent messages
-	private class GetMessagesAsync extends AsyncTask<Void, Void, ArrayList<Message>> {
-		@Override
-		protected ArrayList<Message> doInBackground (Void... params) {
-			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		   
-			ArrayList<Message> msgs = null;
-			
-			if (networkInfo != null && networkInfo.isConnected()) {
-		        try {
-		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&author=" + getMessagesFrom + 
-		        			"&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
-		    		URL url = new URL(Settings.API_URL + "/get_message");
-		    	    
-		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));
-		    	    JSONArray jsonmsgs;
-		    	    
-		    	    if (json.getInt("response") == 0)
-		    	    	msgs = new ArrayList<Message>();
-		    	    else if (json.getInt("response") == 1) {
-		    	    	msgs = new ArrayList<Message>();
-		    	    	jsonmsgs = json.getJSONArray("messages");
-		    	    	
-		    	    	for (int i = 0; i < jsonmsgs.length(); i++) {
-		    	    		JSONObject msg = jsonmsgs.getJSONObject(i);
-		    	    		msgs.add(new Message(true, msg.getString("message"), msg.getString("time").substring(11, 16), (short)msg.getInt("END_FLAG")));
-		    	    	}
-		    	    } else if (json.getInt("response") == -2) { // API key validation fail
-		    	    	msgs = new ArrayList<Message>();
-		    	    	msgs.add(new Message(true, "null", "00:00", (short)2));
-		    	    }
-		    	    
-		    	    return msgs;
-		        } catch (Exception e) {
-		        	Log.e("GetMessageException", e.toString());
-		        	return msgs;
-		        }
-		    } else {
-		    	return msgs;
-		    }
-		}
-		
-		@Override
-		protected void onPostExecute (ArrayList<Message> msgs) {
-			if (msgs == null) {
-				Toast.makeText(Chat.this, "Vish, deu merda, desculpa :( (Você tá conectado na internet?)", Toast.LENGTH_SHORT).show();
-			} else {
-				for (Message msg : msgs) {
-					if (msg.FLAG == 0)
-						adapter.add(msg);
-					else if (msg.FLAG == 2) {
-						Toast.makeText(Chat.this, "Este usuário fez login em outro dispositivo", Toast.LENGTH_SHORT).show();
-						result_ok = false;
-						Intent returnIntent = new Intent();
-						setResult(RESULT_CANCELED, returnIntent);
-						finish();
-					}
-					else {
-						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-						v.vibrate(300);
-						
-						talkingTo.setText("Anônimo se desconectou :( ...");
-						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
-						message.setText("");
-						message.setEnabled(false);
-					}
-				}
-				if (msgs.size() > 0)
-					conversation.setSelection(conversation.getCount() - 1);
-			}
 		}
 	}
 	
@@ -283,6 +163,7 @@ public class Chat extends Activity {
 		        	URL url = new URL(Settings.API_URL + "/send_message");
 		    	    JSONObject json = new JSONObject(POSTConnection (params[0], url));
 		    	    
+		    	    Log.i("SEND_MESSAGE", json.toString());
 		    	    
 		    	    if (Integer.parseInt(params[1]) != -1) {
 			    	    android.os.Message msg = new android.os.Message();
@@ -304,7 +185,7 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
-
+				Log.i("SEND MESAGE", "OK");
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
@@ -313,8 +194,7 @@ public class Chat extends Activity {
 				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
 		}
-	}
-	
+	}	
 	
 	// Function to make the POST request to the server
 	private String POSTConnection (String urlParameters, URL url) throws Exception{
@@ -358,11 +238,10 @@ public class Chat extends Activity {
 	@Override
 	public void onDestroy() {
 		if(isFinishing()) {
-			myTimer.cancel();
 			if (result_ok) {
 				try {
-					String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=end&author=" + sentMessagesFrom + "&flag=1"
-							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
+					String urlParameters = "message=[fechaOChatUniChat]" + "&user=" + Settings.me.getUserID() 
+							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId;
 					new SendMessageAsync().execute(urlParameters, "-1");
 				} catch (Exception e) {
 					Log.e("Error onDestroy", e.toString());

@@ -42,7 +42,7 @@
 		else {
 			// Prepare query
 			try {
-				$query = 'SELECT C.ready, U2.username AS username, U2.special AS special
+				$query = 'SELECT C.ready, C.regId2, U2.username AS username, U2.special AS special
 							FROM conversations C
 							INNER JOIN users U2
 							ON C.user2 = U2.id
@@ -63,7 +63,7 @@
 			if (!$row)
 				echo json_encode(array('response' => 0));
 			else
-				echo json_encode(array('response' => 1, 'username' => $row['username'], 'special' => $row['special']));
+				echo json_encode(array('response' => 1, 'username' => $row['username'], 'special' => $row['special'], 'regId' => $row['regId2']));
 			
 			// Update last seen on database to keep tracking user online
 			try {

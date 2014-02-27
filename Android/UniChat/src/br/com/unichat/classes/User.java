@@ -8,9 +8,10 @@ public class User {
 	private String sex;
 	private int university;
 	private String APIKey;
+	private String GCMRegisterKey;
 	
 	public User(int userID, String username, int courseID,
-			String sex, int university, String APIKey) {
+			String sex, int university, String APIKey, String GCMRegisterKey) {
 		super();
 		this.userID = userID;
 		this.username = username;
@@ -18,9 +19,16 @@ public class User {
 		this.sex = sex;
 		this.university = university;
 		this.APIKey = APIKey;
+		this.GCMRegisterKey = GCMRegisterKey;
 	}
 	
+	public String getGCMRegisterKey() {
+		return GCMRegisterKey;
+	}
 	
+	public void setGCMRegisterKey(String GCMKey) {
+		GCMRegisterKey = GCMKey;
+	}
 	
 	public String getAPIKey() {
 		return APIKey;
