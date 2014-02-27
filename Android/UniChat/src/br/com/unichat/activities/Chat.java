@@ -139,7 +139,7 @@ public class Chat extends Activity {
 			try {
 				String urlParameters = "message=" + URLEncoder.encode(message.getText().toString(), "UTF-8")
 						+ "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
-						+ "&regId=" + sendToRegId;
+						+ "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
@@ -241,7 +241,7 @@ public class Chat extends Activity {
 			if (result_ok) {
 				try {
 					String urlParameters = "message=[fechaOChatUniChat]" + "&user=" + Settings.me.getUserID() 
-							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId;
+							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
 					new SendMessageAsync().execute(urlParameters, "-1");
 				} catch (Exception e) {
 					Log.e("Error onDestroy", e.toString());
