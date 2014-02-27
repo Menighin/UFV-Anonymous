@@ -9,8 +9,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.json.JSONObject;
 
@@ -41,15 +39,11 @@ public class Chat extends Activity {
 	
 	private EditText message;
 	private TextView talkingTo;
-	private String talkingToName = "Anônimo";
 	private String sendToRegId;
 	private Bundle extras;
 	private ListView conversation;
 	private ConversationArrayAdapter adapter;
-	private boolean connected;
-	private Timer myTimer;
 	private Handler handler;
-	private IsReadyAsync isReady = null;
 	private boolean result_ok = true;
 	private BroadcastReceiver messageReceiver;
 	
@@ -65,40 +59,16 @@ public class Chat extends Activity {
 		conversation = (ListView) findViewById(R.id.list_messages);
 		conversation.setAdapter(adapter);
 		
-		// Handler to update time on messages sent by this user
-		handler = new Handler(new Handler.Callback() { 
-			@Override
-			public boolean handleMessage (android.os.Message msg) { 
-				adapter.updateTime(msg.what, msg.obj.toString());
-				return true;
-			} 
-		});
-		
 		// Solving if the activity is either a client or server type
 		extras = getIntent().getExtras();
 		if (extras.getInt("type") == 0) {
 			talkingTo.setText("Esperando o anônimo(a) se conectar...");
-			connected = false;
 			message.setEnabled(false);
 		} else {
 			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
 			talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
-			connected = true;
 			sendToRegId = extras.getString("sendToRegId");
 		}
-		
-		// Setting function to be called from time to time
-		/*myTimer = new Timer();
-		if (!connected) // Server
-		    myTimer.schedule(new TimerTask() {          
-		        @Override
-		        public void run() {
-		        	if (isReady == null || isReady.getStatus() == AsyncTask.Status.FINISHED) {
-		        		isReady = new IsReadyAsync();
-		        		isReady.execute();
-		        	}
-		        }
-		    }, 0, Settings.CHECK_CONVERSATION_READY_TIME);*/
 		
 		this.messageReceiver = new BroadcastReceiver() {
 
@@ -158,8 +128,8 @@ public class Chat extends Activity {
 			Integer lastMsg = adapter.getItem(msg);
 			
 			try {
-				String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=" + URLEncoder.encode(message.getText().toString(), "UTF-8") + 
-						"&flag=0" + "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
+				String urlParameters = "message=" + URLEncoder.encode(message.getText().toString(), "UTF-8")
+						+ "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
 						+ "&regId=" + sendToRegId;
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
@@ -168,64 +138,6 @@ public class Chat extends Activity {
 			}
 			
 			conversation.setSelection(conversation.getCount() - 1);
-		}
-	}
-	
-	// AsyncTask to check if another user connected
-	private class IsReadyAsync extends AsyncTask<Void, Void, Integer> {
-		
-		@Override
-		protected Integer doInBackground(Void...params) {
-			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		   
-			if (networkInfo != null && networkInfo.isConnected()) {
-		        try {
-		        	String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&user=" + Settings.me.getUserID() + "&api_key=" + 
-		        			URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
-		    		URL url = new URL(Settings.API_URL + "/is_conversation_ready");
-		    	    
-		    	    JSONObject json = new JSONObject(POSTConnection (urlParameters, url));		    
-		    	    
-		    	    if (json.getInt("response") == 1 && json.getInt("special") == 1)
-		    	    	talkingToName = json.getString("username");
-		    	    if (json.getInt("response") == 1)
-		    	    	sendToRegId = json.getString("regId");
-		    	    
-		    	    Log.i("READY", json.toString());
-		    	    
-		    	    return json.getInt("response");
-		        } catch (Exception e) {
-		        	Log.e("IsReadyException", e.toString());
-		        	return -1;
-		        }
-		    } else {
-		    	return -3;
-		    }
-		}
-		
-		@Override
-		protected void onPostExecute(Integer result) {
-			if (result == 1) {
-				
-				Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-				v.vibrate(300);
-				
-				talkingTo.setText("Falando com: " + talkingToName);
-				talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
-				message.setEnabled(true);
-				myTimer.cancel();
-			} else if (result == -1) {
-				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
-			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Este usuário fez login em outro dispositivo", Toast.LENGTH_SHORT).show();
-				result_ok = false;
-				Intent returnIntent = new Intent();
-				setResult(RESULT_CANCELED, returnIntent);     
-				finish();
-			} else if (result == -3) {
-				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
-			}
 		}
 	}
 	
@@ -317,11 +229,10 @@ public class Chat extends Activity {
 	@Override
 	public void onDestroy() {
 		if(isFinishing()) {
-			myTimer.cancel();
 			if (result_ok) {
 				try {
-					String urlParameters = "conversation_id=" + Settings.CONVERSATION_ID + "&message=[fechaOChatUniChat]&flag=1"
-							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId;
+					String urlParameters = "message=[fechaOChatUniChat]" + "&user=" + Settings.me.getUserID() 
+							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId;
 					new SendMessageAsync().execute(urlParameters, "-1");
 				} catch (Exception e) {
 					Log.e("Error onDestroy", e.toString());
