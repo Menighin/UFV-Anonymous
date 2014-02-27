@@ -59,6 +59,15 @@ public class Chat extends Activity {
 		conversation = (ListView) findViewById(R.id.list_messages);
 		conversation.setAdapter(adapter);
 		
+		handler = new Handler(new Handler.Callback() { 
+			@Override
+			public boolean handleMessage (android.os.Message msg) { 
+				adapter.updateTime(msg.what, msg.obj.toString());
+				return true;
+			} 
+		});
+		
+		
 		// Solving if the activity is either a client or server type
 		extras = getIntent().getExtras();
 		if (extras.getInt("type") == 0) {
