@@ -32,7 +32,7 @@ header("Content-Type: application/json; charset=utf-8");
 			$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");
 			
 			// Closing conversation whenever one leaves
-			if (strcmp($_POST['message'], "[abreOChatUniChat]") == 0)
+			if (strcmp($_POST['message'], "[fechaOChatUniChat]") == 0)
 				try {
 					$stmt = $conn->prepare("UPDATE conversations SET ready = 1 WHERE id = :id");
 					$stmt->execute(array(':id' => $_POST['conversation_id']));
