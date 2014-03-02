@@ -13,8 +13,10 @@ import java.util.Date;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -230,6 +232,32 @@ public class Chat extends Activity {
 	
 	@Override
 	public void onBackPressed() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		dialog.setMessage("Tem certeza que quer sair? Vai perder ein?!");
+		dialog.setPositiveButton("Quero sair!", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				voltarTela();
+			}
+		});
+		dialog.setNegativeButton("Verdade! Melhor não sair ainda!", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+			}
+		});
+		dialog.create();
+		
+		if(message.isEnabled()) {
+			dialog.show();
+		} else {
+			voltarTela();
+		}
+	}
+	
+	private void voltarTela() {
 		Intent returnIntent = new Intent();
 		setResult(RESULT_OK, returnIntent);     
 		finish();
