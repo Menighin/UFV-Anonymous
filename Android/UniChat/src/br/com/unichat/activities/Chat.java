@@ -241,7 +241,7 @@ public class Chat extends Activity {
 				voltarTela();
 			}
 		});
-		dialog.setNegativeButton("Verdade! Melhor não sair ainda!", new DialogInterface.OnClickListener() {
+		dialog.setNegativeButton("Verdade! Vo esperar!", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
