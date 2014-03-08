@@ -82,19 +82,7 @@
 							é simples e objetiva, com poucos toques você já estará conectado a um estranho anônimo e pronto pra conversar.
 							</p>
 						</div>
-						<div class="faqItem">
-							<h1> Diferenças entre pago e grátis </h1>
-							<p> Além do dinheiro, a versão paga possui algumas funcionalidades a mais. Abaixo os beneficios: </p>
-							<ul>
-								<li>O usuário pago pode escolher o sexo da pessoa anônima com quem quer falar.</li>
-								<li>O usuário pago pode escolher o curso da pessoa anônima com quem quer falar.</li>
-								<li>O aplicativo pago não possui propagandas chatas na tela </li>
-							</ul>
-						</div>
 					</div>
-					<!-- <div id="statistics">
-						<canvas id="generalSex" width="400" height="300">Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo<canvas>
-					</div> -->
 				</div>
 			</section>
 <?php

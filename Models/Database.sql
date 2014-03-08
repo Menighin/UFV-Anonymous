@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS courses (
 	id INTEGER AUTO_INCREMENT,
 	university_id INTEGER NOT NULL,
 	name VARCHAR(40) NOT NULL,
+	acronym VARCHAR (15) NOT NULL,
 CONSTRAINT PK_courses PRIMARY KEY (id, name),
 CONSTRAINT FK_courses FOREIGN KEY (university_id) REFERENCES universities (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -51,63 +52,48 @@ CONSTRAINT FK_conversations_users_2 FOREIGN KEY (user2) REFERENCES users (id),
 CONSTRAINT FK_conversations_courses FOREIGN KEY (u1wantscourse) REFERENCES courses (id)
 );
 
-CREATE TABLE IF NOT EXISTS messages (
-	id INTEGER AUTO_INCREMENT,
-	conversation_id INTEGER NOT NULL,
-	message TEXT NOT NULL,
-	time DATETIME NOT NULL,
-	author INTEGER NOT NULL,
-	is_read TINYINT(1) NOT NULL,
-	END_FLAG TINYINT(1) NOT NULL,
-CONSTRAINT PK_messages PRIMARY KEY (id),
-CONSTRAINT FK_messages_Conversation FOREIGN KEY (conversation_id) REFERENCES conversations (id)
-);
-
 /* INSERTs */
 /* universities and courses */
 INSERT INTO universities (name, email, acronym) VALUES ('Universidade Federal de Viçosa', '@ufv.br', 'UFV');
 
-INSERT INTO courses (university_id, name) VALUES (1, 'Administração');
-INSERT INTO courses (university_id, name) VALUES (1, 'Agronomia');
-INSERT INTO courses (university_id, name) VALUES (1, 'Arquitetura e Urbanismo');
-INSERT INTO courses (university_id, name) VALUES (1, 'Bioquímica');
-INSERT INTO courses (university_id, name) VALUES (1, 'Ciência da Computação');
-INSERT INTO courses (university_id, name) VALUES (1, 'Ciência e Tecnologia de Laticínios');
-INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Biológicas');
-INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Contábeis');
-INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Econômicas');
-INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Sociais');
-INSERT INTO courses (university_id, name) VALUES (1, 'Comunicação Social');
-INSERT INTO courses (university_id, name) VALUES (1, 'Cooperativismo');
-INSERT INTO courses (university_id, name) VALUES (1, 'Dança');
-INSERT INTO courses (university_id, name) VALUES (1, 'Direito');
-INSERT INTO courses (university_id, name) VALUES (1, 'Economia Doméstica');
-INSERT INTO courses (university_id, name) VALUES (1, 'Educação Física');
-INSERT INTO courses (university_id, name) VALUES (1, 'Educação Infantil');
-INSERT INTO courses (university_id, name) VALUES (1, 'Enfermagem');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Agrícola e Ambiental');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Ambiental');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Civil');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia de Agrimensura e Cartográfica');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia de Alimentos');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia de Produção');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Elétrica');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Florestal');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Mecânica');
-INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Química');
-INSERT INTO courses (university_id, name) VALUES (1, 'Física');
-INSERT INTO courses (university_id, name) VALUES (1, 'Geografia');
-INSERT INTO courses (university_id, name) VALUES (1, 'História');
-INSERT INTO courses (university_id, name) VALUES (1, 'Letras');
-INSERT INTO courses (university_id, name) VALUES (1, 'Licenciatura em Ciências Biológicas');
-INSERT INTO courses (university_id, name) VALUES (1, 'Licenciatura em Física');
-INSERT INTO courses (university_id, name) VALUES (1, 'Licenciatura em Matemática');
-INSERT INTO courses (university_id, name) VALUES (1, 'Licenciatura em Química');
-INSERT INTO courses (university_id, name) VALUES (1, 'Matemática');
-INSERT INTO courses (university_id, name) VALUES (1, 'Medicina');
-INSERT INTO courses (university_id, name) VALUES (1, 'Medicina Veterinária');
-INSERT INTO courses (university_id, name) VALUES (1, 'Nutrição');
-INSERT INTO courses (university_id, name) VALUES (1, 'Pedagogia');
-INSERT INTO courses (university_id, name) VALUES (1, 'Química');
-INSERT INTO courses (university_id, name) VALUES (1, 'Secreteriado Executivo Trilingue');
-INSERT INTO courses (university_id, name) VALUES (1, 'Zootecnia');
+INSERT INTO courses (university_id, name) VALUES (1, 'Administração', 'ADT');
+INSERT INTO courses (university_id, name) VALUES (1, 'Agronomia', 'AGN');
+INSERT INTO courses (university_id, name) VALUES (1, 'Arquitetura e Urbanismo', 'ARU');
+INSERT INTO courses (university_id, name) VALUES (1, 'Bioquímica', 'BBQ');
+INSERT INTO courses (university_id, name) VALUES (1, 'Ciência da Computação', 'CCP');
+INSERT INTO courses (university_id, name) VALUES (1, 'Ciência e Tecnologia de Laticínios', 'TLA');
+INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Biológicas', 'BLG');
+INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Contábeis', 'CCO');
+INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Econômicas', 'CEC');
+INSERT INTO courses (university_id, name) VALUES (1, 'Ciências Sociais', 'CSO');
+INSERT INTO courses (university_id, name) VALUES (1, 'Comunicação Social', 'COM');
+INSERT INTO courses (university_id, name) VALUES (1, 'Cooperativismo', 'GCO');
+INSERT INTO courses (university_id, name) VALUES (1, 'Dança', 'DAN');
+INSERT INTO courses (university_id, name) VALUES (1, 'Direito', 'DRT');
+INSERT INTO courses (university_id, name) VALUES (1, 'Economia Doméstica', 'EDM');
+INSERT INTO courses (university_id, name) VALUES (1, 'Educação Física', 'EFS');
+INSERT INTO courses (university_id, name) VALUES (1, 'Educação Infantil', 'EIN');
+INSERT INTO courses (university_id, name) VALUES (1, 'Enfermagem', 'EFG');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Agrícola e Ambiental', 'EAA');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Ambiental', 'EAB');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Civil', 'ECV');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia de Agrimensura e Cartográfica', 'EAM');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia de Alimentos', 'EAL');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia de Produção', 'EPR');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Elétrica', 'EEL');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Florestal', 'EFL');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Mecânica', 'EGM');
+INSERT INTO courses (university_id, name) VALUES (1, 'Engenharia Química', 'EGQ');
+INSERT INTO courses (university_id, name) VALUES (1, 'Física', 'FCA');
+INSERT INTO courses (university_id, name) VALUES (1, 'Geografia', 'GEO');
+INSERT INTO courses (university_id, name) VALUES (1, 'Gestão do Agronegócio', 'GAG');
+INSERT INTO courses (university_id, name) VALUES (1, 'História', 'HIS');
+INSERT INTO courses (university_id, name) VALUES (1, 'Letras', 'LTR');
+INSERT INTO courses (university_id, name) VALUES (1, 'Matemática', 'MTM');
+INSERT INTO courses (university_id, name) VALUES (1, 'Medicina', 'MDC');
+INSERT INTO courses (university_id, name) VALUES (1, 'Medicina Veterinária', 'MVT');
+INSERT INTO courses (university_id, name) VALUES (1, 'Nutrição', 'NTR');
+INSERT INTO courses (university_id, name) VALUES (1, 'Pedagogia', 'PED');
+INSERT INTO courses (university_id, name) VALUES (1, 'Química', 'QCA');
+INSERT INTO courses (university_id, name) VALUES (1, 'Secreteriado Executivo Trilingue', 'SEC');
+INSERT INTO courses (university_id, name) VALUES (1, 'Zootecnia', 'ZOT');

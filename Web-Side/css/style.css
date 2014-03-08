@@ -397,7 +397,7 @@ input[type=text]:focus, input[type=password]:focus {
 	border-top: 14px rgba(0, 0, 0, 0.3) solid;
 }
 
-#content li {
+#faq li {
 	color: #555;
 	font-size: 14px;
 	margin-left: 80px;
@@ -498,6 +498,75 @@ footer {
 	float: right;
 }
 
+/**************** STATISTICS ******/
+#generalCharts {
+	padding: 0 50px;
+	display: inline-block;
+}
+
+.pieChart {
+	display: block;
+	width: 300px;
+	float: left;
+	text-align: center;
+	margin: 0 43px;
+}
+
+.statisticsButton {
+	font-size: 11px;
+	font-family: sans-serif;
+	color: #777;
+	cursor: pointer;
+	padding: 0 10px;
+	border-right: 1px #999 solid;
+	display: inline;
+}
+
+.statisticsButton:last-child {
+	border-right: 0;
+}
+
+.statisticsButton:hover {
+	color: #343434;
+	text-decoration: underline;
+}
+
+
+#barsGraph, #specificPieChart, #lineGraph {
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#specificBars {
+	margin: 0 auto;
+	border-right: 1px dotted #bbb;
+	border-left: 1px dotted #bbb;
+}
+
+#barsButtons li {
+	list-style:none;
+	display: inline;
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+#specificLine {
+	margin: 0 auto;
+}
+
+#barsInfo {
+	border: 1px dotted #999;
+	width: 150px;
+	background-color: #eee;
+	position: absolute;
+	display: none;
+}
+
+#barsInfo ul {
+	font-size: 10px;
+	list-style: none;
+}
 
 /**************** RESPONSIVE **/
 

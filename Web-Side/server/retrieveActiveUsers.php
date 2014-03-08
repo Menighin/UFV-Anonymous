@@ -18,5 +18,7 @@
 	
 	echo '<div id="activeUsers">' . $row['active'] . ' usuários ativos nos últimos 10 minutos</div>';
 	
+	$conn = $database->disconnect();
+	
 ?>
 	

@@ -37,9 +37,9 @@ function chooseSlide (slide) {
 	timer = setInterval(changePictures, 5000);
 }
 
-// Hover buttons
-$(function () { 
-	$("#slidebuttons li").hover (
+
+function addHover (selector) {
+	$(selector).hover (
 		function () {
 			if ($(this).find('img').attr("src") == "img/home/slide_off.png")
 				$(this).find('img').attr("src", "img/home/slide_hover.png");
@@ -49,6 +49,11 @@ $(function () {
 				$(this).find('img').attr("src", "img/home/slide_off.png");
 		}
 	);
+}
+
+// Hover buttons
+$(function () { 
+	addHover("#slidebuttons li");
 });
 
 
@@ -414,79 +419,3 @@ function report() {
 		});
 	}
 }
-
-/* ESTATÍSTICAS ********************************************************************************/
-var myColor = ["#ECD078","#D95B43","#C02942","#542437","#53777A"];
-var myData = [10,30,20,60,40];
-var center_x = 200;
-var center_y = 150;
-var radius = 126;
-
-function getTotal(){
-	var myTotal = 0;
-	for (var j = 0; j < myData.length; j++) {
-		myTotal += (typeof myData[j] == 'number') ? myData[j] : 0;
-	}
-	return myTotal;
-}
-
-function plotData() {
-	var canvas;
-	var ctx;
-	var lastend = 0;
-	var myTotal = getTotal();
-
-	canvas = document.getElementById("generalSex");
-	ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	for (var i = 0; i < myData.length; i++) {
-		var middle = lastend + (Math.PI*(myData[i]/myTotal));
-	
-		ctx.fillStyle = myColor[i];
-		ctx.beginPath();
-		ctx.arc(center_x, center_y, radius, lastend, lastend + (Math.PI*2*(myData[i]/myTotal)), false);
-		ctx.lineTo(center_x, center_y);
-		ctx.fill();
-		
-		lastend += Math.PI*2*(myData[i]/myTotal);
-		
-		var y_dist = Math.sin(middle) * radius;
-		var x_dist = Math.cos(middle) * radius;
-		
-		// Calculando reta => y - center_y = m * (x - center_x)
-		var m = y_dist / x_dist;
-		
-		var d = 10;
-		var x0 = center_x + x_dist;
-		var y0 = center_y + y_dist;
-		var x, y;
-		if (x0 < center_x) {
-			x = x0 - d / Math.sqrt(m*m + 1);
-			y = y0 - (d * m) / Math.sqrt(m * m + 1);
-		} else {
-			x = x0 + d / Math.sqrt(m*m + 1);
-			y = y0 + (d * m) / Math.sqrt(m * m + 1);
-		}
-		
-		
-		ctx.beginPath();
-		ctx.moveTo(center_x + x_dist, center_y + y_dist);
-		ctx.lineTo(x, y);
-		ctx.stroke();
-		
-		ctx.save();
-		ctx.fillStyle = "#000";
-		ctx.rotate(Math.atan(m));
-		//ctx.beginPath();
-		ctx.font = "12px Arial";
-		//ctx.fillText("Testando", x, y );
-		ctx.fillRect(x, y, 10, 5);
-		ctx.restore();
-		
-	}
-}
-
-$(function () {
-	//plotData();
-});

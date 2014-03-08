@@ -50,7 +50,7 @@
 						 <img id="menutip1" src="img/menutip1.png" /> 
 						<div id="menu">
 							<a class="menuItem" href="http://www.unichat.com.br">Home</a>
-							<a class="menuItem" href="http://www.unichat.com.br">Estatísticas</a>
+							<a class="menuItem" href="http://www.unichat.com.br/statistics.php">Estatísticas</a>
 							<a class="menuItem" href="http://www.unichat.com.br/bug.php">Reportar Bugs</a>
 						</div>
 						<img id="menutip2" src="img/menutip2.png" /> 
