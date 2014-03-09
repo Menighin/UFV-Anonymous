@@ -42,7 +42,9 @@ var options = {
 	onAnimationComplete : null
 }
 
-var timerLineGraph = setInterval(updateUsers, 5000);
+if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+	var timerLineGraph = setInterval(updateUsers, 5000);
+}
 
 function updateUsers (animation) {
 	if (actualUni == -1) return;
@@ -66,8 +68,10 @@ function updateUsers (animation) {
 				lineData.labels.splice(0,1);
 			}
 			
-			var ctx = document.getElementById("specificLine").getContext("2d");
-			new Chart(ctx).Line(lineData, {scaleOverride : true, scaleSteps : 10,	scaleStepWidth : parseInt(lineData.max / 10 + 1), scaleStartValue : 0, animation: false});
+			if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+				var ctx = document.getElementById("specificLine").getContext("2d");
+				new Chart(ctx).Line(lineData, {scaleOverride : true, scaleSteps : 10,	scaleStepWidth : parseInt(lineData.max / 10 + 1), scaleStartValue : 0, animation: false});
+			}
 		}
 	});
 	
@@ -223,12 +227,14 @@ function showStatistics (uni) {
 			setInterval(function(){$(".graphLabels").fadeIn("slow");},1700);
 			
 			// Line graph
-			lineData.labels = ["-"];
-			lineData.datasets[0].data = [0];
-			var ctx = document.getElementById("specificLine").getContext("2d");
-			new Chart(ctx).Line(lineData, {scaleOverride : true, scaleSteps : 10,	scaleStepWidth : parseInt(lineData.max / 10 + 1), scaleStartValue : 0, animation: false});
-			
-			updateUsers();
+			if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+				lineData.labels = ["-"];
+				lineData.datasets[0].data = [0];
+				var ctx = document.getElementById("specificLine").getContext("2d");
+				new Chart(ctx).Line(lineData, {scaleOverride : true, scaleSteps : 10,	scaleStepWidth : parseInt(lineData.max / 10 + 1), scaleStartValue : 0, animation: false});
+				
+				updateUsers();
+			}
 			
 			$("#loadingUniversity").fadeOut("slow");
 			
