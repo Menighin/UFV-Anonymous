@@ -25,10 +25,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,6 +43,7 @@ import br.com.unichat.settings.Settings;
 public class Chat extends Activity {
 	
 	private EditText message;
+	private Button sendBtn;
 	private TextView talkingTo;
 	private String sendToRegId;
 	private Bundle extras;
@@ -56,6 +60,7 @@ public class Chat extends Activity {
 		setContentView(R.layout.activity_chat);
 		
 		message = (EditText) findViewById(R.id.message);
+		sendBtn = (Button) findViewById(R.id.send_btn);
 		talkingTo = (TextView) findViewById(R.id.talking_to);
 		adapter = new ConversationArrayAdapter(getApplicationContext(), R.layout.list_item_message);
 		conversation = (ListView) findViewById(R.id.list_messages);
@@ -82,7 +87,6 @@ public class Chat extends Activity {
 		}
 		
 		this.messageReceiver = new BroadcastReceiver() {
-
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				Bundle bundle = intent.getExtras();
@@ -123,6 +127,22 @@ public class Chat extends Activity {
 
 			}
 		};		
+		
+		// Changing the send button icon whenever the user starts typing
+		message.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (message.getText().length() > 0)
+					sendBtn.setBackgroundResource(R.drawable.send_btn);
+				else
+					sendBtn.setBackgroundResource(R.drawable.send_off);
+			}
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			@Override
+			public void afterTextChanged(Editable s) {}
+		});
+		
 	}
 	
 	@Override

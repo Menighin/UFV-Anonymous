@@ -55,7 +55,7 @@
 	            android:id="@+id/send_btn"
 	            android:layout_width="30dp"
 	            android:layout_height="30dp"
-	            android:background="@drawable/send_btn"
+	            android:background="@drawable/send_off"
 	            android:layout_marginLeft="10dp"
 	            android:onClick="sendMessage" />
 	        
