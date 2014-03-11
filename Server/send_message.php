@@ -34,7 +34,7 @@ header("Content-Type: application/json; charset=utf-8");
 			// Closing conversation whenever one leaves
 			if (strcmp($_POST['message'], "[fechaOChatUniChat]") == 0)
 				try {
-					$stmt = $conn->prepare("UPDATE conversations SET ready = 1 WHERE id = :id");
+					$stmt = $conn->prepare("UPDATE conversations SET ready = 1, finished = 1 WHERE id = :id");
 					$stmt->execute(array(':id' => $_POST['conversation_id']));
 				} catch (Exception $e) {
 					echo json_encode(array('response' => -1));

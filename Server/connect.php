@@ -36,12 +36,46 @@
 	}
 	// User authenticated
 	else {
+	
+		// Close other conversations the user may be into
+		$query = "SELECT id, user1, user2, regId1, regId2 FROM conversations 
+			WHERE ready = 1 AND finished = 0 AND (user1 = '" . $_POST['user'] . "' OR user2 = '" . $_POST['user'] . "')";
+		
+		try {
+			$stmt = $conn->prepare($query);
+			$stmt->execute();
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			echo json_encode(array('response' => -1));
+			$conn = $database->disconnect();
+			exit(1);
+		}
+		
+		$result = $stmt->fetchAll();
+		
+		if (count($result) > 0) {
+			include_once './GCM.php';
+			$gcm = new GCM();
+			$registration_ids = array();
+			
+			foreach ($result as $row) {
+				$regId = ($row['user1'] == $_POST['user']) ? $row['regId2'] : $row['regId1'];
+				array_push($registration_ids, $regId);
+				$conn->query("UPDATE conversations SET finished = 1 WHERE id = '" . $row['id'] . "'");
+			}
+			
+			$message = array("message" => "[fechaOChatUniChat]");
+		 
+			$result = $gcm->send_notification($registration_ids, $message);
+		}
+		
+		
+		// Prepare query to select avaiable conversations
 		if ($_POST['wantscourse'] == -1)
 			$wantscourse = null;
 		else
 			$wantscourse = $_POST['wantscourse'];
 		
-		// Prepare query
 		$query = "SELECT C.id, 
 					U1.id AS u1id, U1.username AS user1, U1.sex AS u1sex, U1.course AS u1course, U1.university AS u1university, U1.special AS u1special,
 					C.u1wantssex, C.u1wantscourse, C.ready, C.regId1, C.participants
@@ -74,7 +108,7 @@
 			exit(1);
 		}
 		
-		// Execute it
+		// Fetch results
 		$result = $stmt->fetchAll();
 		 
 		// Check if there is open conversations
