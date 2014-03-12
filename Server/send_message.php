@@ -23,10 +23,10 @@ header("Content-Type: application/json; charset=utf-8");
 			 
 			$gcm = new GCM();
 		 
-			$registatoin_ids = array($regId);
+			$registration_ids = array($regId);
 			$message = array("message" => $message);
 		 
-			$result = $gcm->send_notification($registatoin_ids, $message);
+			$result = $gcm->send_notification($registration_ids, $message);
 			
 			// Update user last seen
 			$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");

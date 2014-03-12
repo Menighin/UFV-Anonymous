@@ -36,6 +36,9 @@
 	}
 	// User authenticated
 	else {
+		
+		// Update user last seen
+		$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");
 	
 		// Close other conversations the user may be into
 		$query = "SELECT id, user1, user2, regId1, regId2 FROM conversations 
@@ -68,7 +71,6 @@
 		 
 			$result = $gcm->send_notification($registration_ids, $message);
 		}
-		
 		
 		// Prepare query to select avaiable conversations
 		if ($_POST['wantscourse'] == -1)
@@ -151,9 +153,9 @@
 			 
 				$gcm = new GCM();
 			 
-				$registatoin_ids = array($result[$random]['regId1']);
+				$registration_ids = array($result[$random]['regId1']);
 			 
-				$gcm->send_notification($registatoin_ids, $json);
+				$gcm->send_notification($registration_ids, $json);
 				
 			} catch (Exception $e) {
 				//echo $e->getMessage();
