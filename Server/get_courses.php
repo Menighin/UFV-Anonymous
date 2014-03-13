@@ -33,6 +33,9 @@
 		try {
 			$stmt = $conn->prepare('SELECT * FROM courses WHERE university_id = (SELECT university FROM users WHERE id = :id) ORDER BY name');
 			$stmt->execute(array(':id' => $_POST['user']));
+			
+			// Update user last seen
+			$conn->query("UPDATE users SET last_seen = NOW() WHERE id = '" . $_POST['user'] . "'");
 		} catch (Exception $e) {
 			echo json_encode (array('response' => -1));
 			Log::writeLog("Erro na validação em GET_COURSES: " . $e->getMessage());

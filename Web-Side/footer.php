@@ -1,5 +1,5 @@
 			<footer>
-				UniChat 2013. Todos os direitos reservados.
+				UniChat 2014. Todos os direitos reservados.
 			</footer>
 			<!-- <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
                 <ins class="adsbygoogle"

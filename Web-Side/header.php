@@ -8,7 +8,7 @@
 	<head>
 		<title>UniChat</title>
 		<link rel="stylesheet" href="css/style.css">
-		<link rel="icon" type="image/png" href="img/favicon.gif">
+		<link rel="shortcut icon" type="image/gif" href="img/favicon.gif?v=2">
 		<script type="text/JavaScript" src="js/jquery.js"></script> 
 		<script type="text/JavaScript" src="js/script.js"></script> 
 		<meta charset="utf-8">

@@ -8,18 +8,18 @@
 			<script type="text/JavaScript" src="js/Chart.js"></script> 
 			<script type="text/JavaScript" src="js/statistics.js"></script> 
 			<section id="contentWrapper">
-				<div id="content" style="text-align: center; display: inline-block;">
+				<div id="contentStatistics" style="text-align: center; display: inline-block; min-width: 500px;">
 					<h2> Estátisticas Gerais </h2><br/>
 					<div id="generalCharts">
 						<div class="pieChart">
 							<h3>Usuários por universidade</h3><br />
-							<canvas style="display: block;" id="generalUni" width="300" height="300">Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
-							<canvas class="graphLabels" style="display: none;" id="generalUniLabels" width="300" >Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
+							<canvas style="display: block;" id="generalUni" width="250" height="250">Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
+							<canvas class="graphLabels" style="display: none;" id="generalUniLabels" width="250" >Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
 						</div>
 						<div class="pieChart">
 							<h3>Guerra dos sexos</h3><br />
-							<canvas style="display: block;" id="generalSex" width="300" height="300">Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
-							<canvas class="graphLabels" style="display: none;" id="generalSexLabels" width="300" >Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
+							<canvas style="display: block;" id="generalSex" width="250" height="250">Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
+							<canvas class="graphLabels" style="display: none;" id="generalSexLabels" width="250" >Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
 						</div>
 					</div>
 					<br/><h2> Estátisticas por Universidade </h2><br/>
@@ -59,7 +59,7 @@
 							<canvas style="display: block;" id="specificBars" width="500" height="400">Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>
 							<ul id="barsButtons"></ul>
 						</div><br /><br />
-						<div id="SpeciicPieChart">
+						<div id="SpecificPieChart">
 							<h3>Guerra dos sexos</h3><br />
 							<canvas id="specificSex" width="300" height="300">Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas><br/>
 							<canvas class="graphLabels" style="display: none;" id="specificSexLabels" width="300" >Somente navegadores que suportam HTML5 conseguem visualizar este conteúdo</canvas>

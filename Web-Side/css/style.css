@@ -19,9 +19,10 @@
 }
 
 h1 {
-	font-family: CaviarDreams;
+	font-family: Sans-serif;
 	color: #d74c4c;
 	font-size: 35px;
+	font-weight: 200
 }
 
 p {
@@ -166,11 +167,18 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 @-webkit-keyframes spaceboots {
-	0% { -webkit-transform: rotate(0deg); }
-	10% { -webkit-transform: rotate(-2deg); }
-	20% { -webkit-transform: rotate(2deg); }
+	0% { -webkit-transform: translate(0px); }
+	10% { -webkit-transform: translate(-2px); }
+	20% { -webkit-transform: translate(2px); }
+	30% { -webkit-transform: translate(2px); }
+	40% { -webkit-transform: translate(-2px); }
+	50% { -webkit-transform: translate(0px); }
+	100% { -webkit-transform: translate(0px)); }
+	/*0% { -webkit-transform: rotate(0deg); }
+	10% { -webkit-transform: rotate(-4deg); }
+	20% { -webkit-transform: rotate(4deg); }
 	30% { -webkit-transform: rotate(0deg); }
-	100% { -webkit-transform: rotate(0deg); }
+	100% { -webkit-transform: rotate(0deg); }*/
 	/*0% { -webkit-transform: translate(2px, 1px) rotate(0deg); }
 	10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); }
 	20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); }
@@ -348,47 +356,33 @@ input[type=text]:focus, input[type=password]:focus {
 	text-align: center;
 	margin: 0 auto;
 	padding: 20px;
-	padding-bottom: 30px;
+	padding-bottom: 40px;
 	border-bottom: 1px rgba(255, 255, 255, 0.3) dotted;
 }
 
 #downloadContent span {
 	display: block;
 	margin-bottom: 10px;
-	color: white;
+	color: #ddd;
 	font-size: 12px;
 }
 
-#downloadPago, #downloadFree {
-	width: 162px;
-	height: 37px;
-	margin: 0 auto;
-	display: block;
-	float: left;
+#downloadImg {
+	opacity: 0.90;
 }
 
-#downloadPago {
-	float: left;
-	opacity: 0.85;
-}
-
-#downloadPago:hover, #downloadFree:hover {
+#downloadImg:hover {
 	opacity: 1.0;
-}
-
-#downloadFree {
-	opacity: 0.85;
-	float: right;
 }
 
 #activeUsers {
 	clear: both;
-	padding: 10px;
+	padding: 0 10px 10px 10px;
 	font-weight: bold;
 	color: #84ba4a;
 }
 
-#content {
+#content, #contentStatistics {
 	width: 95.416667%;
 	background-color: #fff;
 	margin: 0 auto;
@@ -407,10 +401,28 @@ input[type=text]:focus, input[type=password]:focus {
 	width: 84%;
 	margin: 0 auto;
 	padding-top: 650px;
+	padding-bottom: 20px;
 }
 
 .faqItem {
 	margin: 20px 0;
+}
+
+#parceiros {
+	text-align: center;
+	width: 85%;
+	padding-top: 20px;
+	border-top: 1px solid #ddd;
+	margin: 0 auto;
+	min-height: 50px;
+}
+
+#parceiros h4 {
+	color: #999;
+}
+
+.parceiro {
+	margin: 0 10px;
 }
 
 /* REGISTER PAGE *********************************************************/
@@ -502,12 +514,12 @@ footer {
 #generalCharts {
 	padding: 0 50px;
 	display: inline-block;
+	text-align: center;
 }
 
 .pieChart {
-	display: block;
-	width: 300px;
-	float: left;
+	display: inline-block;
+	width: 250px;
 	text-align: center;
 	margin: 0 43px;
 }
@@ -570,7 +582,7 @@ footer {
 
 /**************** RESPONSIVE **/
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1368px) {
 	#wrapper {
 		max-width: 800px;
 		min-width: 750px;
@@ -623,6 +635,10 @@ footer {
 		display:inline-block;
 		width:250px;
 		height:50px
+	}
+	
+	.pieChart {
+		margin: 0 30px;
 	}
 }
 
@@ -747,37 +763,23 @@ footer {
 	}
 	
 	#downloadContent {
-		width: 320px;
-		height: 70px;
+		width: 200px;
+		height: 60px;
 		text-align: center;
 		margin: 0 auto;
 		padding: 20px;
-		padding-bottom: 30px;
+		padding-bottom: 40px;
 		border-bottom: 1px rgba(255, 255, 255, 0.3) dotted;
 	}
 	
-	#downloadPago, #downloadFree, #downloadPago img, #downloadFree img {
-		width: 101px;
-		height: 23px;
-	}
-	
-	#downloadPago {
-		position: relative;
-		left: 54px;
-	}
-	
-	#downloadFree {
-		position: relative;
-		right: 54px;
-	}
-	
-	#downloadContent {
-		height: 60px;
+	#downloadImg img {
+		width: 175px;
+		height: 31px;
 	}
 	
 	#activeUsers {
 		clear: both;
-		padding: 10px;
+		padding: 0 10px 10px 10px;
 		font-weight: bold;
 		color: #84ba4a;
 		font-size: 12px;

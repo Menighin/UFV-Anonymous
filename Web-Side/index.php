@@ -7,9 +7,8 @@
 				<img id="slidetip2" src="img/home/slidetip2.png" />
 				<div id="slide">
 					<div id="downloadContent">
-						<span>DOWNLOAD</span>
-						<a id="downloadPago" href="http://www.google.com.br"><img src="img/home/downloadpagohover.png" /> </a>
-						<a id="downloadFree" href="http://www.google.com.br"><img src="img/home/downloadfreehover.png" /></a>
+						<span>Baixar</span>
+						<a id="downloadImg" href="http://www.google.com.br"><img src="img/home/download.png" /> </a>
 						<?php include "server/retrieveActiveUsers.php" ?>
 					</div>
 					<div id="slideshow">
@@ -82,6 +81,13 @@
 							é simples e objetiva, com poucos toques você já estará conectado a um estranho anônimo e pronto pra conversar.
 							</p>
 						</div>
+					</div>
+					<div id="parceiros">
+						<h4>Parceiros</h4> <br />
+						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
 					</div>
 				</div>
 			</section>
