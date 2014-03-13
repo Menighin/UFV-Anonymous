@@ -6,9 +6,17 @@
 	
 	include "Database.class.php";
 	include "Validate.class.php";
-	include "Log.class.php";
 	$database = new Database();
 	$conn = $database->connect();
+	
+	class Log {
+		public static function writeLog($message) {
+			
+			$timestamp = "[" . date("H:i:s") . "] ";
+			file_put_contents ("logs/" . date("Y-m-d"). ".txt", $timestamp . $message . "\n", FILE_APPEND);
+			
+		}
+	}
 	
 	// Selecting all running conversations
 	$query = "SELECT C.id, C.regId1, U1.last_seen AS lastSeen1, C.regId2, U2.last_seen AS lastSeen2 FROM conversations C 
