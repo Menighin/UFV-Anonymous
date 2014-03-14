@@ -69,11 +69,10 @@ public class Chat extends Activity {
 		handler = new Handler(new Handler.Callback() { 
 			@Override
 			public boolean handleMessage (android.os.Message msg) { 
-				adapter.updateTime(msg.what, msg.obj.toString());
+				adapter.updateMessageStatus(msg.what);
 				return true;
 			} 
 		});
-		
 		
 		// Solving if the activity is either a client or server type
 		extras = getIntent().getExtras();
@@ -86,6 +85,7 @@ public class Chat extends Activity {
 			sendToRegId = extras.getString("sendToRegId");
 		}
 		
+		// Dealing with received message
 		this.messageReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
@@ -154,7 +154,7 @@ public class Chat extends Activity {
 	// Function called when user hit the send button on screen
 	public void sendMessage (View v) {
 		if (message.getText().length() > 0) {
-			Message msg = new Message(false, message.getText().toString(), "");
+			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5));
 			adapter.add(msg);
 			Integer lastMsg = adapter.getItem(msg);
 			
@@ -185,12 +185,9 @@ public class Chat extends Activity {
 		        	URL url = new URL(Settings.API_URL + "/send_message");
 		    	    JSONObject json = new JSONObject(POSTConnection (params[0], url));
 		    	    
-		    	    Log.i("SEND_MESSAGE", json.toString());
-		    	    
 		    	    if (Integer.parseInt(params[1]) != -1) {
 			    	    android.os.Message msg = new android.os.Message();
 			    	    msg.what = Integer.parseInt(params[1]);
-			    	    msg.obj = json.getString("time");
 			    	    handler.sendMessage(msg);
 		    	    }
 		    	    

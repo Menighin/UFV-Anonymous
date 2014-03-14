@@ -182,17 +182,24 @@ public class Login extends Activity {
 		
 	    //Set new global user and settings
 	    if (json.getInt("response") == 1 || json.getInt("response") == -2) {
-	    	//Get GCM Registration key
-		    String registrationId = googleCloud.register(Settings.PROJECT_NUMBER);
-		    
-			Log.i("Informações do GCM", registrationId);
-	    	Settings.me = new User (
-	    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), 
-	    			json.getString("sex"), json.getInt("universityID"), json.getString("apikey"), registrationId);
-	    	Settings.APP_VERSION = packageInfo.versionCode;
-	    	SaveSharedPreferences.createPreferences(
-	    			Login.this, true, json.getString("username"), json.getInt("id"), json.getInt("courseID"), 
-	    			json.getInt("universityID"), json.getString("sex"), json.getString("apikey"), registrationId, packageInfo.versionCode);
+	    	try {
+		    	//Get GCM Registration key
+			    String registrationId = googleCloud.register(Settings.PROJECT_NUMBER);
+			    
+				Log.i("Informações do GCM", registrationId);
+		    	Settings.me = new User (
+		    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), 
+		    			json.getString("sex"), json.getInt("universityID"), json.getString("apikey"), registrationId);
+		    	Settings.APP_VERSION = packageInfo.versionCode;
+		    	SaveSharedPreferences.createPreferences(
+		    			Login.this, true, json.getString("username"), json.getInt("id"), json.getInt("courseID"), 
+		    			json.getInt("universityID"), json.getString("sex"), json.getString("apikey"), registrationId, packageInfo.versionCode);
+		    	
+		    	Log.i("LOGIN", "SALVOU PREFERENCIS");
+	    	} catch (Exception e) {
+	    		Log.e("LOGIN", "Erro ao salvar preferenias");
+	    	}
+	    	
 	    }
 	    return json.getInt("response");
 	    

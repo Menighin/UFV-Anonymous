@@ -136,7 +136,7 @@ public class MainMenu extends Activity {
 							"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey()
 							+ "&regId=" + Settings.me.getGCMRegisterKey();
 					URL url = new URL(Settings.API_URL + "/connect");
-				    
+					
 					String res = POSTConnection(urlParameters, url);
 				    JSONObject json = new JSONObject(res);
 				    
@@ -157,7 +157,7 @@ public class MainMenu extends Activity {
 				    return json.getInt("response");
 		        } catch (Exception e) {
 		        	Log.e("doConnectException", e.toString());
-		        	return -1;
+		        	return -3;
 		        }
 		    } else {
 		    	return -3;
@@ -174,7 +174,7 @@ public class MainMenu extends Activity {
 			} else if (result == -2) {
 				Toast.makeText(MainMenu.this, "Chave inválida para usuário. Esse usuário fez login em outro aparelho.", Toast.LENGTH_LONG).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Ou a net caiu ou tá ruim pra caramba... Tenta denovo...", Toast.LENGTH_SHORT).show();
 			}
 			connectBtn.setEnabled(true);
 			backActivated = true;

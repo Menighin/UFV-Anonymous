@@ -10,15 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import br.com.unichat.activities.R;
 
 public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 	
 	private TextView messageView;
 	private TextView timeView;
+	private TextView confView;
+	private LinearLayout timeConfView;
 	private List<Message> messages = new ArrayList<Message>();
 	private WindowManager wm;
 	private Display display;
@@ -50,6 +52,11 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 		timeView = (TextView) row.findViewById(R.id.time);
 		timeView.setText(message.time);
 		
+		confView = (TextView) row.findViewById(R.id.confirmation);
+		confView.setText(message.conf);
+		
+		timeConfView = (LinearLayout) row.findViewById(R.id.timeConfWrapper);
+		
 		messageView.setMaxWidth(display.getWidth() - (30*display.getWidth()/100));
 		
 		if (message.left) {
@@ -67,8 +74,10 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.RIGHT_OF, R.id.message);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
-			timeView.setLayoutParams(params);
-			timeView.setPadding((int)(10 * context.getResources().getDisplayMetrics().density), 0, 0, 0);
+			timeConfView.setLayoutParams(params);
+			timeConfView.setPadding((int)(10 * context.getResources().getDisplayMetrics().density), 0, 0, 0);
+			
+			confView.setVisibility(TextView.INVISIBLE);
 			
 		} else {
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -85,10 +94,10 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.LEFT_OF, R.id.message);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
-			timeView.setLayoutParams(params);
-			timeView.setPadding(0, 0, (int)(10 * context.getResources().getDisplayMetrics().density), 0);
+			timeConfView.setLayoutParams(params);
+			timeConfView.setPadding(0, 0, (int)(10 * context.getResources().getDisplayMetrics().density), 0);
 			
-			
+			confView.setVisibility(TextView.VISIBLE);
 		}
 		
 		return row;
@@ -102,8 +111,8 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 		return this.messages.indexOf(m);
 	}
 	
-	public void updateTime (int i, String time) {
-		messages.get(i).time = time;
+	public void updateMessageStatus (int i) {
+		messages.get(i).conf = "✓";
 		Message msg = messages.get(i);
 		messages.remove(msg);
 		super.remove(msg);
