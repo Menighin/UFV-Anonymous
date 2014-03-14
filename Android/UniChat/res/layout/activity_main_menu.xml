@@ -7,9 +7,9 @@
     tools:context=".MainMenu" >
 	
     <ScrollView
-        android:layout_width="match_parent"
-    	android:layout_height="match_parent"
-    	android:fillViewport="true">
+        android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:layout_marginBottom="50dp">
     
 	    <LinearLayout 
 	        android:layout_width="match_parent"
@@ -127,12 +127,12 @@
     </ScrollView>
     
     <com.google.android.gms.ads.AdView
-       android:id="@+id/adView"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       ads:adSize="BANNER"
-       android:layout_alignParentBottom="true"
-       ads:adUnitId="@string/ad_unit_id" />
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/ad_unit_id" />
 
 </RelativeLayout>
 
