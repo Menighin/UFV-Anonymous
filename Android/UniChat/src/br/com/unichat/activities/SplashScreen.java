@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,13 +22,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 import br.com.unichat.classes.SaveSharedPreferences;
 import br.com.unichat.settings.Settings;
-
-import br.com.unichat.activities.R;
 
 /*
  * Activity que mostra a tela inicial do aplicativo. O tempo est� definido na classe Settings.java
@@ -40,6 +39,8 @@ public class SplashScreen extends Activity {
 	private Handler hand;
 	private Runnable r;
 	private Intent i;
+	private Button retryBtn;
+	private boolean retryActive = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,8 @@ public class SplashScreen extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_splash_screen);
+		
+		retryBtn = (Button) findViewById(R.id.retry_btn);
 		
 		hand = new Handler();
 		r = new Runnable () {
@@ -67,6 +70,12 @@ public class SplashScreen extends Activity {
     		new GetCoursesAsync().execute();
     	} else
     		hand.postDelayed(r, Settings.SPLASH_TIME);
+	}
+	
+	// Retry connection button clicked
+	public void retryConnect (View v) {
+		retryBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.retry_pressed, 0, 0);
+		new GetCoursesAsync().execute();
 	}
 	
 	
@@ -132,6 +141,14 @@ public class SplashScreen extends Activity {
 			} else if (result == -3) {
 				Toast.makeText(SplashScreen.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
 			}
+			
+			// Activating retry button
+			if (result == -3 || result == -1)
+				if (!retryActive) {
+					retryActive = true;
+					retryBtn.setVisibility(Button.VISIBLE);
+				} else
+					retryBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.retry, 0, 0);
 		}
 	}
 	
