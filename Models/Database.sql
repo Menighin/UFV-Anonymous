@@ -2,28 +2,28 @@ CREATE DATABASE `unichat` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `unichat`;
 
 CREATE TABLE IF NOT EXISTS universities (
-	id INTEGER AUTO_INCREMENT,
+	id INTEGER AUTO_INCREMENT UNIQUE,
 	name VARCHAR(100) NOT NULL,
 	acronym VARCHAR (15) NOT NULL,
 	email VARCHAR(50) NOT NULL,
-CONSTRAINT PK_universities PRIMARY KEY(id, name)
+CONSTRAINT PK_universities PRIMARY KEY(name)
 );
 
 CREATE TABLE IF NOT EXISTS courses (
-	id INTEGER AUTO_INCREMENT,
+	id INTEGER AUTO_INCREMENT UNIQUE,
 	university_id INTEGER NOT NULL,
 	name VARCHAR(40) NOT NULL,
 	acronym VARCHAR (15) NOT NULL,
-CONSTRAINT PK_courses PRIMARY KEY (id, name),
+CONSTRAINT PK_courses PRIMARY KEY (name),
 CONSTRAINT FK_courses FOREIGN KEY (university_id) REFERENCES universities (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS users (
-	id INTEGER AUTO_INCREMENT,
+	id INTEGER AUTO_INCREMENT UNIQUE,
 	username VARCHAR(25) NOT NULL,
 	password VARCHAR(40) NOT NULL,
 	api_key VARCHAR(50) NOT NULL,
-	email VARCHAR(60) NOT NULL,
+	email VARCHAR(60) NOT NULL UNIQUE,
 	sex SET('m', 'f') NOT NULL,
 	university INTEGER NOT NULL,
 	course INTEGER NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS users (
 	last_seen DATETIME DEFAULT NULL,
 	logged TINYINT(1) DEFAULT 0,
 	special TINYINT(1) DEFAULT 0,
-CONSTRAINT PK_users PRIMARY KEY (id, username, email),
+CONSTRAINT PK_users PRIMARY KEY (username),
 CONSTRAINT FK_users_University FOREIGN KEY (university) REFERENCES universities (id),
 CONSTRAINT FK_users_Cousers FOREIGN KEY (course) REFERENCES courses (id)
 );
@@ -43,9 +43,12 @@ CREATE TABLE IF NOT EXISTS conversations (
 	user2 INTEGER DEFAULT NULL,
 	u1wantssex SET('m','f','w') NOT NULL,
 	u1wantscourse INTEGER NULL,
+	regId1 VARCHAR(200) NULL,
+	regId2 VARCHAR(200) NULL,
 	ready TINYINT(1) NOT NULL,
 	participants INTEGER NOT NULL,
 	started_on DATETIME NOT NULL,
+	finished TINYINT(1) DEFAULT 0,
 CONSTRAINT PK_conversations PRIMARY KEY (id),
 CONSTRAINT FK_conversations_users_1 FOREIGN KEY (user1) REFERENCES users (id),
 CONSTRAINT FK_conversations_users_2 FOREIGN KEY (user2) REFERENCES users (id),
