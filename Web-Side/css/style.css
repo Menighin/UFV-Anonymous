@@ -35,7 +35,9 @@ p {
 
 body {
 	background: url('../img/back.jpg') repeat;
+	background-attachment: fixed;
 	padding: 0 28px;
+	
 }
 
 form{
@@ -408,8 +410,7 @@ input[type=text]:focus, input[type=password]:focus {
 	margin: 20px 0;
 }
 
-#parceiros {
-	text-align: center;
+#bottomIndex {
 	width: 85%;
 	padding-top: 20px;
 	border-top: 1px solid #ddd;
@@ -417,8 +418,18 @@ input[type=text]:focus, input[type=password]:focus {
 	min-height: 50px;
 }
 
-#parceiros h4 {
+#bottomIndex h4 {
 	color: #999;
+}
+
+#facebook {
+	width: 230px;
+	display: inline-block;
+}
+
+#parceiros {
+	width: 60%;
+	display: inline-block;
 }
 
 .parceiro {
@@ -807,6 +818,10 @@ footer {
 	
 	input[name=email] {
 		width: 90px;
+	}
+	
+	#parceiros {
+		width: 95%;
 	}
 	
 }

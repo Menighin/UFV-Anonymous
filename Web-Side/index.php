@@ -1,14 +1,24 @@
 <?php
 	include "header.php";
 ?>
-
+			
+			<div id="fb-root"></div>
+			<script>(function(d, s, id) {
+			  var js, fjs = d.getElementsByTagName(s)[0];
+			  if (d.getElementById(id)) return;
+			  js = d.createElement(s); js.id = id;
+			  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=395956050472783";
+			  fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));</script>
+			
+			
 			<section id="contentWrapper">
 				<img id="slidetip1" src="img/home/slidetip1.png" />
 				<img id="slidetip2" src="img/home/slidetip2.png" />
 				<div id="slide">
 					<div id="downloadContent">
 						<span>Baixar</span>
-						<a id="downloadImg" href="http://www.google.com.br"><img src="img/home/download.png" /> </a>
+						<a id="downloadImg" href="https://play.google.com/store/apps/details?id=br.com.unichat.activities" target="_blank"><img src="img/home/download.png" /> </a>
 						<?php include "server/retrieveActiveUsers.php" ?>
 					</div>
 					<div id="slideshow">
@@ -38,7 +48,7 @@
 							<li>
 								<div class="slideInfo">
 									<div class="slideTitle">
-										<a href="www.google.com.br">Baixe o UniChat</a>
+										<a href="https://play.google.com/store/apps/details?id=br.com.unichat.activities" target="_blank">Baixe o UniChat</a>
 									</div>
 									<div class="slideText">
 										Baixe o UniChat no seu smartphone através da Google Playstore
@@ -82,12 +92,17 @@
 							</p>
 						</div>
 					</div>
-					<div id="parceiros">
-						<h4>Parceiros</h4> <br />
-						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
-						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
-						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
-						<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+					<div id="bottomIndex">
+						<div id="facebook">
+							<div class="fb-like-box" data-href="https://www.facebook.com/Unichat" data-width="230" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="false" data-show-border="true"></div>
+						</div>
+						<!--<div id="parceiros">
+							<h4>Parceiros</h4> <br />
+							<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+							<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+							<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+							<a class="parceiro" href="http://www.google.com.br"><img src="img/home/parceiros/example.png" /> </a>
+						</div>-->
 					</div>
 				</div>
 			</section>
