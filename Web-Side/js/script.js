@@ -157,11 +157,13 @@ function activeRegister () {
 
 
 function checkUsername(input) {
+	var reg = /[^a-zA-Z0-9\.]/g;
+
 	if (input.value.length > 0 || validUsername) {
-		if (input.value.length < 5) {
+		if (input.value.length < 5 || input.value.search(reg) != -1) {
 			$(input).css("border", cssBorderInputDenied);
 			$(input).css("color", cssColorInputDenied);
-			$("#usernameMsg").html("Usuário deve ter mais que 5 caracteres");
+			$("#usernameMsg").html("Usuário deve ter mais que 5 caracteres e só pode conter letras, números e ponto");
 			validUsername = false;
 		} else {
 			$.ajax({
