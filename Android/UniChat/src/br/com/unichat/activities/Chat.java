@@ -283,7 +283,8 @@ public class Chat extends Activity {
 	@Override
 	public void onDestroy() {
 		if(isFinishing()) {
-			if (result_ok) {
+			// Only send a finish message if the other user didn't disconect first
+			if (result_ok && message.isEnabled()) {
 				try {
 					String urlParameters = "message=[fechaOChatUniChat]" + "&user=" + Settings.me.getUserID() 
 							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
