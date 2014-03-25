@@ -1,15 +1,33 @@
 <?php
+	include "Validate.class.php";
+	include "Log.class.php";
+	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
 	
-	include 'Log.class.php';
+	// Function to save image
+	function saveMobileAttachment($imageFile, $user)
+	{
+		$buffer = base64_decode($imageFile);
+		$fileName = date("H:i:s") . "_" . $user;
+
+		$file = fopen("images/".$fileName.".jpg", "wb");
+		fwrite($file, $buffer);
+		fclose($file);
+	}
 	
-	Log::writeLog("IMAGEM: " . $_FILES['uploaded_file']['name']);
+	// User not logged in
+	if (!$validate->isValid()) {
+		echo json_encode(array('response' => -2));
+	}
+	// User authenticated
+	else {
+		if (isset($_POST['file'])) {
+			saveMobileAttachment($_POST['file'], $_POST['user']);
+			Log::writeLog("Upload de imagem pelo user " . $_POST['user']);
+			echo json_encode(array('response' => 1));
+		} else {
+			Log::writeLog("ERRO no upload de imagem pelo user " . $_POST['user']);
+			echo json_encode(array('response' => -1));
+		}
+	}
 	
-    $file_path = "images/";
-     
-    $file_path = $file_path . basename( $_FILES['uploaded_file']['name']);
-    if(move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $file_path)) {
-        echo "success";
-    } else{
-        echo "fail";
-    }
- ?>
+?>

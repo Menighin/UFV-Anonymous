@@ -1,9 +1,9 @@
 package br.com.unichat.activities;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -13,28 +13,30 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
@@ -64,6 +66,7 @@ import android.widget.Toast;
 import br.com.unichat.classes.ConversationArrayAdapter;
 import br.com.unichat.classes.Message;
 import br.com.unichat.settings.Settings;
+import br.com.unichat.classes.Base64;
 
 public class Chat extends Activity {
 	
@@ -82,6 +85,7 @@ public class Chat extends Activity {
 	private Point p;
 	private PopupWindow popup;
 	private Uri imgUri;
+	private Bitmap bitmap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -326,18 +330,48 @@ public class Chat extends Activity {
                  Log.d("IMG SELECT", selectedImage.toString());
                  Log.d("IMG SELECT", oi);
                  
-                 new SendImageAsync().execute(oi);
+                 decodeFile (oi);
             
              }
          }
          else if (requestCode == 2) { // Request from camera
         	 if (resultCode == RESULT_OK) {
         		 Toast.makeText(this, "Show, fera: " + imgUri.getPath(), Toast.LENGTH_LONG).show();
-        		 new SendImageAsync().execute(imgUri.getPath());
+        		 decodeFile(imgUri.getPath());
         	 }
          }
      }
 	
+	 public void decodeFile(String filePath) {
+			// Decode image size
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(filePath, o);
+
+			// The new size we want to scale to
+			final int REQUIRED_SIZE = 1024;
+
+			// Find the correct scale value. It should be the power of 2.
+			int width_tmp = o.outWidth, height_tmp = o.outHeight;
+			int scale = 1;
+			while (true) {
+				if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
+					break;
+				width_tmp /= 2;
+				height_tmp /= 2;
+				scale *= 2;
+			}
+
+			// Decode with inSampleSize
+			BitmapFactory.Options o2 = new BitmapFactory.Options();
+			o2.inSampleSize = scale;
+			bitmap = BitmapFactory.decodeFile(filePath, o2);
+			
+			//TODO: Show image on message here
+			
+			// Upload to server
+			new SendImageAsync().execute();
+		}
 	
 	
 	// AsyncTask to send the message to server
@@ -385,29 +419,52 @@ public class Chat extends Activity {
 	
 	// AsyncTask to send the Image to the server
 	private class SendImageAsync extends AsyncTask<String, Void, Integer> {
+		private ProgressDialog dialog = new ProgressDialog(Chat.this);
+
+		@Override
+		protected void onPreExecute() {
+			dialog.setMessage("Uploading...");
+			dialog.show();
+		}
 		
 		@Override
 		protected Integer doInBackground (String... params) {
 			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		   
+			
+			String webAddressToPost = Settings.API_URL + "/up_image.php";
+			
+			
 			if (networkInfo != null && networkInfo.isConnected()) {
-		        try {
-		        	URL url = new URL("http://10.0.2.2/up_image.php");
-		    	    //JSONObject json = new JSONObject(sendImageToServer (params[0], url));
-		    	    String oi = sendImageToServer (params[0], url);
-		    	    if (Integer.parseInt(params[1]) != -1) {
-			    	    android.os.Message msg = new android.os.Message();
-			    	    msg.what = Integer.parseInt(params[1]);
-			    	    handler.sendMessage(msg);
-		    	    }
-		    	    
-		    	    return 1;
-		    	    //return json.getInt("response");
-		        } catch (Exception e) {
-		        	Log.e("SendMessageException", e.toString());
-		        	return -1;
-		        }
+				try {
+					HttpClient httpClient = new DefaultHttpClient();
+					HttpContext localContext = new BasicHttpContext();
+					HttpPost httpPost = new HttpPost(webAddressToPost);
+
+					MultipartEntity entity = new MultipartEntity(
+							HttpMultipartMode.BROWSER_COMPATIBLE);
+
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					bitmap.compress(CompressFormat.JPEG, 100, bos);
+					byte[] data = bos.toByteArray();
+					String file = Base64.encodeBytes(data);
+					entity.addPart("file", new StringBody(file));
+					entity.addPart("user", new StringBody(Settings.me.getUserID() + ""));
+					entity.addPart("api_key", new StringBody(URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")));
+
+					httpPost.setEntity(entity);
+					HttpResponse response = httpClient.execute(httpPost,
+							localContext);
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(
+									response.getEntity().getContent(), "UTF-8"));
+
+					String sResponse = reader.readLine();
+					return 1;
+				} catch (Exception e) {
+					Log.e("ERRO ERRO ERRO", e.toString());
+				}
+				return null;
 		    } else {
 		    	return -3;
 		    }
@@ -415,15 +472,9 @@ public class Chat extends Activity {
 		
 		@Override
 		protected void onPostExecute(Integer result) {
-			if (result == 1) {
-				Log.i("SEND MESAGE", "OK");
-			} else if (result == -1) {
-				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
-			} else if (result == -2) {
-				Toast.makeText(Chat.this, "Chave inválida para usuário. Talvez você logou em outro dispositivo?", Toast.LENGTH_SHORT).show();
-			} else if (result == -3) {
-				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
-			}
+			dialog.dismiss();
+			Toast.makeText(getApplicationContext(), "file uploaded",
+					Toast.LENGTH_LONG).show();
 		}
 	}
 	
@@ -458,130 +509,6 @@ public class Chat extends Activity {
 	    rd.close();
 	    
 	    return response.toString();
-	}
-	
-	private String sendImageToServer (String sourceFileUri, URL url) throws Exception {
-
-       /* DefaultHttpClient httpclient = new DefaultHttpClient();
-
-        HttpPost httppost = new HttpPost("http://10.0.2.2/up_image.php");
-        
-        File file = new File (sourceFileUri);
-
-        MultipartEntity mpEntity = new MultipartEntity(
-                HttpMultipartMode.BROWSER_COMPATIBLE);
-
-        mpEntity.addPart("form_file", new FileBody(file, "image/jpeg"));
-
-        httppost.setEntity(mpEntity);
-
-        HttpResponse response;
-        try {
-
-            response = httpclient.execute(httppost);
-
-            HttpEntity resEntity = response.getEntity();
-
-            if (resEntity != null) {
-
-            }
-            if (resEntity != null) {
-                resEntity.consumeContent();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-		
-		String fileName = sourceFileUri;
-		
-		Log.d("FILENAME ON ASYNC", fileName);
-		
-        HttpURLConnection conn = null;
-        DataOutputStream dos = null;  
-        String lineEnd = "\r\n";
-        String twoHyphens = "--";
-        String boundary = "*****";
-        int bytesRead, bytesAvailable, bufferSize;
-        byte[] buffer;
-        int maxBufferSize = 1 * 1024 * 1024; 
-        File sourceFile = new File(sourceFileUri);
-        int serverResponseCode = 0;
-        
-        if (!sourceFile.isFile())
-        	return "-4";
-        else {  
-               // open a URL connection to the Servlet
-               FileInputStream fileInputStream = new FileInputStream(sourceFile);
-                
-               // Open a HTTP  connection to  the URL
-               conn = (HttpURLConnection) url.openConnection(); 
-               conn.setDoInput(true); // Allow Inputs
-               conn.setDoOutput(true); // Allow Outputs
-               conn.setUseCaches(false); // Don't use a Cached Copy
-               conn.setRequestMethod("POST");
-               conn.setRequestProperty("Connection", "Keep-Alive");
-               conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-               conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-               conn.setRequestProperty("uploaded_file", fileName); 
-               
-               Log.d("OI", "oi");  
-               
-               dos = new DataOutputStream(conn.getOutputStream());
-      
-               dos.writeBytes(twoHyphens + boundary + lineEnd); 
-               dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
-                                         + fileName + "\"" + lineEnd);
-                
-               dos.writeBytes(lineEnd);
-      
-               // create a buffer of  maximum size
-               bytesAvailable = fileInputStream.available(); 
-      
-               bufferSize = Math.min(bytesAvailable, maxBufferSize);
-               buffer = new byte[bufferSize];
-               
-               // read file and write it into form...
-               bytesRead = fileInputStream.read(buffer, 0, bufferSize);  
-               
-               Log.d("OI", "oi2");  
-               
-               while (bytesRead > 0) {
-                 Log.d("BYTES", "oi");   
-                 dos.write(buffer, 0, bufferSize);
-                 bytesAvailable = fileInputStream.available();
-                 bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                 bytesRead = fileInputStream.read(buffer, 0, bufferSize);   
-                  
-                }
-      
-               // send multipart form data necesssary after file data...
-               dos.writeBytes(lineEnd);
-               dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-      
-               // Responses from the server (code and message)
-               serverResponseCode = conn.getResponseCode();
-               String serverResponseMessage = conn.getResponseMessage();
-                 
-               Log.i("uploadFile", "HTTP Response is : "
-                       + serverResponseMessage + ": " + serverResponseCode);
-                
-               if(serverResponseCode == 200){
-                    
-                   runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(Chat.this, "File Upload Complete.", 
-                                         Toast.LENGTH_SHORT).show();
-                        }
-                    });                
-               }    
-                
-               //close the streams //
-               fileInputStream.close();
-               dos.flush();
-               dos.close();
-        }
-		
-		return "1";
 	}
 	
 	@Override
