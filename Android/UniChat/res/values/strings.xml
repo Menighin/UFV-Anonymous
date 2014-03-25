@@ -25,11 +25,14 @@
     <string name="male_btn">Homem</string>
     <string name="connect_btn">Conectar!</string>
     <string name="title_activity_server">Server</string>
-
     
     <!-- Menu -->
     <string name="action_logout">Logout</string>
     
     <!--  Chat -->
     <string name="message_here">Escreva uma mensagem</string>
+    
+    <!-- Pop up menu -->
+    <string name="img_gallery">Galeria</string>
+    <string name="img_camera">Câmera</string>
 </resources>

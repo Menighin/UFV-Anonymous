@@ -41,6 +41,13 @@
         android:paddingBottom="5dp"
         android:background="@drawable/border_red">
 		
+            <Button
+	            android:id="@+id/img_btn"
+	            android:layout_width="30dp"
+	            android:layout_height="30dp"
+	            android:background="@drawable/img_off"
+	            android:layout_marginRight="10dp"
+	            android:onClick="showPopUp" />
             
 	        <EditText
 	            android:id="@+id/message"

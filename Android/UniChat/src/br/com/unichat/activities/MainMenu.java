@@ -108,14 +108,14 @@ public class MainMenu extends Activity {
 		}
 	}
 	
-	//Connect button clicked
+	// Connect button clicked
 	public void connect (View v) {
 		backActivated = false;
 		connectBtn.setEnabled(false);
 		new ConnectAsync().execute();
 	}
 	
-	//Logout text clicked
+	// Logout text clicked
 	public void logoutText (View v) {
 		logout.setTextColor(getResources().getColor(R.color.uniChatRed));
 		logout();

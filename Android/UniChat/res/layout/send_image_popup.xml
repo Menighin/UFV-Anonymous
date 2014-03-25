@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/popup"
+    android:background="@drawable/popup"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="horizontal" >	
+    <Button
+        android:id="@+id/img_gallery"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/img_gallery"
+        android:textSize="12sp"
+        android:textColor="@color/light_gray"
+        android:drawableTop="@drawable/gallery_btn"
+        android:drawablePadding="10dp"
+        android:background="@android:color/transparent"
+        android:layout_marginRight="20dp"
+        android:onClick="sendImageFromGallery" />
+	
+    <Button
+        android:id="@+id/img_camera"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/img_camera"
+        android:textSize="12sp"
+        android:textColor="@color/light_gray"
+        android:drawableTop="@drawable/camera_btn"
+        android:drawablePadding="10dp"
+        android:background="@android:color/transparent"
+        android:layout_marginRight="20dp"
+        android:onClick="sendImageFromCamera" />
+    
+</LinearLayout>

@@ -7,5 +7,6 @@
     <color name="background_color">#ddddee</color>
     <color name="uniChatRed">#d74d4d</color>
     <color name="uniChatGreen">#9bd35f</color>
+    <color name="popUp">#ffffff</color>
     
 </resources>
