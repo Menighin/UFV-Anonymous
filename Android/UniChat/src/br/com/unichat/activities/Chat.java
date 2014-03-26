@@ -307,36 +307,22 @@ public class Chat extends Activity {
          
          if (requestCode == 1) { // Request from gallery
              if (resultCode == RESULT_OK) {
-                 Uri selectedImage = data.getData();
-                 String oi = "oi";
-                 
-                 Cursor cursor = null;
-                 try { 
-                   String[] proj = { MediaStore.Images.Media.DATA };
-                   cursor = getContentResolver().query(selectedImage,  proj, null, null, null);
-                   int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                   cursor.moveToFirst();
-                   oi = cursor.getString(column_index);
-                   cursor.close();
-                 } finally {
-                   if (cursor != null) {
-                     cursor.close();
-                   }
-                 }
-                
-                 Toast.makeText(this, "Selecionada:\n" +
-                         oi, Toast.LENGTH_LONG).show();
-                 Log.d("IMG SELECT", selectedImage.getPath());
-                 Log.d("IMG SELECT", selectedImage.toString());
-                 Log.d("IMG SELECT", oi);
-                 
-                 decodeFile (oi);
-            
+            	Uri selectedImage = data.getData();
+     			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+     			Cursor cursor = getContentResolver().query(selectedImage,
+     					filePathColumn, null, null, null);
+     			cursor.moveToFirst();
+
+     			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+     			String picturePath = cursor.getString(columnIndex);
+     			cursor.close();
+
+     			decodeFile(picturePath);        
              }
          }
          else if (requestCode == 2) { // Request from camera
         	 if (resultCode == RESULT_OK) {
-        		 Toast.makeText(this, "Show, fera: " + imgUri.getPath(), Toast.LENGTH_LONG).show();
         		 decodeFile(imgUri.getPath());
         	 }
          }
@@ -423,7 +409,7 @@ public class Chat extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			dialog.setMessage("Uploading...");
+			dialog.setMessage("Enviando imagem...");
 			dialog.show();
 		}
 		
@@ -453,18 +439,23 @@ public class Chat extends Activity {
 					entity.addPart("api_key", new StringBody(URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")));
 
 					httpPost.setEntity(entity);
-					HttpResponse response = httpClient.execute(httpPost,
-							localContext);
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(
-									response.getEntity().getContent(), "UTF-8"));
-
+					HttpResponse response = httpClient.execute(httpPost, localContext);
+					BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+					
 					String sResponse = reader.readLine();
-					return 1;
+					
+					JSONObject json = new JSONObject(sResponse);
+					
+					String urlParameters = "message=[uniImg]" + json.getString("imgName") + "&user=" + Settings.me.getUserID() 
+							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
+					new SendMessageAsync().execute(urlParameters, "-1");
+					
+					return json.getInt("response");
+					
 				} catch (Exception e) {
-					Log.e("ERRO ERRO ERRO", e.toString());
+					Log.e("Erro em SendImageAsync", e.toString());
+					return -2;
 				}
-				return null;
 		    } else {
 		    	return -3;
 		    }
@@ -473,8 +464,15 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			dialog.dismiss();
-			Toast.makeText(getApplicationContext(), "file uploaded",
-					Toast.LENGTH_LONG).show();
+			if (result == 1) {
+				Toast.makeText(Chat.this, "Imagem enviada com sucesso", Toast.LENGTH_LONG).show();
+			} else if (result == -1) {
+				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_LONG).show();
+			} else if (result == -2) {
+				Toast.makeText(Chat.this, "Chave inválida para usuário. Talvez você logou em outro dispositivo?", Toast.LENGTH_LONG).show();
+			} else if (result == -3) {
+				Toast.makeText(Chat.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 	

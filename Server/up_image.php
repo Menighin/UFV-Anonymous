@@ -1,7 +1,11 @@
 <?php
 	include "Validate.class.php";
 	include "Log.class.php";
+	include "Database.class.php";
+	$database = new Database();
+	$conn = $database->connect();
 	$validate = new Validate($conn, $_POST['user'], $_POST['api_key']);
+	$conn = $database->disconnect();
 	
 	// Function to save image
 	function saveMobileAttachment($imageFile, $user)
