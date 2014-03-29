@@ -11,7 +11,7 @@
 	function saveMobileAttachment($imageFile, $user)
 	{
 		$buffer = base64_decode($imageFile);
-		$fileName = date("H_i_s") . "__" . $user;
+		$fileName = date("Y_m_d_H_i_s") . "__" . $user;
 
 		$file = fopen("images/".$fileName.".jpg", "wb");
 		fwrite($file, $buffer);
@@ -35,5 +35,4 @@
 			echo json_encode(array('response' => -1));
 		}
 	}
-	
 ?>
