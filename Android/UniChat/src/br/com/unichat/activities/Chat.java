@@ -30,6 +30,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -352,11 +353,13 @@ public class Chat extends Activity {
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
 			bitmap = BitmapFactory.decodeFile(filePath, o2);
-			
-			//TODO: Show image on message here
+						
+			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmap, filePath);
+			adapter.add(msg);
+			Integer lastMsg = adapter.getItem(msg);
 			
 			// Upload to server
-			new SendImageAsync().execute();
+			new SendImageAsync().execute(lastMsg.toString());
 		}
 	
 	
@@ -404,13 +407,27 @@ public class Chat extends Activity {
 	}	
 	
 	// AsyncTask to send the Image to the server
-	private class SendImageAsync extends AsyncTask<String, Void, Integer> {
+	private class SendImageAsync extends AsyncTask<String, Void, Integer> implements OnDismissListener {
 		private ProgressDialog dialog = new ProgressDialog(Chat.this);
-
+		private boolean cancelled = false;
+		
 		@Override
 		protected void onPreExecute() {
 			dialog.setMessage("Enviando imagem...");
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setCancelable(true);
+			dialog.setOnDismissListener(this);
 			dialog.show();
+		}
+		
+		public void onDismiss(DialogInterface dialog) {
+			cancelled = true;
+			Toast.makeText(Chat.this, "Envio cancelado", Toast.LENGTH_LONG).show();
+			this.cancel(true);
+		}
+		
+		protected void onCancelled() {
+			cancel(true);
 		}
 		
 		@Override
@@ -448,7 +465,8 @@ public class Chat extends Activity {
 					
 					String urlParameters = "message=[uniImg]" + json.getString("imgName") + "&user=" + Settings.me.getUserID() 
 							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
-					new SendMessageAsync().execute(urlParameters, "-1");
+					if (!cancelled)
+						new SendMessageAsync().execute(urlParameters, params[0]);
 					
 					return json.getInt("response");
 					
@@ -464,6 +482,7 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			dialog.dismiss();
+			popup.dismiss();
 			if (result == 1) {
 				Toast.makeText(Chat.this, "Imagem enviada com sucesso", Toast.LENGTH_LONG).show();
 			} else if (result == -1) {
