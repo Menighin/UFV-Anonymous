@@ -67,6 +67,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 		
 		imageView = (ImageView) row.findViewById(R.id.imageUploaded);
 		imageView.setOnTouchListener(null);
+		imageView.setBackgroundResource(message.left ? R.drawable.anonymous : R.drawable.me);
 		
 		messageView.setMaxWidth(display.getWidth() - (30*display.getWidth()/100));
 		imageView.setMaxWidth(display.getWidth() - (30*display.getWidth()/100));
@@ -77,6 +78,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
+			imageView.setLayoutParams(params);
 			
 			if (!message.image) {
 				messageView.setPadding(
@@ -96,9 +98,9 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			} else {
 				
 				imageView.setPadding(
-						(int)(5 * context.getResources().getDisplayMetrics().density),
+						(int)(10 * context.getResources().getDisplayMetrics().density),
 						(int)(5 * context.getResources().getDisplayMetrics().density), 
-						(int)(10 * context.getResources().getDisplayMetrics().density), 
+						(int)(5 * context.getResources().getDisplayMetrics().density), 
 						(int)(5 * context.getResources().getDisplayMetrics().density));
 				imageView.requestFocus();
 				
@@ -106,14 +108,27 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 				imageView.setVisibility(ImageView.VISIBLE);
 				
 				params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-				params.addRule(RelativeLayout.LEFT_OF, R.id.imageUploaded);
+				params.addRule(RelativeLayout.RIGHT_OF, R.id.imageUploaded);
 				params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 				timeConfView.setLayoutParams(params);
-				timeConfView.setPadding(0, 0, (int)(10 * context.getResources().getDisplayMetrics().density), 0);
+				timeConfView.setPadding((int)(10 * context.getResources().getDisplayMetrics().density), 0, 0, 0);
 				
 				imageView.setImageBitmap(message.bitImage);
+				imageView.setTag(message);
 				
-				//TODO: Set onTouchListener after getting image from server
+				imageView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Message messageForThisRow = (Message)v.getTag();
+						Uri imgUri = Uri.parse("file://" + messageForThisRow.imagePath);
+						Intent intent = new Intent(); 
+						intent.setAction(android.content.Intent.ACTION_VIEW);
+						intent.setData(imgUri);
+						intent.setDataAndType(imgUri, "image/*");
+						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						context.startActivity(intent);
+					}
+				});
 			}
 			
 			confView.setVisibility(TextView.INVISIBLE);
@@ -123,6 +138,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
+			imageView.setLayoutParams(params);
 			
 			if (!message.image) {
 				messageView.setPadding(
@@ -163,9 +179,9 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 				// Adding the eventListener
 				imageView.setTag(message);
 				
-				imageView.setOnTouchListener(new OnTouchListener() {
+				imageView.setOnClickListener(new OnClickListener() {
 					@Override
-					public boolean onTouch(View v, MotionEvent event) {
+					public void onClick(View v) {
 						Message messageForThisRow = (Message)v.getTag();
 						Uri imgUri = Uri.parse("file://" + messageForThisRow.imagePath);
 						Intent intent = new Intent(); 
@@ -174,7 +190,6 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 						intent.setDataAndType(imgUri, "image/*");
 						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						context.startActivity(intent);
-						return true;
 					}
 				});
 			}

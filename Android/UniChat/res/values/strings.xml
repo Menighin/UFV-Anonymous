@@ -30,7 +30,7 @@
     <string name="action_logout">Logout</string>
     
     <!--  Chat -->
-    <string name="message_here">Escreva uma mensagem</string>
+    <string name="message_here">Escreva aqui</string>
     
     <!-- Pop up menu -->
     <string name="img_gallery">Galeria</string>

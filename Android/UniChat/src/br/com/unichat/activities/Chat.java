@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,6 +32,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -80,8 +83,8 @@ public class Chat extends Activity {
 	private ListView conversation;
 	private ConversationArrayAdapter adapter;
 	private Handler handler;
-	private boolean result_ok = true;
 	private boolean connected = false;
+	private boolean waitingAnonymous = true;
 	private BroadcastReceiver messageReceiver;
 	private Point p;
 	private PopupWindow popup;
@@ -115,10 +118,14 @@ public class Chat extends Activity {
 		if (extras.getInt("type") == 0) {
 			talkingTo.setText("Esperando o anônimo(a) se conectar...");
 			message.setEnabled(false);
+			waitingAnonymous = true;
 		} else {
 			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
 			talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
 			sendToRegId = extras.getString("sendToRegId");
+			imgBtn.setEnabled(true);
+			connected = true;
+			waitingAnonymous = false;
 		}
 		
 		// Dealing with received message
@@ -138,6 +145,7 @@ public class Chat extends Activity {
 						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
 						message.setText("");
 						message.setEnabled(false);
+						connected = false;
 					} else if (messageJSON.getString("message").equals("[abreOChatUniChat]")) {
 						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 						v.vibrate(300);
@@ -146,7 +154,11 @@ public class Chat extends Activity {
 						talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
 						message.setEnabled(true);
 						connected = true;
+						imgBtn.setEnabled(true);
 						sendToRegId = messageJSON.getString("regId");
+					} else if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
+						
+						new GetImageAsync().execute(messageJSON.getString("message").substring(12));
 						
 					} else {
 						Date date = new Date();
@@ -155,7 +167,7 @@ public class Chat extends Activity {
 						adapter.add(message);
 					}
 				} catch (Exception e) {
-					Log.e("RECEIVE MESSAGE", "INVALID JSON");
+					Log.e("RECEIVE MESSAGE", "INVALID JSON:" + bundle.getString("message"));
 				}
 				
 				// Focus on last received message
@@ -195,12 +207,12 @@ public class Chat extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		
-		popup.dismiss();
+		if (popup != null)
+			popup.dismiss();
 	}
 	
 	// Function called when user hit the send button on screen
 	public void showPopUp (View v) {
-		
 		// Getting location of the popup window
 		int [] location = new int[2];
 		imgBtn.getLocationOnScreen(location);
@@ -208,27 +220,27 @@ public class Chat extends Activity {
  	    p.x = location[0];
 	    p.y = location[1];
 		
-		int popupWidth = 300;
-		int popupHeight = 200;
+		int popupWidth = (int) (150 * getResources().getDisplayMetrics().density);
+		int popupHeight = (int)(100 * getResources().getDisplayMetrics().density);
 		
 		// Changing button icon
 		imgBtn.setBackgroundResource(R.drawable.img_on);
 
 		// Inflate the popup_layout.xml
-		LinearLayout viewGroup = (LinearLayout) findViewById(R.id.popup);
-		LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LinearLayout viewGroup = (LinearLayout) Chat.this.findViewById(R.id.popup);
+		LayoutInflater layoutInflater = (LayoutInflater)Chat.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View layout = layoutInflater.inflate(R.layout.send_image_popup, viewGroup);
-		
+
 		// Creating the PopupWindow
-		popup = new PopupWindow();
+		popup = new PopupWindow(Chat.this);
 		popup.setContentView(layout);
 		popup.setWidth(popupWidth);
 		popup.setHeight(popupHeight);
 		popup.setFocusable(true);
-		 
+		
 		// Some offset to align the popup a bit to the right, and a bit down, relative to button's position.
-		int OFFSET_X = 1;
-		int OFFSET_Y = 30;
+		int OFFSET_X = (int)(1 * getResources().getDisplayMetrics().density);
+		int OFFSET_Y = (int)(15 * getResources().getDisplayMetrics().density);
 		 
 		popup.setBackgroundDrawable(new BitmapDrawable());
 		
@@ -289,13 +301,10 @@ public class Chat extends Activity {
 		
 		// Create file itself
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		Log.d("DATA", timeStamp);
 		
 		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
 		
-		
 		imgUri = Uri.fromFile(mediaFile);
-		Log.d("FILE URI", imgUri.toString());
 		
 	    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
 		
@@ -319,12 +328,15 @@ public class Chat extends Activity {
      			String picturePath = cursor.getString(columnIndex);
      			cursor.close();
 
-     			decodeFile(picturePath);        
+     			decodeFile(picturePath); 
+     			
              }
          }
          else if (requestCode == 2) { // Request from camera
         	 if (resultCode == RESULT_OK) {
         		 decodeFile(imgUri.getPath());
+        		 // Update gallery
+      			 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(imgUri.getPath()))));
         	 }
          }
      }
@@ -353,7 +365,7 @@ public class Chat extends Activity {
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
 			bitmap = BitmapFactory.decodeFile(filePath, o2);
-						
+			
 			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmap, filePath);
 			adapter.add(msg);
 			Integer lastMsg = adapter.getItem(msg);
@@ -407,7 +419,7 @@ public class Chat extends Activity {
 	}	
 	
 	// AsyncTask to send the Image to the server
-	private class SendImageAsync extends AsyncTask<String, Void, Integer> implements OnDismissListener {
+	private class SendImageAsync extends AsyncTask<String, Void, Integer> implements OnClickListener {
 		private ProgressDialog dialog = new ProgressDialog(Chat.this);
 		private boolean cancelled = false;
 		
@@ -415,14 +427,16 @@ public class Chat extends Activity {
 		protected void onPreExecute() {
 			dialog.setMessage("Enviando imagem...");
 			dialog.setCanceledOnTouchOutside(false);
-			dialog.setCancelable(true);
-			dialog.setOnDismissListener(this);
+			dialog.setCancelable(false);
+			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", this);
 			dialog.show();
 		}
 		
-		public void onDismiss(DialogInterface dialog) {
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
 			cancelled = true;
 			Toast.makeText(Chat.this, "Envio cancelado", Toast.LENGTH_LONG).show();
+			popup.dismiss();
 			this.cancel(true);
 		}
 		
@@ -436,7 +450,6 @@ public class Chat extends Activity {
 			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 			
 			String webAddressToPost = Settings.API_URL + "/up_image.php";
-			
 			
 			if (networkInfo != null && networkInfo.isConnected()) {
 				try {
@@ -463,7 +476,7 @@ public class Chat extends Activity {
 					
 					JSONObject json = new JSONObject(sResponse);
 					
-					String urlParameters = "message=[uniImg]" + json.getString("imgName") + "&user=" + Settings.me.getUserID() 
+					String urlParameters = "message=[UniChatImg]" + json.getString("imgName") + "&user=" + Settings.me.getUserID() 
 							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
 					if (!cancelled)
 						new SendMessageAsync().execute(urlParameters, params[0]);
@@ -495,6 +508,80 @@ public class Chat extends Activity {
 		}
 	}
 	
+	private class GetImageAsync extends AsyncTask<String, Void, Integer> {
+		private String filename;
+		private Bitmap bitmapDownloaded;
+		
+		@Override
+		protected Integer doInBackground(String... params) {
+			
+			filename = params[0];
+			
+			InputStream in = null;
+	        int response = -1;
+	        
+	        try {
+		        URL url = new URL(Settings.API_URL + "/images/" + params[0] + ".jpg");
+		        URLConnection conn = url.openConnection();
+	                   
+	            HttpURLConnection httpConn = (HttpURLConnection) conn;
+	            httpConn.setAllowUserInteraction(false);
+	            httpConn.setInstanceFollowRedirects(true);
+	            httpConn.setRequestMethod("GET");
+	            httpConn.connect();
+	  
+	            response = httpConn.getResponseCode();                
+	            if (response == HttpURLConnection.HTTP_OK) {
+	                in = httpConn.getInputStream();
+	                bitmapDownloaded = BitmapFactory.decodeStream(in);
+	                in.close();
+	            }
+	        }
+	        catch (Exception e) {
+	            Log.e("GetImageAsync", "deu ruim");
+	            e.printStackTrace();
+	        }
+			
+			return 1;
+		}
+		
+		@Override
+		protected void onPostExecute(Integer result) {
+			
+			// Saving picture on SD Card
+			File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+		              Environment.DIRECTORY_PICTURES), "UniChat Imagens");
+			
+			// Create UniChat directory if it doesn't exists
+			if (!mediaStorageDir.exists()){
+		        if (!mediaStorageDir.mkdirs()){
+		            Log.e("IMAGE DOWNLOADED", "failed to create directory");
+		        }
+		    }
+			
+			String fname = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg";
+			File file = new File (mediaStorageDir, fname);
+			if (file.exists ()) file.delete (); 
+			try {
+			       FileOutputStream out = new FileOutputStream(file);
+			       bitmapDownloaded.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			       out.flush();
+			       out.close();
+			       // Update gallery
+	      		   sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+
+			} catch (Exception e) {
+				Log.e("GetImageAsync", "Error saving downloaded image");
+				e.printStackTrace();
+			}
+			
+			Message msg = new Message(true, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmapDownloaded, file.getAbsolutePath());
+			adapter.add(msg);
+			Toast.makeText(getApplicationContext(), "file downloaded",
+					Toast.LENGTH_LONG).show();
+		}
+		
+	}
 	
 	// Function to make the POST request to the server and send a message
 	private String POSTConnection (String urlParameters, URL url) throws Exception{
@@ -565,11 +652,14 @@ public class Chat extends Activity {
 	public void onDestroy() {
 		if(isFinishing()) {
 			// Only send a finish message if the other user didn't disconect first
-			if (result_ok && !connected) {
+			if (connected || waitingAnonymous) {
 				try {
 					String urlParameters = "message=[fechaOChatUniChat]" + "&user=" + Settings.me.getUserID() 
 							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
 					new SendMessageAsync().execute(urlParameters, "-1");
+					
+					unregisterReceiver(messageReceiver);
+					
 				} catch (Exception e) {
 					Log.e("Error onDestroy", e.toString());
 				}
