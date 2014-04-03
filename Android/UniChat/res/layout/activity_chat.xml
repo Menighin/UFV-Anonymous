@@ -48,7 +48,7 @@
 	            android:background="@drawable/img_off"
 	            android:layout_marginRight="10dp"
 	            android:onClick="showPopUp"
-	            android:enabled="true" />
+	            android:enabled="false" />
             
 	        <EditText
 	            android:id="@+id/message"

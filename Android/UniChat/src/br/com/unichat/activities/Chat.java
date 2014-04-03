@@ -371,6 +371,8 @@ public class Chat extends Activity {
 			Integer lastMsg = adapter.getItem(msg);
 			
 			// Upload to server
+			popup.dismiss();
+			Toast.makeText(Chat.this, "Enviando sua imagem...", Toast.LENGTH_LONG).show();
 			new SendImageAsync().execute(lastMsg.toString());
 		}
 	
@@ -407,7 +409,7 @@ public class Chat extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result == 1) {
-				Log.i("SEND MESAGE", "OK");
+				//Log.i("SEND MESAGE", "OK");
 			} else if (result == -1) {
 				Toast.makeText(Chat.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 			} else if (result == -2) {
@@ -419,31 +421,7 @@ public class Chat extends Activity {
 	}	
 	
 	// AsyncTask to send the Image to the server
-	private class SendImageAsync extends AsyncTask<String, Void, Integer> implements OnClickListener {
-		private ProgressDialog dialog = new ProgressDialog(Chat.this);
-		private boolean cancelled = false;
-		
-		@Override
-		protected void onPreExecute() {
-			dialog.setMessage("Enviando imagem...");
-			dialog.setCanceledOnTouchOutside(false);
-			dialog.setCancelable(false);
-			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", this);
-			dialog.show();
-		}
-		
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			cancelled = true;
-			Toast.makeText(Chat.this, "Envio cancelado", Toast.LENGTH_LONG).show();
-			popup.dismiss();
-			this.cancel(true);
-		}
-		
-		protected void onCancelled() {
-			cancel(true);
-		}
-		
+	private class SendImageAsync extends AsyncTask<String, Void, Integer> {
 		@Override
 		protected Integer doInBackground (String... params) {
 			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -478,8 +456,8 @@ public class Chat extends Activity {
 					
 					String urlParameters = "message=[UniChatImg]" + json.getString("imgName") + "&user=" + Settings.me.getUserID() 
 							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
-					if (!cancelled)
-						new SendMessageAsync().execute(urlParameters, params[0]);
+					
+					new SendMessageAsync().execute(urlParameters, params[0]);
 					
 					return json.getInt("response");
 					
@@ -494,8 +472,6 @@ public class Chat extends Activity {
 		
 		@Override
 		protected void onPostExecute(Integer result) {
-			dialog.dismiss();
-			popup.dismiss();
 			if (result == 1) {
 				Toast.makeText(Chat.this, "Imagem enviada com sucesso", Toast.LENGTH_LONG).show();
 			} else if (result == -1) {
@@ -577,8 +553,6 @@ public class Chat extends Activity {
 			
 			Message msg = new Message(true, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmapDownloaded, file.getAbsolutePath());
 			adapter.add(msg);
-			Toast.makeText(getApplicationContext(), "file downloaded",
-					Toast.LENGTH_LONG).show();
 		}
 		
 	}

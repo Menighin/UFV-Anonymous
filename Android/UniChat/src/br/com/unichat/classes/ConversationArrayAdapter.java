@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -78,6 +79,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
+			messageView.setTextColor(Color.BLACK);
 			imageView.setLayoutParams(params);
 			
 			if (!message.image) {
@@ -138,6 +140,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 			params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 			messageView.setLayoutParams(params);
+			messageView.setTextColor(Color.WHITE);
 			imageView.setLayoutParams(params);
 			
 			if (!message.image) {
