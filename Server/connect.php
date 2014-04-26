@@ -135,7 +135,7 @@
 				$conn->query("UPDATE conversations SET user2 = '" . $_POST['user'] . "', ready = 1, participants = 2, regId2 = '" . $_POST['regId'] . 
 					"' WHERE id = " . $result[$random = mt_rand(0, count($result) - 1)]['id'] . " AND ready = 0");
 				echo json_encode (array('response' => 1, 'conversation_id' => $result[$random]['id'], 'username' => $result[$random]['user1'], 'special' => $result[$random]['u1special'],
-					'regId' => $result[$random]['regId1']));
+					'regId' => $result[$random]['regId1'], 'userId' => $result[$random]['u1id']));
 				
 				// Send message to user 1 telling him the conversation has started
 				$query = 'SELECT * FROM users WHERE id = :user';

@@ -14,7 +14,6 @@ public class GcmIntentService extends IntentService {
 	public GcmIntentService() {
 		super("GcmIntentService");
 	}
-
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		Bundle extras = intent.getExtras();

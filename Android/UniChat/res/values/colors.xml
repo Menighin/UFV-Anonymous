@@ -8,5 +8,7 @@
     <color name="uniChatRed">#d74d4d</color>
     <color name="uniChatGreen">#9bd35f</color>
     <color name="popUp">#ffffff</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000</color>
     
 </resources>

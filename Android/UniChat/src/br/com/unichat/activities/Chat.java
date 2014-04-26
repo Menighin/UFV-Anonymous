@@ -13,6 +13,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.http.HttpResponse;
@@ -28,12 +29,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -67,13 +65,17 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+import br.com.unichat.classes.Base64;
+import br.com.unichat.classes.Conversation;
 import br.com.unichat.classes.ConversationArrayAdapter;
+import br.com.unichat.classes.ConversationDAO;
 import br.com.unichat.classes.Message;
 import br.com.unichat.settings.Settings;
-import br.com.unichat.classes.Base64;
 
 public class Chat extends Activity {
 	
+	private Conversation chat;
+	private ConversationDAO database;
 	private EditText message;
 	private Button sendBtn;
 	private Button imgBtn;
@@ -96,6 +98,9 @@ public class Chat extends Activity {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_chat);
+		
+		chat = new Conversation();
+		database = new ConversationDAO(this);
 		
 		message = (EditText) findViewById(R.id.message);
 		sendBtn = (Button) findViewById(R.id.send_btn);
@@ -126,6 +131,8 @@ public class Chat extends Activity {
 			imgBtn.setEnabled(true);
 			connected = true;
 			waitingAnonymous = false;
+			chat.setAnonymID(extras.getInt("userId"));
+			chat.setAnonymousAlias(extras.getString("talkingTo"));
 		}
 		
 		// Dealing with received message
@@ -156,6 +163,7 @@ public class Chat extends Activity {
 						connected = true;
 						imgBtn.setEnabled(true);
 						sendToRegId = messageJSON.getString("regId");
+						chat.setAnonymID(messageJSON.getInt("user"));
 					} else if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
 						
 						new GetImageAsync().execute(messageJSON.getString("message").substring(12));
@@ -165,6 +173,7 @@ public class Chat extends Activity {
 						DateFormat format = DateFormat.getTimeInstance();
 						Message message = new Message(true, messageJSON.getString("message"), format.format(date).substring(0, 5));
 						adapter.add(message);
+						chat.addMessage(message);
 					}
 				} catch (Exception e) {
 					Log.e("RECEIVE MESSAGE", "INVALID JSON:" + bundle.getString("message"));
@@ -261,6 +270,7 @@ public class Chat extends Activity {
 		if (message.getText().length() > 0) {
 			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5));
 			adapter.add(msg);
+			chat.addMessage(msg);
 			Integer lastMsg = adapter.getItem(msg);
 			
 			try {
@@ -631,6 +641,8 @@ public class Chat extends Activity {
 					String urlParameters = "message=[fechaOChatUniChat]" + "&user=" + Settings.me.getUserID() 
 							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
 					new SendMessageAsync().execute(urlParameters, "-1");
+					
+					database.addConversation(chat);
 					
 					unregisterReceiver(messageReceiver);
 					

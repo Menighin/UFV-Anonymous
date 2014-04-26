@@ -1,6 +1,7 @@
 package br.com.unichat.activities;
 
 import java.io.BufferedReader;
+
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,51 +20,93 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import br.com.unichat.classes.Conversation;
+import br.com.unichat.classes.ConversationDAO;
 import br.com.unichat.classes.SaveSharedPreferences;
 import br.com.unichat.settings.Settings;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-public class MainMenu extends Activity {
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+
+
+public class MainMenu extends FragmentActivity {
 	
+	private ConversationDAO database;
+	private ArrayList<Conversation> conversations;
+	private ScrollView mContentLayout;
+	private LinearLayout mConversationsLayout;
+	private RelativeLayout mMenuLayout;
 	private LinearLayout paid;
 	private Button whateverBtn;
 	private Button femaleBtn;
 	private Button maleBtn;
 	private Button connectBtn;
+	private Button tab1;
+	private Button tab2;
 	private Spinner courses;
 	private char selectedSex = 'w';
 	private boolean backActivated = true;
+	private boolean checkTab = true;		// True for tab 2
 	private ArrayAdapter<String> adapter;
 	private Intent intent;
 	private TextView logout;
-	
+	private TextView test;
 	private AdView mAdView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_main_menu);
+		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.menu_content);
 		
-		whateverBtn = (Button) findViewById(R.id.whatever_btn);
-		femaleBtn = (Button) findViewById(R.id.female_btn);
-		maleBtn = (Button) findViewById(R.id.male_btn);
-		connectBtn = (Button) findViewById(R.id.connect_btn);
-		courses = (Spinner)findViewById(R.id.courses_spinner);
-		paid = (LinearLayout) findViewById(R.id.paid_part);
-		logout = (TextView) findViewById(R.id.logoutText);
+		database = new ConversationDAO(this);
+		conversations = null;
+		
+		// Get the other XML layouts
+		LayoutInflater inflater = getLayoutInflater();
+		mMenuLayout = (RelativeLayout) inflater.inflate(R.layout.activity_main_menu, null);
+		mConversationsLayout = (LinearLayout) inflater.inflate(R.layout.activity_conversations, null);
+		
+		// Find widgets on the layouts
+		
+		// Content widgets
+		tab1 = (Button) findViewById(R.id.tab1);
+		tab2 = (Button) findViewById(R.id.tab2);
+		
+		// Menu widgets
+		whateverBtn = (Button) mMenuLayout.findViewById(R.id.whatever_btn);
+		femaleBtn = (Button) mMenuLayout.findViewById(R.id.female_btn);
+		maleBtn = (Button) mMenuLayout.findViewById(R.id.male_btn);
+		connectBtn = (Button) mMenuLayout.findViewById(R.id.connect_btn);
+		courses = (Spinner) mMenuLayout.findViewById(R.id.courses_spinner);
+		paid = (LinearLayout) mMenuLayout.findViewById(R.id.paid_part);
+		logout = (TextView) mMenuLayout.findViewById(R.id.logoutText);
+		mContentLayout = (ScrollView) findViewById(R.id.menu_content);
+		
+		// Conversations widgets
+		test = (TextView) mConversationsLayout.findViewById(R.id.textView1);
+		
+		// Add first tab
+		mContentLayout.addView(mMenuLayout);
+		
 		
 		if (Settings.FREE_VERSION)
 			paid.setVisibility(View.GONE);
@@ -74,8 +117,7 @@ public class MainMenu extends Activity {
 			Settings.COURSES.add("Qualquer");
 			Settings.COURSES_ID.add(-1);
 			new GetCoursesAsync().execute();
-		}
-		else {
+		} else {
 			adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
 			courses.setAdapter(adapter);
 		}
@@ -105,6 +147,25 @@ public class MainMenu extends Activity {
 				maleBtn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.male, 0, 0);
 				selectedSex = 'w';
 				break;
+		}
+	}
+	
+	public void changeTab (View v) {
+		mContentLayout.removeAllViews();
+		if (!checkTab) {
+			mContentLayout.addView(mConversationsLayout);
+			tab1.setBackgroundResource(R.drawable.tab_button_on);
+			tab2.setBackgroundResource(R.drawable.tab_button_off);
+			checkTab = true;
+			
+			ArrayList<Conversation> cv = database.getAllConversations();
+			test.setText(cv.size() + "");
+			
+		} else {
+			mContentLayout.addView(mMenuLayout);
+			tab1.setBackgroundResource(R.drawable.tab_button_off);
+			tab2.setBackgroundResource(R.drawable.tab_button_on);
+			checkTab = false;
 		}
 	}
 	
@@ -150,8 +211,10 @@ public class MainMenu extends Activity {
 					    if (json.getInt("response") == 1 && json.getInt("special") == 1)
 					    	talkingTo = json.getString("username");
 					    intent.putExtra("talkingTo", talkingTo);
-					    if (json.getInt("response") == 1)
+					    if (json.getInt("response") == 1) {
 					    	intent.putExtra("sendToRegId", json.getString("regId"));
+					    	intent.putExtra("userId", json.getString("userId"));
+					    }
 				    }
 				    
 				    return json.getInt("response");
