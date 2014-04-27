@@ -49,8 +49,14 @@ public class Conversation {
 
 	@Override
 	public String toString() {
-		return "Conversation [anonymID=" + anonymID + ", anonymousAlias="
-				+ anonymousAlias + ", messages=" + messages + "]";
+		String res = "Conversation [anonymID=" + anonymID + ", anonymousAlias="
+				+ anonymousAlias + ", messages=[";
+		
+		for (Message msg : messages) {
+			res += msg.message + ", ";
+		}
+		res += "]";
+		return res;
 	}
 	
 }

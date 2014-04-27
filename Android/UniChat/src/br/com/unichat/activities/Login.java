@@ -41,7 +41,7 @@ public class Login extends Activity {
 	private EditText password;
 	private TextView registerButton;
 	private Button login;
-	private LoginAsync loginAsync = null;
+	private String registrationId;
 	
 	private AdView mAdView;
 	
@@ -90,12 +90,49 @@ public class Login extends Activity {
 			user.setEnabled(false);
 			password.setEnabled(false);
 			login.setEnabled(false);
-			loginAsync = new LoginAsync();
-			loginAsync.execute();
+			new GCMRegister().execute();
 		} else {
 			focusView.requestFocus();
 		}
 		
+	}
+	
+	private class GCMRegister extends AsyncTask<Void, Void, Integer> {
+		
+		@Override
+		protected Integer doInBackground (Void... params) {
+			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+		   
+			if (networkInfo != null && networkInfo.isConnected()) {
+				try {
+					//Get GCM Registration key
+				    registrationId = googleCloud.register(Settings.PROJECT_NUMBER);
+				} catch (Exception e) {
+					Log.e("GCMRegister", e.toString());
+					return -1;
+				}
+				return 1;
+			} else {
+		    	return -3;
+		    }
+		}
+		
+		@Override
+		protected void onPostExecute(Integer result) {
+			if (result == 1) {
+				new LoginAsync().execute();
+			} else {
+				user.setEnabled(true);
+				password.setEnabled(true);
+				login.setEnabled(true);
+				if (result == -1) {
+	        		Toast.makeText(Login.this, "Ocorreu um problema no servidor, por favor tente mais tarde.", Toast.LENGTH_LONG).show();
+	        	} else if (result == -3) {
+	        		Toast.makeText(Login.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_LONG).show();
+	        	}
+			}
+		}
 	}
 	
 	private class LoginAsync extends AsyncTask<Void, Void, Integer> {
@@ -147,7 +184,7 @@ public class Login extends Activity {
 	
 	private int doLogin() throws Exception {
 		
-		String urlParameters = "username=" + URLEncoder.encode(user.getText().toString(), "UTF-8") + "&password=" + password.getText().toString();
+		String urlParameters = "username=" + URLEncoder.encode(user.getText().toString(), "UTF-8") + "&password=" + password.getText().toString() + "&gcm=" + registrationId;
 		URL url = new URL(Settings.API_URL + "/login");
 		
 		//Connection parameters
@@ -183,10 +220,6 @@ public class Login extends Activity {
 	    //Set new global user and settings
 	    if (json.getInt("response") == 1 || json.getInt("response") == -2) {
 	    	try {
-		    	//Get GCM Registration key
-			    String registrationId = googleCloud.register(Settings.PROJECT_NUMBER);
-			    
-				Log.i("Informações do GCM", registrationId);
 		    	Settings.me = new User (
 		    			json.getInt("id"), json.getString("username"), json.getInt("courseID"), 
 		    			json.getString("sex"), json.getInt("universityID"), json.getString("apikey"), registrationId);
@@ -194,8 +227,6 @@ public class Login extends Activity {
 		    	SaveSharedPreferences.createPreferences(
 		    			Login.this, true, json.getString("username"), json.getInt("id"), json.getInt("courseID"), 
 		    			json.getInt("universityID"), json.getString("sex"), json.getString("apikey"), registrationId, packageInfo.versionCode);
-		    	
-		    	Log.i("LOGIN", "SALVOU PREFERENCIS");
 	    	} catch (Exception e) {
 	    		Log.e("LOGIN", "Erro ao salvar preferenias");
 	    	}
@@ -216,9 +247,6 @@ public class Login extends Activity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		if (loginAsync != null) {
-			loginAsync.cancel(true);
-		}
 	}
 
 }

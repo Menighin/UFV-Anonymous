@@ -204,7 +204,7 @@ public class MainMenu extends FragmentActivity {
 				    //Set new global id conversation
 				    if (json.getInt("response") == 1 || json.getInt("response") == 0) {
 				    	Settings.CONVERSATION_ID = json.getInt("conversation_id");
-				    
+				   
 					    // Creating next intent and putting username if it is the case
 					    String talkingTo = "Anônimo";
 					    intent = new Intent(MainMenu.this, Chat.class);
@@ -213,7 +213,7 @@ public class MainMenu extends FragmentActivity {
 					    intent.putExtra("talkingTo", talkingTo);
 					    if (json.getInt("response") == 1) {
 					    	intent.putExtra("sendToRegId", json.getString("regId"));
-					    	intent.putExtra("userId", json.getString("userId"));
+					    	intent.putExtra("userId", json.getInt("userId"));
 					    }
 				    }
 				    

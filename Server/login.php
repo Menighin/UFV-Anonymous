@@ -38,7 +38,7 @@
 				if ($row['logged'] == 0) {
 					try {
 						$key = md5(uniqid(rand(), true));
-						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1, api_key = '". $key ."' WHERE username = '" . $_POST['username'] . "'");
+						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1, api_key = '". $key . "', gcm_key = '" . $_POST['gcm'] . "' WHERE username = '" . $_POST['username'] . "'");
 						echo json_encode(array('response' => 1, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $key));
 					} catch (Exception $e) {
 						echo $e->getMessage();
@@ -49,7 +49,7 @@
 					// It changes de API Key so it allows the user to log in another device
 					try {
 						$key = md5(uniqid(rand(), true));
-						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1, api_key = '". $key ."' WHERE username = '" . $_POST['username'] . "'");
+						$conn->query("UPDATE users SET last_seen = NOW(), logged = 1, api_key = '". $key ."', gcm_key = '" . $_POST['gcm'] . "' WHERE username = '" . $_POST['username'] . "'");
 						echo json_encode(array('response' => -2, 'id' => $row['id'], 'username' => $row['username'], 'courseID' => $row['course'], 'sex' => $row['sex'], 'universityID' => $row['university'], 'apikey' => $key));
 					} catch (Exception $e) {
 						echo $e->getMessage();

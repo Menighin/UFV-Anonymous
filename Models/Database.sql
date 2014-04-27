@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS users (
 	username VARCHAR(25) NOT NULL,
 	password VARCHAR(40) NOT NULL,
 	api_key VARCHAR(50) NOT NULL,
+	gcm_key VARCHAR(200) DEFAULT NULL,
 	email VARCHAR(60) NOT NULL UNIQUE,
 	sex SET('m', 'f') NOT NULL,
 	university INTEGER NOT NULL,

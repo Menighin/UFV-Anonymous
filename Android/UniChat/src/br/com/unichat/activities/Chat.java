@@ -379,7 +379,7 @@ public class Chat extends Activity {
 			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmap, filePath);
 			adapter.add(msg);
 			Integer lastMsg = adapter.getItem(msg);
-			
+		
 			// Upload to server
 			popup.dismiss();
 			Toast.makeText(Chat.this, "Enviando sua imagem...", Toast.LENGTH_LONG).show();

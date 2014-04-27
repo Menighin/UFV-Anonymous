@@ -10,7 +10,17 @@ public class Message {
 	public String conf;
 	public String imagePath;
 	public Bitmap bitImage;
+	public boolean read;
 
+	public Message () {
+		left = false;
+		image = false;
+		message = "";
+		time = "";
+		conf = "·";
+		read = false;
+	}
+	
 	public Message(boolean left, String comment, String time) {
 		super();
 		this.left = left;
@@ -19,6 +29,7 @@ public class Message {
 		this.conf = "·";
 		this.image = false;
 		this.bitImage = null;
+		this.read = true;
 	}
 	
 	public Message(boolean left, String comment, String time, boolean image, Bitmap bitImage, String path) {
@@ -30,5 +41,6 @@ public class Message {
 		this.image = image;
 		this.bitImage = bitImage;
 		this.imagePath = path;
+		this.read = true;
 	}
 }

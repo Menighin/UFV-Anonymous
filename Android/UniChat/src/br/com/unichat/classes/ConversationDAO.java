@@ -88,9 +88,9 @@ public class ConversationDAO extends SQLiteOpenHelper {
 		Log.d("addConversation", conversation.getAnonymousAlias());
 	}
     
-    public void addMessages (ArrayList<Message> messages, int anonymID, boolean read) {
+    public void addMessages (ArrayList<Message> messages, int anonymID) {
     	SQLiteDatabase db = this.getWritableDatabase();
-    	
+    
     	ContentValues values;
     	
     	// Adding messages of the conversation
@@ -100,7 +100,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
 			values.put(COLUMN_MESSAGE, msg.message);
 			values.put(COLUMN_TIME, msg.time);
 			values.put(COLUMN_LEFT, msg.left ? 1 : 0);
-			values.put(COLUMN_READ, read ? 1 : 0);
+			values.put(COLUMN_READ, msg.read ? 1 : 0);
 			
 			db.insert(TABLE_MESSAGES, null, values);
 		}
@@ -143,27 +143,44 @@ public class ConversationDAO extends SQLiteOpenHelper {
  
     }
     
-    // Get All Books
+    // Get All Conversations
     public ArrayList<Conversation> getAllConversations() {
         ArrayList<Conversation> conversations = new ArrayList<Conversation>();
  
-        // 1. build the query
         String query = "SELECT  * FROM " + TABLE_CONVERSATIONS;
  
-        // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
  
-        // 3. go over each row, build book and add it to list
         Conversation conversation = null;
+        Message message = null;
         if (cursor.moveToFirst()) {
             do {
                 conversation = new Conversation();
                 conversation.setAnonymID(Integer.parseInt(cursor.getString(0)));
                 conversation.setAnonymousAlias(cursor.getString(1));
+                
+                
+                // Get messages of the conversations
+                String queryM = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + COLUMN_USERID + " = " + cursor.getString(0);
+                Cursor cursorM = db.rawQuery(queryM, null);
+                
+                if (cursorM.moveToFirst()) {
+                	do {
+                		message = new Message();
+                		message.message = cursorM.getString(2);
+                		message.time = cursorM.getString(3);
+                		message.conf = "✓";
+                		message.read = Integer.parseInt(cursorM.getString(4)) == 1 ? true : false;
+                		message.left = Integer.parseInt(cursorM.getString(5)) == 1 ? true : false;
+                		
+                		conversation.addMessage(message);
+                		
+                	} while (cursorM.moveToNext());
+                }
  
-                // Add book to books
                 conversations.add(conversation);
+                
                 Log.d("CONVERSATION", conversation.toString());
             } while (cursor.moveToNext());
         }
