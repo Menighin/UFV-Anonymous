@@ -143,16 +143,16 @@
 				$stmt->execute(array(':user' => $_POST['user']));
 				$row = $stmt->fetch();
 				
-				$user = "Anônimo";
+				$userAlias = "Anônimo";
 				if ($row['special'] == 1)
-					$user = $row['username'];
+					$userAlias = $row['username'];
 				
-				$json = array("message" => "[abreOChatUniChat]", "user" => $user, "regId" => $_POST['regId']);
+				$json = array("message" => "[abreOChatUniChat]", "user" => $userAlias, "user_id" => $_POST['user'], "regId" => $_POST['regId']);
 				
 				include_once './GCM.php';
 			 
 				$gcm = new GCM();
-			 
+				
 				$registration_ids = array($result[$random]['regId1']);
 			 
 				$gcm->send_notification($registration_ids, $json);

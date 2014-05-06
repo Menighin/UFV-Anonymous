@@ -26,7 +26,7 @@
 			 WHERE C.finished = 0 AND C.ready = 1";
 	
 	// Selecting "left over" conversations
-	$query2 = "SELECT C.id, C.regId1, U1.last_seen FROM conversations C 
+	$query2 = "SELECT C.id, C.regId1, U1.last_seen AS lastSeen1 FROM conversations C 
 			 INNER JOIN users U1 ON C.user1 = U1.id 
 			 WHERE C.finished = 0";
 	
@@ -47,7 +47,7 @@
 	$result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 	
 	// Closing open conversations which users are not seen in TEMPO seconds
-	include_once './GCM.php';
+	include 'GCM.php';
 	$gcm = new GCM();
 	
 	$message = array("message" => "[fechaOChatUniChat]");

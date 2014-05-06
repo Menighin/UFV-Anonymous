@@ -18,6 +18,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
     public static final String COLUMN_CONVERSATIONSID = "anonymous_id";
     public static final String COLUMN_ALIAS = "alias";
     public static final String COLUMN_REGID = "reg_id";
+    public static final String COLUMN_DATE = "date";
     
     public static final String TABLE_MESSAGES = "Messages";
     public static final String COLUMN_MESSAGESID = "id";
@@ -29,7 +30,8 @@ public class ConversationDAO extends SQLiteOpenHelper {
     
     public static final String CREATE_CONVERSATIONS = "CREATE TABLE " + TABLE_CONVERSATIONS + " ( " 
     		+ COLUMN_CONVERSATIONSID + " INTEGER PRIMARY KEY, "
-    		+ COLUMN_ALIAS + " TEXT)";
+    		+ COLUMN_ALIAS + " TEXT, "
+    		+ COLUMN_DATE + " TEXT)";
 	
     public static final String CREATE_MESSAGES = "CREATE TABLE " + TABLE_MESSAGES + " ( " 
     		+ COLUMN_MESSAGESID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -46,6 +48,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // create books table
+    	Log.e("CREATE1", CREATE_CONVERSATIONS);
         db.execSQL(CREATE_CONVERSATIONS);
         db.execSQL(CREATE_MESSAGES);
     }
@@ -147,7 +150,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
     public ArrayList<Conversation> getAllConversations() {
         ArrayList<Conversation> conversations = new ArrayList<Conversation>();
  
-        String query = "SELECT  * FROM " + TABLE_CONVERSATIONS;
+        String query = "SELECT * FROM " + TABLE_CONVERSATIONS;
  
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -159,7 +162,6 @@ public class ConversationDAO extends SQLiteOpenHelper {
                 conversation = new Conversation();
                 conversation.setAnonymID(Integer.parseInt(cursor.getString(0)));
                 conversation.setAnonymousAlias(cursor.getString(1));
-                
                 
                 // Get messages of the conversations
                 String queryM = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + COLUMN_USERID + " = " + cursor.getString(0);
@@ -181,13 +183,33 @@ public class ConversationDAO extends SQLiteOpenHelper {
  
                 conversations.add(conversation);
                 
-                Log.d("CONVERSATION", conversation.toString());
+                Log.d("getAllConversations(i)", conversation.toString());
             } while (cursor.moveToNext());
         }
 
-        Log.d("getAllBooks()", "hehe");
+        Log.d("getAllConversations()", "hehe");
  
         // return books
         return conversations;
     }
+    
+    public int countConversations() {
+    	String query = "SELECT COUNT(*) FROM " + TABLE_CONVERSATIONS;
+    	
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	Cursor cursor = db.rawQuery(query, null);
+    	
+    	if (cursor.moveToFirst()) {
+    		return Integer.parseInt(cursor.getString(0));
+    	}
+    	
+    	return -1;
+    }
+    
+    public void clearDatabase() {
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATIONS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
+    }
+    
 }

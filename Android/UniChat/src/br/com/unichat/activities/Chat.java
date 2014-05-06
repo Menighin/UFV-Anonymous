@@ -67,7 +67,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import br.com.unichat.classes.Base64;
 import br.com.unichat.classes.Conversation;
-import br.com.unichat.classes.ConversationArrayAdapter;
+import br.com.unichat.classes.ChatArrayAdapter;
 import br.com.unichat.classes.ConversationDAO;
 import br.com.unichat.classes.Message;
 import br.com.unichat.settings.Settings;
@@ -80,10 +80,9 @@ public class Chat extends Activity {
 	private Button sendBtn;
 	private Button imgBtn;
 	private TextView talkingTo;
-	private String sendToRegId;
 	private Bundle extras;
 	private ListView conversation;
-	private ConversationArrayAdapter adapter;
+	private ChatArrayAdapter adapter;
 	private Handler handler;
 	private boolean connected = false;
 	private boolean waitingAnonymous = true;
@@ -92,6 +91,7 @@ public class Chat extends Activity {
 	private PopupWindow popup;
 	private Uri imgUri;
 	private Bitmap bitmap;
+	private EditText alias;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,13 +100,16 @@ public class Chat extends Activity {
 		setContentView(R.layout.activity_chat);
 		
 		chat = new Conversation();
+		chat.setDate(DateFormat.getDateInstance().format(new Date()));
 		database = new ConversationDAO(this);
+		
+		alias = new EditText(this);
 		
 		message = (EditText) findViewById(R.id.message);
 		sendBtn = (Button) findViewById(R.id.send_btn);
 		imgBtn = (Button) findViewById(R.id.img_btn);
 		talkingTo = (TextView) findViewById(R.id.talking_to);
-		adapter = new ConversationArrayAdapter(getApplicationContext(), R.layout.list_item_message);
+		adapter = new ChatArrayAdapter(getApplicationContext(), R.layout.list_item_message);
 		conversation = (ListView) findViewById(R.id.list_messages);
 		conversation.setAdapter(adapter);
 		
@@ -118,22 +121,15 @@ public class Chat extends Activity {
 			} 
 		});
 		
-		// Solving if the activity is either a client or server type
+		// Getting info from intent
 		extras = getIntent().getExtras();
-		if (extras.getInt("type") == 0) {
-			talkingTo.setText("Esperando o anônimo(a) se conectar...");
-			message.setEnabled(false);
-			waitingAnonymous = true;
-		} else {
-			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
-			talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
-			sendToRegId = extras.getString("sendToRegId");
-			imgBtn.setEnabled(true);
-			connected = true;
-			waitingAnonymous = false;
-			chat.setAnonymID(extras.getInt("userId"));
-			chat.setAnonymousAlias(extras.getString("talkingTo"));
-		}
+		talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
+		talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
+		imgBtn.setEnabled(true);
+		connected = true;
+		waitingAnonymous = false;
+		chat.setAnonymID(extras.getInt("userId"));
+		chat.setAnonymousAlias(extras.getString("talkingTo"));
 		
 		// Dealing with received message
 		this.messageReceiver = new BroadcastReceiver() {
@@ -144,31 +140,15 @@ public class Chat extends Activity {
 				try {
 					JSONObject messageJSON = new JSONObject(bundle.getString("message"));
 					
-					if(messageJSON.getString("message").equals("[fechaOChatUniChat]")) {
+					if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
 						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 						v.vibrate(300);
-	
-						talkingTo.setText("Anônimo se desconectou :( ...");
-						talkingTo.setTextColor(getResources().getColor(R.color.uniChatRed));
-						message.setText("");
-						message.setEnabled(false);
-						connected = false;
-					} else if (messageJSON.getString("message").equals("[abreOChatUniChat]")) {
-						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-						v.vibrate(300);
-						
-						talkingTo.setText("Falando com: " + messageJSON.getString("user"));
-						talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
-						message.setEnabled(true);
-						connected = true;
-						imgBtn.setEnabled(true);
-						sendToRegId = messageJSON.getString("regId");
-						chat.setAnonymID(messageJSON.getInt("user"));
-					} else if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
 						
 						new GetImageAsync().execute(messageJSON.getString("message").substring(12));
-						
 					} else {
+						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						v.vibrate(300);
+						
 						Date date = new Date();
 						DateFormat format = DateFormat.getTimeInstance();
 						Message message = new Message(true, messageJSON.getString("message"), format.format(date).substring(0, 5));
@@ -200,9 +180,6 @@ public class Chat extends Activity {
 			@Override
 			public void afterTextChanged(Editable s) {}
 		});
-		
-		
-		
 	}
 	
 	@Override
@@ -210,7 +187,6 @@ public class Chat extends Activity {
 		super.onResume();
 		registerReceiver(this.messageReceiver, new IntentFilter(Chat.class.getName()));
 	}
-	
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -275,8 +251,7 @@ public class Chat extends Activity {
 			
 			try {
 				String urlParameters = "message=" + URLEncoder.encode(message.getText().toString(), "UTF-8")
-						+ "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8")
-						+ "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
+						+ "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
@@ -341,8 +316,7 @@ public class Chat extends Activity {
      			decodeFile(picturePath); 
      			
              }
-         }
-         else if (requestCode == 2) { // Request from camera
+         } else if (requestCode == 2) { // Request from camera
         	 if (resultCode == RESULT_OK) {
         		 decodeFile(imgUri.getPath());
         		 // Update gallery
@@ -397,7 +371,7 @@ public class Chat extends Activity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	URL url = new URL(Settings.API_URL + "/send_message");
+		        	URL url = new URL(Settings.API_URL + "/send_message2.php");
 		    	    JSONObject json = new JSONObject(POSTConnection (params[0], url));
 		    	    
 		    	    if (Integer.parseInt(params[1]) != -1) {
@@ -465,7 +439,7 @@ public class Chat extends Activity {
 					JSONObject json = new JSONObject(sResponse);
 					
 					String urlParameters = "message=[UniChatImg]" + json.getString("imgName") + "&user=" + Settings.me.getUserID() 
-							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
+							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
 					
 					new SendMessageAsync().execute(urlParameters, params[0]);
 					
@@ -601,29 +575,50 @@ public class Chat extends Activity {
 	
 	@Override
 	public void onBackPressed() {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-		dialog.setMessage("Tem certeza que quer sair? Vai perder ein?!");
-		dialog.setPositiveButton("Quero sair!", new DialogInterface.OnClickListener() {
-			
+		AlertDialog.Builder confirmQuit = new AlertDialog.Builder(this);
+		confirmQuit.setMessage("Adicionar anônimo antes de sair?");
+		
+		// EditText for anonimous alias
+		alias.setHint("Apelido");
+		alias.setText("");
+		
+		
+		confirmQuit.setView(alias);
+		
+		confirmQuit.setPositiveButton("Salvar e sair", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (Settings.N_CONVERSATIONS < Settings.MAX_STORED_CONVERSATIONS) {
+					if (alias.getText().toString().length() > 0) {
+						chat.setAnonymousAlias(alias.getText().toString());
+					}
+					database.addConversation(chat);
+					voltarTela();
+				} else {
+					Toast.makeText(Chat.this, "Lista cheia! Exclua um anônimo para poder adicionar outro!", Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+		confirmQuit.setNeutralButton("Sair sem salvar", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				voltarTela();
 			}
-		});
-		dialog.setNegativeButton("Verdade! Vo esperar!", new DialogInterface.OnClickListener() {
 			
+		});
+		confirmQuit.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				
+				// Do nothing
 			}
 		});
-		dialog.create();
+		confirmQuit.create();
 		
-		if(message.isEnabled()) {
-			dialog.show();
-		} else {
-			voltarTela();
-		}
+		//if(message.isEnabled()) {
+			confirmQuit.show();
+		//} else {
+		//	voltarTela();
+		//}
 	}
 	
 	private void voltarTela() {
@@ -638,12 +633,6 @@ public class Chat extends Activity {
 			// Only send a finish message if the other user didn't disconect first
 			if (connected || waitingAnonymous) {
 				try {
-					String urlParameters = "message=[fechaOChatUniChat]" + "&user=" + Settings.me.getUserID() 
-							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&regId=" + sendToRegId + "&conversation_id=" + Settings.CONVERSATION_ID ;
-					new SendMessageAsync().execute(urlParameters, "-1");
-					
-					database.addConversation(chat);
-					
 					unregisterReceiver(messageReceiver);
 					
 				} catch (Exception e) {

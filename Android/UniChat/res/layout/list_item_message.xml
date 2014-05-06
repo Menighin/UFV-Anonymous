@@ -20,7 +20,7 @@
             android:background="@drawable/me"
             android:paddingRight="40dp"
             android:textColor="@android:color/black"
-            android:text="Hello bubblek çask"
+            android:text="Bubble"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true" />
         
