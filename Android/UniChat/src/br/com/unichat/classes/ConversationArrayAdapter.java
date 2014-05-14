@@ -20,6 +20,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Conversation> {
 	private ImageView imageView;
 	private TextView aliasView;
 	private TextView messageView;
+	private TextView headerView;
 	private TextView dateView;
 	private ArrayList<Conversation> conversations = new ArrayList<Conversation>();
 	private Conversation conversation;
@@ -29,23 +30,30 @@ public class ConversationArrayAdapter extends ArrayAdapter<Conversation> {
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View row = convertView;
-		if (row == null) {
-			LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			row = inflater.inflate(R.layout.list_item_conversation, parent, false);
-		}
-		
+		View row; //= convertView;
 		conversation = getItem(position);
-		Log.d("POSITION", position +"");
 		
-		aliasView = (TextView) row.findViewById(R.id.conversation_list_alias);
-		aliasView.setText(conversation.getAnonymousAlias());
+		//if (row == null) {
+			LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			if (!conversation.isHeader())
+				row = inflater.inflate(R.layout.list_item_conversation, parent, false);
+			else
+				row = inflater.inflate(R.layout.list_item_conversation_separator, parent, false);
+		//}
 		
-		messageView = (TextView) row.findViewById(R.id.conversation_list_last);
-		messageView.setText(conversation.getLastMessage().message + "...");
-		
-		dateView = (TextView) row.findViewById(R.id.conversation_list_date);
-		dateView.setText(conversation.getDate());
+		if (!conversation.isHeader()) {
+			aliasView = (TextView) row.findViewById(R.id.conversation_list_alias);
+			aliasView.setText(conversation.getAnonymousAlias());
+			
+			messageView = (TextView) row.findViewById(R.id.conversation_list_last);
+			messageView.setText(conversation.getLastMessage().message + "...");
+			
+			dateView = (TextView) row.findViewById(R.id.conversation_list_date);
+			dateView.setText(conversation.getDate());
+		} else {
+			headerView = (TextView) row.findViewById(R.id.conversation_separator);
+			headerView.setText(conversation.getAnonymousAlias());
+		}
 	
 		return row;
 	}

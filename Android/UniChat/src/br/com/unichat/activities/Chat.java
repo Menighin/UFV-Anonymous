@@ -84,14 +84,13 @@ public class Chat extends Activity {
 	private ListView conversation;
 	private ChatArrayAdapter adapter;
 	private Handler handler;
-	private boolean connected = false;
-	private boolean waitingAnonymous = true;
 	private BroadcastReceiver messageReceiver;
 	private Point p;
 	private PopupWindow popup;
 	private Uri imgUri;
 	private Bitmap bitmap;
 	private EditText alias;
+	private ArrayList<Message> newMessages;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +99,6 @@ public class Chat extends Activity {
 		setContentView(R.layout.activity_chat);
 		
 		chat = new Conversation();
-		chat.setDate(DateFormat.getDateInstance().format(new Date()));
 		database = new ConversationDAO(this);
 		
 		alias = new EditText(this);
@@ -121,15 +119,25 @@ public class Chat extends Activity {
 			} 
 		});
 		
+		imgBtn.setEnabled(true);
+		
 		// Getting info from intent
 		extras = getIntent().getExtras();
-		talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
-		talkingTo.setTextColor(getResources().getColor(R.color.uniChatGreen));
-		imgBtn.setEnabled(true);
-		connected = true;
-		waitingAnonymous = false;
-		chat.setAnonymID(extras.getInt("userId"));
-		chat.setAnonymousAlias(extras.getString("talkingTo"));
+		if (extras.getString("type").equals("new")) { // If this chat was created by a new conversation request
+			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
+			chat.setAnonymID(extras.getInt("user_id"));
+			chat.setAnonymousAlias(extras.getString("talkingTo"));
+			chat.setDate(DateFormat.getDateInstance().format(new Date()));
+		} else { // If this is a chat already saved on local database
+			chat = database.getConversation(extras.getInt("user_id"));
+			talkingTo.setText("Falando com: " + chat.getAnonymousAlias());
+			
+			newMessages = new ArrayList<Message>();
+			
+			for (Message m : chat.getMessages()) {
+				adapter.add(m);
+			}
+		}
 		
 		// Dealing with received message
 		this.messageReceiver = new BroadcastReceiver() {
@@ -152,6 +160,7 @@ public class Chat extends Activity {
 						Date date = new Date();
 						DateFormat format = DateFormat.getTimeInstance();
 						Message message = new Message(true, messageJSON.getString("message"), format.format(date).substring(0, 5));
+						if (extras.get("type").equals("old")) newMessages.add(message);
 						adapter.add(message);
 						chat.addMessage(message);
 					}
@@ -247,11 +256,15 @@ public class Chat extends Activity {
 			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5));
 			adapter.add(msg);
 			chat.addMessage(msg);
+			
+			if (extras.getString("type").equals("old")) newMessages.add(msg); // Add if new message in old conversation for update later
+			
 			Integer lastMsg = adapter.getItem(msg);
 			
 			try {
 				String urlParameters = "message=" + URLEncoder.encode(message.getText().toString(), "UTF-8")
-						+ "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
+						+ "&user=" + Settings.me.getUserID() + "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&user_to=" + chat.getAnonymID();
+				
 				message.getText().clear();
 	    		new SendMessageAsync().execute(urlParameters, lastMsg.toString());
 			} catch (Exception e) {
@@ -349,9 +362,10 @@ public class Chat extends Activity {
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
 			bitmap = BitmapFactory.decodeFile(filePath, o2);
-			
 			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmap, filePath);
 			adapter.add(msg);
+			chat.addMessage(msg);
+			if (extras.get("type").equals("old")) newMessages.add(msg);
 			Integer lastMsg = adapter.getItem(msg);
 		
 			// Upload to server
@@ -585,6 +599,7 @@ public class Chat extends Activity {
 		
 		confirmQuit.setView(alias);
 		
+		// Buttons on dialog
 		confirmQuit.setPositiveButton("Salvar e sair", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -615,10 +630,12 @@ public class Chat extends Activity {
 		confirmQuit.create();
 		
 		//if(message.isEnabled()) {
+		if (extras.getString("type").equals("new")) {
 			confirmQuit.show();
-		//} else {
-		//	voltarTela();
-		//}
+		} else {
+			database.updateMessages(chat.getAnonymID(), newMessages, DateFormat.getDateInstance().format(new Date()));
+			voltarTela();
+		}
 	}
 	
 	private void voltarTela() {
@@ -630,15 +647,13 @@ public class Chat extends Activity {
 	@Override
 	public void onDestroy() {
 		if(isFinishing()) {
-			// Only send a finish message if the other user didn't disconect first
-			if (connected || waitingAnonymous) {
-				try {
-					unregisterReceiver(messageReceiver);
-					
-				} catch (Exception e) {
-					Log.e("Error onDestroy", e.toString());
-				}
-			}
+			/*try {
+				unregisterReceiver(messageReceiver);
+				
+			} catch (Exception e) {
+				Log.e("Error onDestroy", e.toString());
+			}*/
+			
 		}
 		super.onDestroy();
 	}

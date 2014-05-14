@@ -21,21 +21,22 @@ public class Message {
 		read = false;
 	}
 	
-	public Message(boolean left, String comment, String time) {
+	public Message(boolean left, String msg, String time) {
 		super();
 		this.left = left;
-		this.message = comment;
+		this.message = msg;
 		this.time = time;
 		this.conf = "·";
 		this.image = false;
 		this.bitImage = null;
 		this.read = true;
+		this.imagePath = "";
 	}
 	
-	public Message(boolean left, String comment, String time, boolean image, Bitmap bitImage, String path) {
+	public Message(boolean left, String msg, String time, boolean image, Bitmap bitImage, String path) {
 		super();
 		this.left = left;
-		this.message = comment;
+		this.message = msg;
 		this.time = time;
 		this.conf = "·";
 		this.image = image;

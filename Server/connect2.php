@@ -83,7 +83,7 @@
 		} else {
 			// Select random stranger among the 20 to talk with
 			// And the winner is...
-			$random = mt_rand(0, count($result - 1));
+			$random = mt_rand(0, count($result) - 1);
 			
 			echo json_encode (array('response' => 1, 'user_id' => $result[$random]['id'], 'username' => $result[$random]['username'], 'special' => $result[$random]['special']));
 		}

@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -104,21 +105,31 @@ public class MainMenu extends FragmentActivity {
 		conversationList = (ListView) mConversationsLayout.findViewById(R.id.list_conversation);
 		conversationList.setAdapter(conversationAdapter);
 		
-		cv = database.getAllConversations();
+		// Genrating list of stored conversations
+		
+		cv = new ArrayList<Conversation>();
+		cv.add(new Conversation("Minhas conversas", true, -1));
+		cv.addAll(database.getAllConversations(1));
+		cv.add(new Conversation("Conversas comigo", true, -1));
+		cv.addAll(database.getAllConversations(0));
 		
 		for (Conversation c : cv) {
-			conversationAdapter.add(c);
+			//if (c.getAnonymID() != -1)
+				conversationAdapter.add(c);
 			Log.d("C", c.getAnonymousAlias());
 		}
 		
 		// Set click item list event
 		conversationList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-		  @Override
-		  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-		    Object o = conversationList.getItemAtPosition(position);
-		    Toast.makeText(MainMenu.this, cv.get(position).getAnonymousAlias(), Toast.LENGTH_SHORT).show();  
-		  }
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+				if (cv.get(position).getAnonymID() != -1) {
+					intent = new Intent(MainMenu.this, Chat.class);
+					intent.putExtra("type", "old");
+					intent.putExtra("user_id", cv.get(position).getAnonymID());
+					startActivityForResult(intent, 1);
+				}
+			}
 		});
 		
 		
@@ -244,6 +255,7 @@ public class MainMenu extends FragmentActivity {
 		@Override
 		protected void onPostExecute (Integer result) {
 			if (result == 1) {
+				intent.putExtra("type", "new");
 				startActivityForResult(intent, 1);
 			} else if (result == 0) {
 				Toast.makeText(MainMenu.this, "Nenhum usuário foi encontrado com os critérios escolhidos", Toast.LENGTH_LONG).show();
@@ -364,7 +376,7 @@ public class MainMenu extends FragmentActivity {
 	}
 	
 	private String POSTConnection (String urlParameters, URL url) throws Exception{
-
+		
 		//Connection parameters
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("POST");
@@ -373,13 +385,14 @@ public class MainMenu extends FragmentActivity {
 	    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 	    conn.setRequestProperty("charset", "utf-8");
 	    
+	    
 	    //Send request
 		DataOutputStream wr = new DataOutputStream (conn.getOutputStream ());
 		wr.writeBytes (urlParameters);
 		wr.flush ();
 		wr.close ();
 		
-		//Get Response	
+		//Get Response
 	    InputStream is = conn.getInputStream();
 	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 	    String line;

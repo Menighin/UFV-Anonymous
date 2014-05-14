@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -115,7 +118,8 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
 				timeConfView.setLayoutParams(params);
 				timeConfView.setPadding((int)(10 * context.getResources().getDisplayMetrics().density), 0, 0, 0);
 				
-				imageView.setImageBitmap(message.bitImage);
+				//imageView.setImageBitmap(message.bitImage);
+				imageView.setImageBitmap(new BitmapFactory().decodeFile(message.imagePath));
 				imageView.setTag(message);
 				
 				imageView.setOnClickListener(new OnClickListener() {
@@ -177,8 +181,8 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
 				timeConfView.setLayoutParams(params);
 				timeConfView.setPadding(0, 0, (int)(10 * context.getResources().getDisplayMetrics().density), 0);
 				
-				imageView.setImageBitmap(message.bitImage);
-				
+				//imageView.setImageBitmap(message.bitImage);
+				imageView.setImageBitmap(new BitmapFactory().decodeFile(message.imagePath));
 				// Adding the eventListener
 				imageView.setTag(message);
 				

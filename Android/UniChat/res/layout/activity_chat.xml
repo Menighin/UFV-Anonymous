@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text=""
-        android:textColor="@android:color/white"
+        android:textColor="@color/uniChatGreen"
         android:paddingLeft="14dp"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
@@ -47,8 +47,7 @@
 	            android:layout_height="30dp"
 	            android:background="@drawable/img_off"
 	            android:layout_marginRight="10dp"
-	            android:onClick="showPopUp"
-	            android:enabled="false" />
+	            android:onClick="showPopUp" />
             
 	        <EditText
 	            android:id="@+id/message"

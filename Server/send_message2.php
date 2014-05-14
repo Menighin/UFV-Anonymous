@@ -16,13 +16,13 @@ header("Content-Type: application/json; charset=utf-8");
 	// User authenticated
 	else {
 		if (isset($_POST["message"])) {
-			$message = $_POST["message"];
+			$message = json_encode(array("message" => $_POST["message"], "user_from" => $_POST['user']));
 			
 			// Get the GCM key
 			try {
 				$query = "SELECT * FROM users WHERE id = :user";
 				$stmt = $conn->prepare($query);
-				$stmt->execute(array(':user' => $_POST['user']));
+				$stmt->execute(array(':user' => $_POST['user_to']));
 				$row = $stmt->fetch();
 			} catch (Exception $e) {
 				echo json_encode(array('response' => -1));

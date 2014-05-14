@@ -8,7 +8,7 @@
 	 
 		private $conn;
 		//private $username = "root", $password = "", $host = "localhost", $dbname = "unichat";
-		private $username = "root", $password = "WyDadaVaX", $host = "93.188.161.199", $dbname = "unichat";
+		private $username = "root", $password = "minhacasaminhavida", $host = "107.170.81.127", $dbname = "unichat";
 		
 		/**
 		* Funcion to create a connection with the database info
