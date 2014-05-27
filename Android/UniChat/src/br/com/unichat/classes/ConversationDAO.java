@@ -20,6 +20,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
     public static final String COLUMN_REGID = "reg_id";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_IS_MINE = "is_mine";
+    public static final String COLUMN_CONVERSATION_IMG = "conversation_img";
     
     public static final String TABLE_MESSAGES = "Messages";
     public static final String COLUMN_MESSAGESID = "id";
@@ -30,12 +31,14 @@ public class ConversationDAO extends SQLiteOpenHelper {
     public static final String COLUMN_LEFT = "message_left";
     public static final String COLUMN_IS_IMAGE = "message_is_image";
     public static final String COLUMN_IMAGE_PATH = "message_image_path";
+    public static final String COLUMN_WAS_DOWNLOADED = "message_was_downloaded";
     
     public static final String CREATE_CONVERSATIONS = "CREATE TABLE " + TABLE_CONVERSATIONS + " ( " 
     		+ COLUMN_CONVERSATIONSID + " INTEGER PRIMARY KEY, "
     		+ COLUMN_ALIAS + " TEXT, "
     		+ COLUMN_DATE + " TEXT, " 
-    		+ COLUMN_IS_MINE + " INTEGER)";
+    		+ COLUMN_IS_MINE + " INTEGER, "
+    		+ COLUMN_CONVERSATION_IMG + " INTEGER)";
 	
     public static final String CREATE_MESSAGES = "CREATE TABLE " + TABLE_MESSAGES + " ( " 
     		+ COLUMN_MESSAGESID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -45,7 +48,8 @@ public class ConversationDAO extends SQLiteOpenHelper {
     		+ COLUMN_READ + " INTEGER, "
     		+ COLUMN_LEFT + " INTEGER, "
     		+ COLUMN_IS_IMAGE + " INTEGER, "
-    		+ COLUMN_IMAGE_PATH + " TEXT)";
+    		+ COLUMN_IMAGE_PATH + " TEXT, " 
+    		+ COLUMN_WAS_DOWNLOADED + " INTEGER)";
     
     public ConversationDAO (Context context) {
     	super (context, DATABASE_NAME, null, 1);
@@ -79,6 +83,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
 		values.put(COLUMN_ALIAS, conversation.getAnonymousAlias()); 
 		values.put(COLUMN_DATE, conversation.getDate());
 		values.put(COLUMN_IS_MINE, conversation.isMine() ? 1 : 0);
+		values.put(COLUMN_CONVERSATION_IMG, conversation.getImgId());
 		
 		db.insert(TABLE_CONVERSATIONS, null, values);
 		
@@ -92,6 +97,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
 			values.put(COLUMN_READ, 1);
 			values.put(COLUMN_IS_IMAGE, msg.image ? 1 : 0);
 			values.put(COLUMN_IMAGE_PATH, msg.imagePath);
+			values.put(COLUMN_WAS_DOWNLOADED, msg.wasDownloaded ? 1 : 0);
 			
 			db.insert(TABLE_MESSAGES, null, values);
 		}
@@ -101,7 +107,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
 		Log.d("addConversation", conversation.getAnonymousAlias());
 	}
     
-    public int updateMessagesRead(Conversation conversation) {
+    public int updateMessagesRead(int conversationId) {
     	 
         SQLiteDatabase db = this.getWritableDatabase();
      
@@ -109,12 +115,33 @@ public class ConversationDAO extends SQLiteOpenHelper {
         values.put(COLUMN_READ, 1);
      
         int i = db.update(TABLE_MESSAGES, values, COLUMN_USERID + " = ?",
-                new String[] { String.valueOf(conversation.getAnonymID()) });
+                new String[] { String.valueOf(conversationId) });
      
         db.close();
      
         return i;
+    }
+    
+    public void updateImageDownloaded (int messageId, String imgPath) {
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	
+    	ContentValues values = new ContentValues();
+    	values.put(COLUMN_WAS_DOWNLOADED, 1);
+    	values.put(COLUMN_IMAGE_PATH, imgPath);
+    	
+    	db.update(TABLE_MESSAGES, values, COLUMN_MESSAGESID + " = ?", new String[] { String.valueOf(messageId) });
+    }
+    
+    public void updateUserAlias (int conversationId, String alias) {
+    	SQLiteDatabase db = this.getWritableDatabase();
+        
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ALIAS, alias);
      
+        db.update(TABLE_CONVERSATIONS, values, COLUMN_CONVERSATIONSID + " = ?",
+                new String[] { String.valueOf(conversationId) });
+
+        db.close();
     }
     
     public void deleteConversation(Conversation conversation) {
@@ -151,6 +178,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
     		c.setAnonymousAlias(cursor.getString(1));
     		c.setDate(cursor.getString(2));
     		c.isMine(Integer.parseInt(cursor.getString(3)) == 1 ? true : false);
+    		c.setImgId(cursor.getInt(4));
     		
     		// Get the messages
     		String queryM = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + COLUMN_USERID + " = " + cursor.getString(0);
@@ -159,6 +187,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
     		if (cursorM.moveToFirst()) {
     			do {
     				m = new Message();
+    				m.id = cursorM.getInt(0);
     				m.message = cursorM.getString(2);
             		m.time = cursorM.getString(3);
             		m.conf = "✓";
@@ -166,6 +195,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
             		m.left = Integer.parseInt(cursorM.getString(5)) == 1 ? true : false;
             		m.image = Integer.parseInt(cursorM.getString(6)) == 1 ? true : false;
             		m.imagePath = m.image ? cursorM.getString(7) : "";
+            		m.wasDownloaded = Integer.parseInt(cursorM.getString(8)) == 1 ? true : false;
             		c.addMessage(m);
     			} while(cursorM.moveToNext());
     		}
@@ -198,6 +228,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
                 conversation.setAnonymousAlias(cursor.getString(1));
                 conversation.setDate(cursor.getString(2));
         		conversation.isMine(Integer.parseInt(cursor.getString(3)) == 1 ? true : false);
+        		conversation.setImgId(cursor.getInt(4));
         		
                 // Get messages of the conversations
                 String queryM = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + COLUMN_USERID + " = " + cursor.getString(0);
@@ -206,6 +237,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
                 if (cursorM.moveToFirst()) {
                 	do {
                 		message = new Message();
+                		message.id = cursorM.getInt(0);
                 		message.message = cursorM.getString(2);
                 		message.time = cursorM.getString(3);
                 		message.conf = "✓";
@@ -213,6 +245,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
                 		message.left = Integer.parseInt(cursorM.getString(5)) == 1 ? true : false;
                 		message.image = Integer.parseInt(cursorM.getString(6)) == 1 ? true : false;
                 		message.imagePath = message.image ? cursorM.getString(7) : "";
+                		message.wasDownloaded = Integer.parseInt(cursorM.getString(8)) == 1 ? true : false;
                 		
                 		conversation.addMessage(message);
                 		
@@ -267,6 +300,7 @@ public class ConversationDAO extends SQLiteOpenHelper {
 			values.put(COLUMN_READ, msg.read ? 1 : 0);
 			values.put(COLUMN_IS_IMAGE, msg.image ? 1 : 0);
 			values.put(COLUMN_IMAGE_PATH, msg.imagePath);
+			values.put(COLUMN_WAS_DOWNLOADED, msg.wasDownloaded ? 1 : 0);
 			
 			db.insert(TABLE_MESSAGES, null, values);
 		}
@@ -274,4 +308,25 @@ public class ConversationDAO extends SQLiteOpenHelper {
 		db.close(); 
     }
     
+    public int addMessage (int user, Message msg) {
+    	SQLiteDatabase db = this.getWritableDatabase();
+     
+    	ContentValues values;
+
+		values = new ContentValues();
+		values.put(COLUMN_USERID, user);
+		values.put(COLUMN_MESSAGE, msg.message);
+		values.put(COLUMN_TIME, msg.time);
+		values.put(COLUMN_LEFT, msg.left ? 1 : 0);
+		values.put(COLUMN_READ, msg.read ? 1 : 0);
+		values.put(COLUMN_IS_IMAGE, msg.image ? 1 : 0);
+		values.put(COLUMN_IMAGE_PATH, msg.imagePath);
+		values.put(COLUMN_WAS_DOWNLOADED, msg.wasDownloaded ? 1 : 0);
+		
+		long id = db.insert(TABLE_MESSAGES, null, values);
+		
+		db.close();
+		
+		return (int)id;
+    }
 }

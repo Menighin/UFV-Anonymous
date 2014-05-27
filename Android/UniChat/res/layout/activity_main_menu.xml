@@ -66,7 +66,6 @@
 				        android:background="@android:color/transparent"
 				        android:layout_marginRight="20dp"
 				        android:onClick="btnSelected" />
-				    
 				    <Button
 				        android:id="@+id/female_btn"
 				        style="?android:attr/buttonStyleSmall"
@@ -122,6 +121,20 @@
 		        android:background="@android:color/transparent"
 		        android:layout_marginTop="20dp"
 		        android:onClick="connect" />
+		    
+		    <Button
+		        android:id="@+id/retry_btn"
+		        style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/retry_connect"
+		        android:textSize="12sp"
+		        android:drawableTop="@drawable/retry"
+		        android:drawablePadding="10dp"
+		        android:background="@android:color/transparent"
+		        android:onClick="retryConnection"
+		        android:layout_marginTop="20dp"
+		        android:visibility="gone" />
 		    
 		</LinearLayout>
 		    

@@ -12,10 +12,13 @@ import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -27,6 +30,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -47,7 +51,6 @@ import com.google.android.gms.ads.AdView;
 public class MainMenu extends FragmentActivity {
 	
 	private ConversationDAO database;
-	private ArrayList<Conversation> conversations;
 	private ConversationArrayAdapter conversationAdapter;
 	private ArrayList<Conversation> cv;
 	private ListView conversationList;
@@ -59,6 +62,7 @@ public class MainMenu extends FragmentActivity {
 	private Button femaleBtn;
 	private Button maleBtn;
 	private Button connectBtn;
+	private Button retryConnectBtn;
 	private Button tab1;
 	private Button tab2;
 	private Spinner courses;
@@ -77,7 +81,6 @@ public class MainMenu extends FragmentActivity {
 		setContentView(R.layout.menu_content);
 		
 		database = new ConversationDAO(this);
-		conversations = null;
 		
 		// Get the other XML layouts
 		LayoutInflater inflater = getLayoutInflater();
@@ -95,6 +98,7 @@ public class MainMenu extends FragmentActivity {
 		femaleBtn = (Button) mMenuLayout.findViewById(R.id.female_btn);
 		maleBtn = (Button) mMenuLayout.findViewById(R.id.male_btn);
 		connectBtn = (Button) mMenuLayout.findViewById(R.id.connect_btn);
+		retryConnectBtn = (Button) mMenuLayout.findViewById(R.id.retry_btn);
 		courses = (Spinner) mMenuLayout.findViewById(R.id.courses_spinner);
 		paid = (LinearLayout) mMenuLayout.findViewById(R.id.paid_part);
 		logout = (TextView) mMenuLayout.findViewById(R.id.logoutText);
@@ -105,8 +109,7 @@ public class MainMenu extends FragmentActivity {
 		conversationList = (ListView) mConversationsLayout.findViewById(R.id.list_conversation);
 		conversationList.setAdapter(conversationAdapter);
 		
-		// Genrating list of stored conversations
-		
+		// Generating list of stored conversations
 		cv = new ArrayList<Conversation>();
 		cv.add(new Conversation("Minhas conversas", true, -1));
 		cv.addAll(database.getAllConversations(1));
@@ -114,12 +117,11 @@ public class MainMenu extends FragmentActivity {
 		cv.addAll(database.getAllConversations(0));
 		
 		for (Conversation c : cv) {
-			//if (c.getAnonymID() != -1)
-				conversationAdapter.add(c);
+			conversationAdapter.add(c);
 			Log.d("C", c.getAnonymousAlias());
 		}
 		
-		// Set click item list event
+		// Set click item list event to open conversation
 		conversationList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
@@ -127,14 +129,90 @@ public class MainMenu extends FragmentActivity {
 					intent = new Intent(MainMenu.this, Chat.class);
 					intent.putExtra("type", "old");
 					intent.putExtra("user_id", cv.get(position).getAnonymID());
-					startActivityForResult(intent, 1);
+					startActivityForResult(intent, 2);
 				}
 			}
 		});
 		
+		conversationList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+				
+				if (cv.get(position).isHeader())
+					return false;
+				
+				AlertDialog.Builder longClickConversation = new AlertDialog.Builder(MainMenu.this);
+				longClickConversation.setMessage("Adicionar anônimo antes de sair?");
+				final EditText alias = new EditText(MainMenu.this);
+				// EditText for anonimous alias
+				alias.setHint("Apelido");
+				alias.setText(cv.get(position).getAnonymousAlias());
+				
+				longClickConversation.setView(alias);
+				
+				// Buttons on dialog
+				longClickConversation.setPositiveButton("Renomear", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String newAlias = alias.getText().toString().length() > 0 ? alias.getText().toString() : "Anônimo";
+						cv.get(position).setAnonymousAlias(newAlias);
+						conversationAdapter.notifyDataSetChanged();
+						database.updateUserAlias(cv.get(position).getAnonymID(), newAlias);
+						Toast.makeText(MainMenu.this, "Usuário renomeado", Toast.LENGTH_LONG).show();
+					}
+				});
+				longClickConversation.setNeutralButton("Deletar", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						AlertDialog confirmExclusion = 
+								new AlertDialog.Builder(MainMenu.this)
+								.setMessage("Certeza?")
+								.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										if (cv.get(position).isMine()) Settings.N_CONVERSATIONS--;
+										database.deleteConversation(cv.get(position));
+										cv.remove(position);
+										conversationAdapter.remove(position);
+										conversationAdapter.notifyDataSetChanged();
+										Toast.makeText(MainMenu.this, "Usuário removido", Toast.LENGTH_LONG).show();
+										
+										//TODO: SEND REMOVE MESSAGE TO OTHER USER
+									}
+								})
+								.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										// Do nothing
+									}
+								}).create();
+						confirmExclusion.show();
+						
+					}
+				});
+				longClickConversation.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing
+					}
+				});
+				
+				longClickConversation.create().show();
+				return true;
+			}
+			
+		});
 		
-		// Add first tab
-		mContentLayout.addView(mMenuLayout);
+		
+		// Inflate the first tab
+		if(cv.size() > 2) {
+			mContentLayout.addView(mConversationsLayout);
+			tab1.setBackgroundResource(R.drawable.tab_button_on);
+			tab2.setBackgroundResource(R.drawable.tab_button_off);
+			checkTab = false;
+		}
+		else
+			mContentLayout.addView(mMenuLayout);
 		
 		
 		if (Settings.FREE_VERSION)
@@ -156,7 +234,7 @@ public class MainMenu extends FragmentActivity {
 		
 		// Setting the number of stored conversations on DB
 		Settings.N_CONVERSATIONS = database.countConversations();
-		Log.i("N_CONV", Settings.N_CONVERSATIONS + "");
+
 	}
 	
 	//Function to make the 3 buttons work like a RadioButton
@@ -192,6 +270,9 @@ public class MainMenu extends FragmentActivity {
 			tab2.setBackgroundResource(R.drawable.tab_button_off);
 			checkTab = true;
 			
+			// Updating conversations
+			updateContactsList();
+			
 		} else {
 			mContentLayout.addView(mMenuLayout);
 			tab1.setBackgroundResource(R.drawable.tab_button_off);
@@ -213,6 +294,12 @@ public class MainMenu extends FragmentActivity {
 		logout();
 	}
 	
+	// Retry connect button click
+	public void retryConnection (View v) {
+		new GetCoursesAsync().execute();
+	}
+	
+	
 	//AsyncTask to manage the connection with the API
 	private class ConnectAsync extends AsyncTask<Void, Void, Integer> {
 		
@@ -224,8 +311,17 @@ public class MainMenu extends FragmentActivity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
+		        	String already_added = "";
+		        	
+		        	if (cv.size() > 0) {
+		        		already_added = cv.get(0).getAnonymID() + "";
+		        		for (int i = 1; i < cv.size(); i++)
+		        			already_added += "," + cv.get(i).getAnonymID();
+		        	}
+		        	
 		        	String urlParameters = "user=" + Settings.me.getUserID() +
-							"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + "&api_key=" + Settings.me.getAPIKey();
+							"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + 
+							"&api_key=" + Settings.me.getAPIKey() + "&already_added=" + already_added;
 					URL url = new URL(Settings.API_URL + "/connect2.php");
 					
 					String res = POSTConnection(urlParameters, url);
@@ -312,6 +408,8 @@ public class MainMenu extends FragmentActivity {
 			if (result == 1) {
 				adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
 				courses.setAdapter(adapter);
+				connectBtn.setVisibility(View.VISIBLE);
+				retryConnectBtn.setVisibility(View.GONE);
 			} else if (result == 0) {
 				Toast.makeText(MainMenu.this, "Essa universidade não tem cursos, lol", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {
@@ -319,7 +417,9 @@ public class MainMenu extends FragmentActivity {
 			} else if (result == -2) {
 				Toast.makeText(MainMenu.this, "Chave inválida para usuário. Esse usuário fez login em outro aparelho.", Toast.LENGTH_LONG).show();
 			} else if (result == -3) {
-				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet pra logar!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainMenu.this, "Para conversar é necessário uma conexão com internet", Toast.LENGTH_SHORT).show();
+				connectBtn.setVisibility(View.GONE);
+				retryConnectBtn.setVisibility(View.VISIBLE);
 			}
 		}
 	}
@@ -330,6 +430,8 @@ public class MainMenu extends FragmentActivity {
 			if (resultCode == RESULT_CANCELED) {    
 				logout();
 			}
+		} else if (requestCode == 2 && resultCode == RESULT_OK) {
+			updateContactsList();
 		}
 	}
 	
@@ -404,6 +506,22 @@ public class MainMenu extends FragmentActivity {
 	    rd.close();
 	    
 	    return response.toString();
+	}
+	
+	public void updateContactsList () {
+		conversationList.setAdapter(null);
+		conversationAdapter.notifyDataSetChanged();
+		conversationAdapter = new ConversationArrayAdapter(getApplicationContext(), R.layout.list_item_conversation);
+		conversationList.setAdapter(conversationAdapter);
+		cv = new ArrayList<Conversation>();
+		cv.add(new Conversation("Minhas conversas", true, -1));
+		cv.addAll(database.getAllConversations(1));
+		cv.add(new Conversation("Conversas comigo", true, -1));
+		cv.addAll(database.getAllConversations(0));
+		
+		for (Conversation c : cv) {
+			conversationAdapter.add(c);
+		}
 	}
 	
 	@Override

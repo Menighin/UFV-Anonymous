@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -30,23 +32,39 @@ public class ConversationArrayAdapter extends ArrayAdapter<Conversation> {
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View row; //= convertView;
+		View row;
 		conversation = getItem(position);
 		
-		//if (row == null) {
-			LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			if (!conversation.isHeader())
-				row = inflater.inflate(R.layout.list_item_conversation, parent, false);
-			else
-				row = inflater.inflate(R.layout.list_item_conversation_separator, parent, false);
-		//}
+		LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		if (!conversation.isHeader())
+			row = inflater.inflate(R.layout.list_item_conversation, parent, false);
+		else
+			row = inflater.inflate(R.layout.list_item_conversation_separator, parent, false);
 		
 		if (!conversation.isHeader()) {
 			aliasView = (TextView) row.findViewById(R.id.conversation_list_alias);
 			aliasView.setText(conversation.getAnonymousAlias());
 			
 			messageView = (TextView) row.findViewById(R.id.conversation_list_last);
-			messageView.setText(conversation.getLastMessage().message + "...");
+			Message lastMessage = conversation.getLastMessage();
+			if (lastMessage.message.length() > 20)
+				messageView.setText(lastMessage.message.subSequence(0, 20) + "...");
+			else
+				messageView.setText(lastMessage.message);
+			if (lastMessage.image)
+				messageView.setText("Imagem");
+			if (!lastMessage.read) {
+				messageView.setTypeface(null, Typeface.BOLD);
+				messageView.setTextColor(Color.parseColor("#555555"));
+			}
+			imageView = (ImageView) row.findViewById(R.id.conversation_list_img);
+			switch (conversation.getImgId()) {
+				case 0: imageView.setImageResource(R.drawable.conversation0); break;
+				case 1: imageView.setImageResource(R.drawable.conversation1); break;
+				case 2: imageView.setImageResource(R.drawable.conversation2); break;
+				case 3: imageView.setImageResource(R.drawable.conversation3); break;
+				case 4: imageView.setImageResource(R.drawable.conversation4); break;
+			}
 			
 			dateView = (TextView) row.findViewById(R.id.conversation_list_date);
 			dateView.setText(conversation.getDate());
@@ -67,6 +85,10 @@ public class ConversationArrayAdapter extends ArrayAdapter<Conversation> {
 		Log.d("Adding", c.getAnonymousAlias());
 		conversations.add(c);
 		super.add(c);
+	}
+	
+	public void remove(int index) {
+		conversations.remove(index);
 	}
 	
 	@Override

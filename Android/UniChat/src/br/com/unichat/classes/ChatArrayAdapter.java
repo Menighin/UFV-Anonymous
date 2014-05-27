@@ -1,5 +1,6 @@
 package br.com.unichat.classes;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +9,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,7 +27,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import br.com.unichat.activities.Chat;
 import br.com.unichat.activities.R;
+import br.com.unichat.activities.Chat.GetImageAsync;
 
 public class ChatArrayAdapter extends ArrayAdapter<Message> {
 	
@@ -98,6 +104,10 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
 				timeConfView.setLayoutParams(params);
 				timeConfView.setPadding((int)(10 * context.getResources().getDisplayMetrics().density), 0, 0, 0);
 				
+				if (!message.read)
+					messageView.setTypeface(null, Typeface.BOLD);
+				
+				
 				messageView.setVisibility(TextView.VISIBLE);
 				imageView.setVisibility(ImageView.GONE);
 			} else {
@@ -118,23 +128,28 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
 				timeConfView.setLayoutParams(params);
 				timeConfView.setPadding((int)(10 * context.getResources().getDisplayMetrics().density), 0, 0, 0);
 				
-				//imageView.setImageBitmap(message.bitImage);
-				imageView.setImageBitmap(new BitmapFactory().decodeFile(message.imagePath));
 				imageView.setTag(message);
-				
-				imageView.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Message messageForThisRow = (Message)v.getTag();
-						Uri imgUri = Uri.parse("file://" + messageForThisRow.imagePath);
-						Intent intent = new Intent(); 
-						intent.setAction(android.content.Intent.ACTION_VIEW);
-						intent.setData(imgUri);
-						intent.setDataAndType(imgUri, "image/*");
-						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						context.startActivity(intent);
-					}
-				});
+				if (!message.wasDownloaded) {
+					imageView.setImageResource(R.drawable.camera_off);
+					imageView.setClickable(false);
+				} else {
+					imageView.setImageBitmap(new BitmapFactory().decodeFile(message.imagePath));
+					imageView.setClickable(true);
+					imageView.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							Message messageForThisRow = (Message)v.getTag();
+							Log.e("IMAGEPATH", messageForThisRow.imagePath);
+							Uri imgUri = Uri.parse("file://" + messageForThisRow.imagePath);
+							Intent intent = new Intent(); 
+							intent.setAction(android.content.Intent.ACTION_VIEW);
+							intent.setData(imgUri);
+							intent.setDataAndType(imgUri, "image/*");
+							intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							context.startActivity(intent);
+						}
+					});
+				}
 			}
 			
 			confView.setVisibility(TextView.INVISIBLE);
@@ -221,6 +236,11 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
 		super.remove(msg);
 		messages.add(i, msg);
 		super.add(msg);
+	}
+	
+	public void updateImageDownloaded (int i, String path) {
+		messages.get(i).wasDownloaded = true;
+		messages.get(i).imagePath = path;
 	}
 	
 	@Override

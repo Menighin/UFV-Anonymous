@@ -61,7 +61,7 @@
 			$params[':wantscourse'] = $wantscourse;
 		}
 		
-		$query .= ' AND gcm_key IS NOT NULL AND gcm_key != "" ORDER BY last_seen DESC LIMIT 30';
+		$query .= ' AND gcm_key IS NOT NULL AND gcm_key != "" AND id NOT IN (' . $_POST['already_added'] . ') ORDER BY last_seen DESC LIMIT 30';
 		
 		// Execute query!
 		try {

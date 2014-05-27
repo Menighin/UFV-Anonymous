@@ -15,6 +15,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -58,8 +60,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -90,7 +94,7 @@ public class Chat extends Activity {
 	private Uri imgUri;
 	private Bitmap bitmap;
 	private EditText alias;
-	private ArrayList<Message> newMessages;
+	//private ArrayList<Message> newMessages;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -129,13 +133,31 @@ public class Chat extends Activity {
 			chat.setAnonymousAlias(extras.getString("talkingTo"));
 			chat.setDate(DateFormat.getDateInstance().format(new Date()));
 		} else { // If this is a chat already saved on local database
+			Settings.CURRENT_CONVERSATION_ID = extras.getInt("user_id");
 			chat = database.getConversation(extras.getInt("user_id"));
 			talkingTo.setText("Falando com: " + chat.getAnonymousAlias());
 			
-			newMessages = new ArrayList<Message>();
+			//newMessages = new ArrayList<Message>();
 			
 			for (Message m : chat.getMessages()) {
 				adapter.add(m);
+			}
+			
+			conversation.setSelection(chat.getLastReadMessage());
+			
+			database.updateMessagesRead(extras.getInt("user_id"));
+		}
+		
+		// If not connected, dont let'em talk
+		ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+		
+		if (networkInfo == null || !networkInfo.isConnected()) {
+			message.setEnabled(false);
+			switch(new Random().nextInt(3)) {
+				case 0: message.setHint("Preciso de internet pra isso!"); break;
+				case 1: message.setHint("Liga o 3G!"); break;
+				case 2: message.setHint("Liga a Wifi!"); break;
 			}
 		}
 		
@@ -144,23 +166,38 @@ public class Chat extends Activity {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				Bundle bundle = intent.getExtras();
-				//String messageString = bundle.getString("message");
 				try {
+					Date date = new Date();
+					DateFormat format = DateFormat.getTimeInstance();
 					JSONObject messageJSON = new JSONObject(bundle.getString("message"));
-					
 					if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
 						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 						v.vibrate(300);
 						
-						new GetImageAsync().execute(messageJSON.getString("message").substring(12));
+						Message message = new Message.Builder()
+							.left(true)
+							.message(messageJSON.getString("message").substring(12))
+							.time(format.format(date).substring(0, 5))
+							.image(true)
+							.wasDownloaded(false)
+							.imagePath("")
+							.createMessage();
+						
+						if (extras.get("type").equals("old")) message.id = database.addMessage(chat.getAnonymID(), message); //newMessages.add(message);
+						adapter.add(message);
+						chat.addMessage(message);
+						
 					} else {
 						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 						v.vibrate(300);
 						
-						Date date = new Date();
-						DateFormat format = DateFormat.getTimeInstance();
-						Message message = new Message(true, messageJSON.getString("message"), format.format(date).substring(0, 5));
-						if (extras.get("type").equals("old")) newMessages.add(message);
+						Message message = new Message.Builder()
+							.left(true)
+							.message(messageJSON.getString("message"))
+							.time(format.format(date).substring(0, 5))
+							.createMessage();
+						
+						if (extras.get("type").equals("old")) message.id = database.addMessage(chat.getAnonymID(), message); //newMessages.add(message);
 						adapter.add(message);
 						chat.addMessage(message);
 					}
@@ -188,6 +225,40 @@ public class Chat extends Activity {
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 			@Override
 			public void afterTextChanged(Editable s) {}
+		});
+		
+		// Set click item list event
+		conversation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {			
+				if (adapter.getItem(position).image && adapter.getItem(position).left && !adapter.getItem(position).wasDownloaded) {
+					final Message msg = (Message)arg1.findViewById(R.id.imageUploaded).getTag();
+					try {
+						AlertDialog.Builder confirmDownload = new AlertDialog.Builder(Chat.this);
+						confirmDownload.setMessage("Baixar imagem?");
+						
+						// Buttons on dialog
+						confirmDownload.setPositiveButton("Baixar", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								Toast.makeText(Chat.this, "Baixando a imagem...", Toast.LENGTH_LONG).show();
+								new GetImageAsync().execute(msg.message, position + "", msg.id + "");
+							}
+						});
+						confirmDownload.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// Do nothing
+							}
+						});
+						confirmDownload.create().show();
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e("GETASYNCIMAGE", e.toString());
+					}
+					
+				}
+			}
 		});
 	}
 	
@@ -253,11 +324,18 @@ public class Chat extends Activity {
 	
 	public void sendMessage (View v) {
 		if (message.getText().length() > 0) {
-			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5));
+			//Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5));
+			
+			Message msg = new Message.Builder()
+				.left(false)
+				.message(message.getText().toString())
+				.time(DateFormat.getTimeInstance().format(new Date()).substring(0,5))
+				.createMessage();
+			
 			adapter.add(msg);
 			chat.addMessage(msg);
 			
-			if (extras.getString("type").equals("old")) newMessages.add(msg); // Add if new message in old conversation for update later
+			if (extras.getString("type").equals("old")) msg.id = database.addMessage(chat.getAnonymID(), msg); //newMessages.add(msg); // Add if new message in old conversation for update later
 			
 			Integer lastMsg = adapter.getItem(msg);
 			
@@ -362,10 +440,20 @@ public class Chat extends Activity {
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
 			bitmap = BitmapFactory.decodeFile(filePath, o2);
-			Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmap, filePath);
+			
+			//Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmap, filePath);
+			Message msg = new Message.Builder()
+				.left(false)
+				.message(message.getText().toString())
+				.time(DateFormat.getTimeInstance().format(new Date()).substring(0,5))
+				.image(true)
+				.bitImage(bitmap)
+				.imagePath(filePath).createMessage();
+			
 			adapter.add(msg);
 			chat.addMessage(msg);
-			if (extras.get("type").equals("old")) newMessages.add(msg);
+			conversation.setSelection(conversation.getCount() - 1);
+			if (extras.get("type").equals("old"))  msg.id = database.addMessage(chat.getAnonymID(), msg);//newMessages.add(msg);
 			Integer lastMsg = adapter.getItem(msg);
 		
 			// Upload to server
@@ -452,8 +540,8 @@ public class Chat extends Activity {
 					
 					JSONObject json = new JSONObject(sResponse);
 					
-					String urlParameters = "message=[UniChatImg]" + json.getString("imgName") + "&user=" + Settings.me.getUserID() 
-							+ "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8");
+					String urlParameters = "message=[UniChatImg]" + URLEncoder.encode(json.getString("imgName"), "UTF-8")
+							+ "&user=" + Settings.me.getUserID() + "&api_key=" + URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&user_to=" + chat.getAnonymID();
 					
 					new SendMessageAsync().execute(urlParameters, params[0]);
 					
@@ -482,20 +570,24 @@ public class Chat extends Activity {
 		}
 	}
 	
-	private class GetImageAsync extends AsyncTask<String, Void, Integer> {
+	public class GetImageAsync extends AsyncTask<String, Void, Integer> {
 		private String filename;
+		private int position;
+		private int messageId;
 		private Bitmap bitmapDownloaded;
 		
 		@Override
 		protected Integer doInBackground(String... params) {
 			
 			filename = params[0];
+			position = Integer.parseInt(params[1]);
+			messageId = Integer.parseInt(params[2]);
 			
 			InputStream in = null;
 	        int response = -1;
 	        
 	        try {
-		        URL url = new URL(Settings.API_URL + "/images/" + params[0] + ".jpg");
+		        URL url = new URL(Settings.API_URL + "/images/" + filename + ".jpg");
 		        URLConnection conn = url.openConnection();
 	                   
 	            HttpURLConnection httpConn = (HttpURLConnection) conn;
@@ -515,8 +607,9 @@ public class Chat extends Activity {
 	            Log.e("GetImageAsync", "deu ruim");
 	            e.printStackTrace();
 	        }
+	        
+	        return 1;
 			
-			return 1;
 		}
 		
 		@Override
@@ -548,9 +641,10 @@ public class Chat extends Activity {
 				Log.e("GetImageAsync", "Error saving downloaded image");
 				e.printStackTrace();
 			}
-			
-			Message msg = new Message(true, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmapDownloaded, file.getAbsolutePath());
-			adapter.add(msg);
+			adapter.updateImageDownloaded(position, file.getAbsolutePath());
+			adapter.notifyDataSetChanged();
+			Log.e("MESSAGE ID", messageId + "");
+			database.updateImageDownloaded(messageId, file.getAbsolutePath());
 		}
 		
 	}
@@ -559,7 +653,6 @@ public class Chat extends Activity {
 	private String POSTConnection (String urlParameters, URL url) throws Exception{
 
 		//Connection parameters
-		
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("POST");
 		conn.setDoInput(true);
@@ -607,6 +700,7 @@ public class Chat extends Activity {
 					if (alias.getText().toString().length() > 0) {
 						chat.setAnonymousAlias(alias.getText().toString());
 					}
+					chat.setImgId(new Random().nextInt(5));
 					database.addConversation(chat);
 					voltarTela();
 				} else {
@@ -633,7 +727,7 @@ public class Chat extends Activity {
 		if (extras.getString("type").equals("new")) {
 			confirmQuit.show();
 		} else {
-			database.updateMessages(chat.getAnonymID(), newMessages, DateFormat.getDateInstance().format(new Date()));
+			//database.updateMessages(chat.getAnonymID(), newMessages, DateFormat.getDateInstance().format(new Date()));
 			voltarTela();
 		}
 	}
@@ -646,15 +740,7 @@ public class Chat extends Activity {
 	
 	@Override
 	public void onDestroy() {
-		if(isFinishing()) {
-			/*try {
-				unregisterReceiver(messageReceiver);
-				
-			} catch (Exception e) {
-				Log.e("Error onDestroy", e.toString());
-			}*/
-			
-		}
+		Settings.CURRENT_CONVERSATION_ID = -1;
 		super.onDestroy();
 	}
 	

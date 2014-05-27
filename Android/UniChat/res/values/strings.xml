@@ -7,7 +7,7 @@
     <string name="splash_image">Splash screen image</string>
 
     <!--  Splash Screen -->
-    <string name="retry_connect">Tentar novamente</string>
+    <string name="retry_connect">Reconectar</string>
     <!-- Login activity -->
     <string name="title_activity_login">Login</string>
     <string name="input_user">Usuário</string>

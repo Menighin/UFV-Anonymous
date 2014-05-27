@@ -11,6 +11,7 @@ public class Conversation {
 	private boolean isMine;
 	private boolean isHeader;
 	private ArrayList<Message> messages;
+	private int imgId;
 	
 	public Conversation() {
 		anonymID = 0;
@@ -19,21 +20,31 @@ public class Conversation {
 		isHeader = false;
 		date = DateFormat.getDateInstance().format(new Date());
 		messages = new ArrayList<Message>();
+		imgId = 1;
 	}
 	
-	public Conversation (int id, String alias, String date, boolean isMine, ArrayList<Message> messages) {
+	public Conversation (int id, String alias, String date, boolean isMine, ArrayList<Message> messages, int imgId) {
 		this.anonymID = id;
 		this.anonymousAlias = alias;
 		this.date = date;
 		this.isMine = isMine;
 		this.messages = messages;
 		this.isHeader = false;
+		this.imgId = imgId;
 	}
 	
 	public Conversation (String alias, boolean isHeader, int id) {
 		this.anonymousAlias = alias;
 		this.isHeader = isHeader;
 		this.anonymID = id;
+	}
+
+	public int getImgId() {
+		return imgId;
+	}
+
+	public void setImgId(int imgId) {
+		this.imgId = imgId;
 	}
 
 	public String getDate() {
@@ -97,6 +108,16 @@ public class Conversation {
 			return messages.get(messages.size() - 1);
 		else
 			return new Message();
+	}
+	
+	public int getLastReadMessage() {
+		int i = 0;
+		for (i = 0; i < messages.size(); i++) {
+			if (!messages.get(i).read) {
+				return i;
+			}
+		}
+		return i - 1;
 	}
 
 	@Override

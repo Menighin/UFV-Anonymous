@@ -14,20 +14,5 @@
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:contentDescription="@string/splash_image" />
-
-    <Button
-        android:id="@+id/retry_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="@android:color/transparent"
-        android:drawablePadding="10dp"
-        android:drawableTop="@drawable/retry"
-        android:onClick="retryConnect"
-        android:text="@string/retry_connect"
-        android:textColor="@color/dark_gray"
-        android:textSize="12sp"
-        android:layout_gravity="center"
-        android:visibility="invisible" />
     
 </LinearLayout>
