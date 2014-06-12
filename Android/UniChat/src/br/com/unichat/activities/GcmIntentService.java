@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -59,6 +60,8 @@ public class GcmIntentService extends IntentService {
 				String notificationMessage;
 				if (msg.length() > 12 && msg.substring(0, 12).equals("[UniChatImg]"))
 					notificationMessage = "Imagem";
+				else if (msg.equals("[uniChatFechaSsaPorra]"))
+					notificationMessage = "Você foi excluído(a) por esse anônimo!";
 				else
 					notificationMessage = msg;
 				NotificationCompat.Builder mBuilder =
@@ -84,39 +87,48 @@ public class GcmIntentService extends IntentService {
 				mBuilder.setContentIntent(resultPendingIntent);
 				NotificationManager mNotificationManager =
 				    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-				// mId allows you to update the notification later on.
-				mNotificationManager.notify(1, mBuilder.build());
-				
 				
 				// Adding message on database
+				boolean closingMessage = messageJSON.getString("message").equals("[uniChatFechaSsaPorra]");
 				Message message;
+				Log.d("CURRENT CONVERSATION", Settings.CURRENT_CONVERSATION_ID + " == " + id + "?");
 				if (Settings.CURRENT_CONVERSATION_ID != id) {
-					if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
-						message = new Message.Builder()
-							.left(true)
-							.message(messageJSON.getString("message").substring(12))
-							.time(DateFormat.getTimeInstance().format(new Date()).substring(0,5))
-							.image(true)
-							.wasDownloaded(false)
-							.imagePath("")
-							.createMessage();
+					if (!closingMessage) {
+						if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
+							message = new Message.Builder()
+								.left(true)
+								.message(messageJSON.getString("message").substring(12))
+								.time(DateFormat.getTimeInstance().format(new Date()).substring(0,5))
+								.image(true)
+								.wasDownloaded(false)
+								.imagePath("")
+								.createMessage();
+						} else {
+							message = new Message.Builder()
+								.left(true)
+								.message(msg)
+								.time(DateFormat.getTimeInstance().format(new Date()).substring(0,5))
+								.read(false)
+								.createMessage();
+						}
+					
+						if (database.getConversation(id) != null) {
+							database.addMessage(id, message);
+						} else {
+							ArrayList<Message> messages = new ArrayList<Message>();
+							messages.add(message);
+							int randImg = new Random().nextInt(5);
+							Conversation c = new Conversation(id, "Anônimo", DateFormat.getTimeInstance().format(new Date()).substring(0,5), false, messages, randImg, false);
+							database.addConversation(c);
+						}
 					} else {
-						message = new Message.Builder()
-							.left(true)
-							.message(msg)
-							.time(DateFormat.getTimeInstance().format(new Date()).substring(0,5))
-							.read(false)
-							.createMessage();
+						database.updateConversationClosed(id);
 					}
-				
-					if (database.getConversation(id) != null) {
-						database.addMessage(id, message);
-					} else {
-						ArrayList<Message> messages = new ArrayList<Message>();
-						messages.add(message);
-						int randImg = new Random().nextInt(5);
-						Conversation c = new Conversation(id, "Anônimo", DateFormat.getTimeInstance().format(new Date()).substring(0,5), false, messages, randImg);
-						database.addConversation(c);
+					
+					if (database.isConversation(id)) {
+						mNotificationManager.notify(1, mBuilder.build());
+						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						v.vibrate(300);
 					}
 				}
 				

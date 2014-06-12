@@ -12,6 +12,7 @@ public class Conversation {
 	private boolean isHeader;
 	private ArrayList<Message> messages;
 	private int imgId;
+	private boolean isClosed;
 	
 	public Conversation() {
 		anonymID = 0;
@@ -21,9 +22,10 @@ public class Conversation {
 		date = DateFormat.getDateInstance().format(new Date());
 		messages = new ArrayList<Message>();
 		imgId = 1;
+		isClosed = false;
 	}
 	
-	public Conversation (int id, String alias, String date, boolean isMine, ArrayList<Message> messages, int imgId) {
+	public Conversation (int id, String alias, String date, boolean isMine, ArrayList<Message> messages, int imgId, boolean isClosed) {
 		this.anonymID = id;
 		this.anonymousAlias = alias;
 		this.date = date;
@@ -31,6 +33,7 @@ public class Conversation {
 		this.messages = messages;
 		this.isHeader = false;
 		this.imgId = imgId;
+		this.isClosed = isClosed;
 	}
 	
 	public Conversation (String alias, boolean isHeader, int id) {
@@ -69,6 +72,14 @@ public class Conversation {
 	
 	public void isHeader(boolean bool) {
 		this.isHeader = bool;
+	}
+
+	public boolean isClosed() {
+		return isClosed;
+	}
+
+	public void setClosed(boolean isClosed) {
+		this.isClosed = isClosed;
 	}
 
 	public int getAnonymID() {

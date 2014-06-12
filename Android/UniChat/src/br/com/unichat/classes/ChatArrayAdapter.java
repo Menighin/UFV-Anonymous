@@ -130,7 +130,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
 				
 				imageView.setTag(message);
 				if (!message.wasDownloaded) {
-					imageView.setImageResource(R.drawable.camera_off);
+					imageView.setImageResource(R.drawable.download_image);
 					imageView.setClickable(false);
 				} else {
 					imageView.setImageBitmap(new BitmapFactory().decodeFile(message.imagePath));

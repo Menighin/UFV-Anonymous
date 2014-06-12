@@ -12,7 +12,7 @@ public class Settings {
 	public static final int SPLASH_TIME = 3000;
 	public static final int CHECK_CONVERSATION_READY_TIME = 4000;
 	public static final int CHECK_MESSAGES_TIME = 4000;
-	public static final int MAX_STORED_CONVERSATIONS = 4;
+	public static final int MAX_STORED_CONVERSATIONS = 5;
 	public static final boolean FREE_VERSION = false;
 	public static ArrayList<String> COURSES = null;
 	public static ArrayList<Integer> COURSES_ID = null;

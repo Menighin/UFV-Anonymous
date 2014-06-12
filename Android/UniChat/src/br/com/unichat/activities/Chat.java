@@ -94,7 +94,7 @@ public class Chat extends Activity {
 	private Uri imgUri;
 	private Bitmap bitmap;
 	private EditText alias;
-	//private ArrayList<Message> newMessages;
+	private AlertDialog confirmQuit;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +104,6 @@ public class Chat extends Activity {
 		
 		chat = new Conversation();
 		database = new ConversationDAO(this);
-		
-		alias = new EditText(this);
 		
 		message = (EditText) findViewById(R.id.message);
 		sendBtn = (Button) findViewById(R.id.send_btn);
@@ -127,17 +125,16 @@ public class Chat extends Activity {
 		
 		// Getting info from intent
 		extras = getIntent().getExtras();
+		Settings.CURRENT_CONVERSATION_ID = extras.getInt("user_id");
 		if (extras.getString("type").equals("new")) { // If this chat was created by a new conversation request
 			talkingTo.setText("Falando com: " + extras.getString("talkingTo"));
 			chat.setAnonymID(extras.getInt("user_id"));
 			chat.setAnonymousAlias(extras.getString("talkingTo"));
-			chat.setDate(DateFormat.getDateInstance().format(new Date()));
+			chat.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+			chat.setClosed(false);
 		} else { // If this is a chat already saved on local database
-			Settings.CURRENT_CONVERSATION_ID = extras.getInt("user_id");
 			chat = database.getConversation(extras.getInt("user_id"));
 			talkingTo.setText("Falando com: " + chat.getAnonymousAlias());
-			
-			//newMessages = new ArrayList<Message>();
 			
 			for (Message m : chat.getMessages()) {
 				adapter.add(m);
@@ -146,6 +143,15 @@ public class Chat extends Activity {
 			conversation.setSelection(chat.getLastReadMessage());
 			
 			database.updateMessagesRead(extras.getInt("user_id"));
+			
+			if (chat.isClosed()) {
+				message.setEnabled(false);
+				switch(new Random().nextInt(3)) {
+					case 0: message.setHint(chat.getAnonymousAlias() + " deletou você =/"); break;
+					case 1: message.setHint(chat.getAnonymousAlias() + " não te quer mais =/"); break;
+					case 2: message.setHint(chat.getAnonymousAlias() + " te excluiu =/"); break;
+				}
+			}
 		}
 		
 		// If not connected, dont let'em talk
@@ -170,36 +176,42 @@ public class Chat extends Activity {
 					Date date = new Date();
 					DateFormat format = DateFormat.getTimeInstance();
 					JSONObject messageJSON = new JSONObject(bundle.getString("message"));
-					if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
-						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-						v.vibrate(300);
-						
-						Message message = new Message.Builder()
-							.left(true)
-							.message(messageJSON.getString("message").substring(12))
-							.time(format.format(date).substring(0, 5))
-							.image(true)
-							.wasDownloaded(false)
-							.imagePath("")
-							.createMessage();
-						
-						if (extras.get("type").equals("old")) message.id = database.addMessage(chat.getAnonymID(), message); //newMessages.add(message);
-						adapter.add(message);
-						chat.addMessage(message);
-						
-					} else {
-						Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-						v.vibrate(300);
-						
-						Message message = new Message.Builder()
-							.left(true)
-							.message(messageJSON.getString("message"))
-							.time(format.format(date).substring(0, 5))
-							.createMessage();
-						
-						if (extras.get("type").equals("old")) message.id = database.addMessage(chat.getAnonymID(), message); //newMessages.add(message);
-						adapter.add(message);
-						chat.addMessage(message);
+					if (messageJSON.getInt("user_from") == chat.getAnonymID()) {
+						if (messageJSON.getString("message").length() > 12 && messageJSON.getString("message").substring(0, 12).equals("[UniChatImg]")) {
+							Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+							v.vibrate(300);
+							
+							Message message = new Message.Builder()
+								.left(true)
+								.message(messageJSON.getString("message").substring(12))
+								.time(format.format(date).substring(0, 5))
+								.image(true)
+								.wasDownloaded(false)
+								.imagePath("")
+								.createMessage();
+							
+							if (extras.get("type").equals("old")) message.id = database.addMessage(chat.getAnonymID(), message); //newMessages.add(message);
+							adapter.add(message);
+							chat.addMessage(message);
+							
+						} else if (messageJSON.getString("message").equals("[uniChatFechaSsaPorra]")) {
+							database.updateConversationClosed(chat.getAnonymID());
+							message.setEnabled(false);
+							message.setHint(chat.getAnonymousAlias() + " deletou você =/");
+						} else {
+							Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+							v.vibrate(300);
+							
+							Message message = new Message.Builder()
+								.left(true)
+								.message(messageJSON.getString("message"))
+								.time(format.format(date).substring(0, 5))
+								.createMessage();
+							
+							if (extras.get("type").equals("old")) message.id = database.addMessage(chat.getAnonymID(), message); //newMessages.add(message);
+							adapter.add(message);
+							chat.addMessage(message);
+						}
 					}
 				} catch (Exception e) {
 					Log.e("RECEIVE MESSAGE", "INVALID JSON:" + bundle.getString("message"));
@@ -227,7 +239,7 @@ public class Chat extends Activity {
 			public void afterTextChanged(Editable s) {}
 		});
 		
-		// Set click item list event
+		// Set click item list event for images
 		conversation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {			
@@ -260,6 +272,46 @@ public class Chat extends Activity {
 				}
 			}
 		});
+		
+		// Creating confirm exit dialog box
+		// EditText for anonimous alias
+		alias = new EditText(this);
+		alias.setHint("Apelido");
+		alias.setText("");
+		confirmQuit = new AlertDialog.Builder(this)
+					.setMessage("Adicionar anônimo antes de sair?")
+					.setView(alias)
+					.setPositiveButton("Salvar e sair", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (Settings.N_CONVERSATIONS < Settings.MAX_STORED_CONVERSATIONS) {
+								if (alias.getText().toString().length() > 0) {
+									chat.setAnonymousAlias(alias.getText().toString());
+								}
+								chat.setImgId(new Random().nextInt(7));
+								database.addConversation(chat);
+								Settings.N_CONVERSATIONS++;
+								voltarTela();
+							} else {
+								Toast.makeText(Chat.this, "Lista cheia! Exclua um anônimo para poder adicionar outro!", Toast.LENGTH_LONG).show();
+							}
+							confirmQuit.dismiss();
+						}
+					})
+					/*.setNeutralButton("Sair sem salvar", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							voltarTela();
+						}
+						
+					})*/
+					.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							confirmQuit.dismiss();
+						}
+					})
+					.create();
 	}
 	
 	@Override
@@ -324,8 +376,6 @@ public class Chat extends Activity {
 	
 	public void sendMessage (View v) {
 		if (message.getText().length() > 0) {
-			//Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5));
-			
 			Message msg = new Message.Builder()
 				.left(false)
 				.message(message.getText().toString())
@@ -681,53 +731,10 @@ public class Chat extends Activity {
 	}
 	
 	@Override
-	public void onBackPressed() {
-		AlertDialog.Builder confirmQuit = new AlertDialog.Builder(this);
-		confirmQuit.setMessage("Adicionar anônimo antes de sair?");
-		
-		// EditText for anonimous alias
-		alias.setHint("Apelido");
-		alias.setText("");
-		
-		
-		confirmQuit.setView(alias);
-		
-		// Buttons on dialog
-		confirmQuit.setPositiveButton("Salvar e sair", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (Settings.N_CONVERSATIONS < Settings.MAX_STORED_CONVERSATIONS) {
-					if (alias.getText().toString().length() > 0) {
-						chat.setAnonymousAlias(alias.getText().toString());
-					}
-					chat.setImgId(new Random().nextInt(5));
-					database.addConversation(chat);
-					voltarTela();
-				} else {
-					Toast.makeText(Chat.this, "Lista cheia! Exclua um anônimo para poder adicionar outro!", Toast.LENGTH_LONG).show();
-				}
-			}
-		});
-		confirmQuit.setNeutralButton("Sair sem salvar", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				voltarTela();
-			}
-			
-		});
-		confirmQuit.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// Do nothing
-			}
-		});
-		confirmQuit.create();
-		
-		//if(message.isEnabled()) {
+	public void onBackPressed() {		
 		if (extras.getString("type").equals("new")) {
 			confirmQuit.show();
 		} else {
-			//database.updateMessages(chat.getAnonymID(), newMessages, DateFormat.getDateInstance().format(new Date()));
 			voltarTela();
 		}
 	}

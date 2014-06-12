@@ -6,9 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,6 +25,7 @@ import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,7 +38,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,16 +66,17 @@ public class MainMenu extends FragmentActivity {
 	private Button maleBtn;
 	private Button connectBtn;
 	private Button retryConnectBtn;
+	private Button disabledConBtn;
 	private Button tab1;
 	private Button tab2;
 	private Spinner courses;
 	private char selectedSex = 'w';
 	private boolean backActivated = true;
-	private boolean checkTab = true;		// True for tab 2
 	private ArrayAdapter<String> adapter;
 	private Intent intent;
 	private TextView logout;
 	private AdView mAdView;
+	private Comparator<Conversation> conversationComparator;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +103,7 @@ public class MainMenu extends FragmentActivity {
 		maleBtn = (Button) mMenuLayout.findViewById(R.id.male_btn);
 		connectBtn = (Button) mMenuLayout.findViewById(R.id.connect_btn);
 		retryConnectBtn = (Button) mMenuLayout.findViewById(R.id.retry_btn);
+		disabledConBtn = (Button) mMenuLayout.findViewById(R.id.disabled_cnt_btn);
 		courses = (Spinner) mMenuLayout.findViewById(R.id.courses_spinner);
 		paid = (LinearLayout) mMenuLayout.findViewById(R.id.paid_part);
 		logout = (TextView) mMenuLayout.findViewById(R.id.logoutText);
@@ -110,15 +115,34 @@ public class MainMenu extends FragmentActivity {
 		conversationList.setAdapter(conversationAdapter);
 		
 		// Generating list of stored conversations
+		conversationComparator = new Comparator<Conversation>() {
+			SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			@Override
+			public int compare(Conversation lhs, Conversation rhs) {
+				try {
+	                return f.parse(rhs.getDate()).compareTo(f.parse(lhs.getDate()));
+	            } catch (Exception e) {
+	                Log.e("Comparator", e.toString());
+	            }
+				return 0;
+			}
+		};
+		
+		ArrayList<Conversation> aux;
+		
 		cv = new ArrayList<Conversation>();
 		cv.add(new Conversation("Minhas conversas", true, -1));
-		cv.addAll(database.getAllConversations(1));
+		aux = database.getAllConversations(1);
+		Collections.sort(aux, conversationComparator);
+		cv.addAll(aux);
 		cv.add(new Conversation("Conversas comigo", true, -1));
-		cv.addAll(database.getAllConversations(0));
+		aux = database.getAllConversations(0);
+		Collections.sort(aux, conversationComparator);
+		cv.addAll(aux);
+		
 		
 		for (Conversation c : cv) {
 			conversationAdapter.add(c);
-			Log.d("C", c.getAnonymousAlias());
 		}
 		
 		// Set click item list event to open conversation
@@ -170,14 +194,23 @@ public class MainMenu extends FragmentActivity {
 								.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
-										if (cv.get(position).isMine()) Settings.N_CONVERSATIONS--;
-										database.deleteConversation(cv.get(position));
-										cv.remove(position);
-										conversationAdapter.remove(position);
-										conversationAdapter.notifyDataSetChanged();
-										Toast.makeText(MainMenu.this, "Usuário removido", Toast.LENGTH_LONG).show();
-										
-										//TODO: SEND REMOVE MESSAGE TO OTHER USER
+
+										if (cv.get(position).isClosed()) {
+											if (cv.get(position).isMine()) Settings.N_CONVERSATIONS--;
+											database.deleteConversation(cv.get(position));
+											cv.remove(position);
+											conversationAdapter.remove(position);
+											conversationAdapter.notifyDataSetChanged();
+											Toast.makeText(MainMenu.this, "Usuário removido", Toast.LENGTH_LONG).show();
+										} else {
+											try {
+												String urlParameters = "message=[uniChatFechaSsaPorra]" + "&user=" + Settings.me.getUserID() 
+														+ "&api_key=" +  URLEncoder.encode(Settings.me.getAPIKey(), "UTF-8") + "&user_to=" + cv.get(position).getAnonymID();
+									    		new SendDeleteMessageAsync().execute(urlParameters, position + "");
+											} catch (Exception e) {
+												Log.e ("DELETAR BUTTON", e.toString());
+											}
+										}
 									}
 								})
 								.setNegativeButton("Não", new DialogInterface.OnClickListener() {
@@ -209,7 +242,6 @@ public class MainMenu extends FragmentActivity {
 			mContentLayout.addView(mConversationsLayout);
 			tab1.setBackgroundResource(R.drawable.tab_button_on);
 			tab2.setBackgroundResource(R.drawable.tab_button_off);
-			checkTab = false;
 		}
 		else
 			mContentLayout.addView(mMenuLayout);
@@ -264,20 +296,25 @@ public class MainMenu extends FragmentActivity {
 	// On tab click
 	public void changeTab (View v) {
 		mContentLayout.removeAllViews();
-		if (!checkTab) {
+		if (v.getId() == R.id.tab1) {
 			mContentLayout.addView(mConversationsLayout);
 			tab1.setBackgroundResource(R.drawable.tab_button_on);
 			tab2.setBackgroundResource(R.drawable.tab_button_off);
-			checkTab = true;
 			
 			// Updating conversations
 			updateContactsList();
 			
-		} else {
+		} else if (v.getId() == R.id.tab2) {
 			mContentLayout.addView(mMenuLayout);
 			tab1.setBackgroundResource(R.drawable.tab_button_off);
 			tab2.setBackgroundResource(R.drawable.tab_button_on);
-			checkTab = false;
+			if (database.countConversations() >= Settings.MAX_STORED_CONVERSATIONS) {
+				connectBtn.setVisibility(View.GONE);
+				disabledConBtn.setVisibility(View.VISIBLE);
+			} else {
+				connectBtn.setVisibility(View.VISIBLE);
+				disabledConBtn.setVisibility(View.GONE);
+			}
 		}
 	}
 	
@@ -414,6 +451,8 @@ public class MainMenu extends FragmentActivity {
 				Toast.makeText(MainMenu.this, "Essa universidade não tem cursos, lol", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
+				connectBtn.setVisibility(View.GONE);
+				retryConnectBtn.setVisibility(View.VISIBLE);
 			} else if (result == -2) {
 				Toast.makeText(MainMenu.this, "Chave inválida para usuário. Esse usuário fez login em outro aparelho.", Toast.LENGTH_LONG).show();
 			} else if (result == -3) {
@@ -513,11 +552,17 @@ public class MainMenu extends FragmentActivity {
 		conversationAdapter.notifyDataSetChanged();
 		conversationAdapter = new ConversationArrayAdapter(getApplicationContext(), R.layout.list_item_conversation);
 		conversationList.setAdapter(conversationAdapter);
+		
+		ArrayList<Conversation> aux;
 		cv = new ArrayList<Conversation>();
 		cv.add(new Conversation("Minhas conversas", true, -1));
-		cv.addAll(database.getAllConversations(1));
+		aux = database.getAllConversations(1);
+		Collections.sort(aux, conversationComparator);
+		cv.addAll(aux);
 		cv.add(new Conversation("Conversas comigo", true, -1));
-		cv.addAll(database.getAllConversations(0));
+		aux = database.getAllConversations(0);
+		Collections.sort(aux, conversationComparator);
+		cv.addAll(aux);
 		
 		for (Conversation c : cv) {
 			conversationAdapter.add(c);
@@ -548,4 +593,59 @@ public class MainMenu extends FragmentActivity {
 			super.onBackPressed();
 	}
 	
+	
+	private class SendDeleteMessageAsync extends AsyncTask<String, Void, Integer> {
+		private int position;
+		@Override
+		protected Integer doInBackground (String... params) {
+			
+			position = Integer.parseInt(params[1]);
+			
+			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+		   
+			if (networkInfo != null && networkInfo.isConnected()) {
+		        try {
+		        	URL url = new URL(Settings.API_URL + "/send_message2.php");
+		    	    JSONObject json = new JSONObject(POSTConnection (params[0], url));
+    
+		    	    return json.getInt("response");
+		        } catch (Exception e) {
+		        	Log.e("SendMessageException", e.toString());
+		        	return -1;
+		        }
+		    } else {
+		    	return -3;
+		    }
+		}
+		@Override
+		protected void onPostExecute(Integer result) {
+			if (result == 1) {
+				if (cv.get(position).isMine()) Settings.N_CONVERSATIONS--;
+				database.deleteConversation(cv.get(position));
+				cv.remove(position);
+				conversationAdapter.remove(position);
+				conversationAdapter.notifyDataSetChanged();
+				Toast.makeText(MainMenu.this, "Usuário removido", Toast.LENGTH_LONG).show();
+			} else if (result == -1) {
+				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor ou sua net ta ruim", Toast.LENGTH_SHORT).show();
+			} else if (result == -2) {
+				Toast.makeText(MainMenu.this, "Chave inválida para usuário. Talvez você logou em outro dispositivo?", Toast.LENGTH_SHORT).show();
+			} else if (result == -3) {
+				Toast.makeText(MainMenu.this, "Preciso de uma conexão com a internet para excluir contatos!", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (database.countConversations() >= Settings.MAX_STORED_CONVERSATIONS) {
+			connectBtn.setVisibility(View.GONE);
+			disabledConBtn.setVisibility(View.VISIBLE);
+		} else {
+			connectBtn.setVisibility(View.VISIBLE);
+			disabledConBtn.setVisibility(View.GONE);
+		}
+	}
 }

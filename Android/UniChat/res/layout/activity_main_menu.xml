@@ -136,6 +136,19 @@
 		        android:layout_marginTop="20dp"
 		        android:visibility="gone" />
 		    
+		    <Button
+		        android:id="@+id/disabled_cnt_btn"
+		        style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="@color/dark_gray"
+		        android:text="A lista de contatos está cheia"
+		        android:textSize="12sp"
+		        android:drawableTop="@drawable/connect_disabled"
+		        android:background="@android:color/transparent"
+		        android:layout_marginTop="20dp"
+		        android:visibility="gone"  />
+		    
 		</LinearLayout>
 		    
     </ScrollView>

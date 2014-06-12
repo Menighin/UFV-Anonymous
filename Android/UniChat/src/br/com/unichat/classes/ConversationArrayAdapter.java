@@ -64,10 +64,12 @@ public class ConversationArrayAdapter extends ArrayAdapter<Conversation> {
 				case 2: imageView.setImageResource(R.drawable.conversation2); break;
 				case 3: imageView.setImageResource(R.drawable.conversation3); break;
 				case 4: imageView.setImageResource(R.drawable.conversation4); break;
+				case 5: imageView.setImageResource(R.drawable.conversation5); break;
+				case 6: imageView.setImageResource(R.drawable.conversation6); break;
 			}
 			
 			dateView = (TextView) row.findViewById(R.id.conversation_list_date);
-			dateView.setText(conversation.getDate());
+			dateView.setText(conversation.getDate().substring(0, conversation.getDate().length() - 3));
 		} else {
 			headerView = (TextView) row.findViewById(R.id.conversation_separator);
 			headerView.setText(conversation.getAnonymousAlias());
@@ -82,7 +84,6 @@ public class ConversationArrayAdapter extends ArrayAdapter<Conversation> {
 	
 	@Override
 	public void add(Conversation c) {
-		Log.d("Adding", c.getAnonymousAlias());
 		conversations.add(c);
 		super.add(c);
 	}
