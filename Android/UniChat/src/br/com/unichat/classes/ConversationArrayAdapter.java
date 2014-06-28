@@ -66,6 +66,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Conversation> {
 				case 4: imageView.setImageResource(R.drawable.conversation4); break;
 				case 5: imageView.setImageResource(R.drawable.conversation5); break;
 				case 6: imageView.setImageResource(R.drawable.conversation6); break;
+				case 7: imageView.setImageResource(R.drawable.conversation7); break;
 			}
 			
 			dateView = (TextView) row.findViewById(R.id.conversation_list_date);

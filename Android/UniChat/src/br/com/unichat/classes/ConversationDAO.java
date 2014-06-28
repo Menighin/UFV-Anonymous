@@ -295,6 +295,21 @@ public class ConversationDAO extends SQLiteOpenHelper {
     	return -1;
     }
     
+    public int countMyConversations() {
+    	String query = "SELECT COUNT(*) FROM " + TABLE_CONVERSATIONS + " WHERE " + COLUMN_C_IS_MINE + " = 1";
+    	
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	Cursor cursor = db.rawQuery(query, null);
+    	
+    	if (cursor.moveToFirst()) {
+    		return Integer.parseInt(cursor.getString(0));
+    	}
+    	
+    	db.close();
+    	
+    	return -1;
+    }
+    
     public void clearDatabase() {
     	SQLiteDatabase db = this.getWritableDatabase();
     	db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATIONS);

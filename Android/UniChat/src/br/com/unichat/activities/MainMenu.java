@@ -308,7 +308,7 @@ public class MainMenu extends FragmentActivity {
 			mContentLayout.addView(mMenuLayout);
 			tab1.setBackgroundResource(R.drawable.tab_button_off);
 			tab2.setBackgroundResource(R.drawable.tab_button_on);
-			if (database.countConversations() >= Settings.MAX_STORED_CONVERSATIONS) {
+			if (database.countMyConversations() >= Settings.MAX_STORED_CONVERSATIONS) {
 				connectBtn.setVisibility(View.GONE);
 				disabledConBtn.setVisibility(View.VISIBLE);
 			} else {
@@ -359,7 +359,7 @@ public class MainMenu extends FragmentActivity {
 		        	String urlParameters = "user=" + Settings.me.getUserID() +
 							"&wantssex=" + selectedSex + "&wantscourse=" + Settings.COURSES_ID.get(courses.getSelectedItemPosition()) + 
 							"&api_key=" + Settings.me.getAPIKey() + "&already_added=" + already_added;
-					URL url = new URL(Settings.API_URL + "/connect2.php");
+					URL url = new URL(Settings.API_URL + "/connect");
 					
 					String res = POSTConnection(urlParameters, url);
 				    JSONObject json = new JSONObject(res);
@@ -445,13 +445,20 @@ public class MainMenu extends FragmentActivity {
 			if (result == 1) {
 				adapter = new ArrayAdapter<String>(MainMenu.this, android.R.layout.simple_spinner_item, Settings.COURSES);
 				courses.setAdapter(adapter);
-				connectBtn.setVisibility(View.VISIBLE);
+				if (database.countMyConversations() >= Settings.MAX_STORED_CONVERSATIONS) {
+					connectBtn.setVisibility(View.GONE);
+					disabledConBtn.setVisibility(View.VISIBLE);
+				} else {
+					connectBtn.setVisibility(View.VISIBLE);
+					disabledConBtn.setVisibility(View.GONE);
+				}
 				retryConnectBtn.setVisibility(View.GONE);
 			} else if (result == 0) {
 				Toast.makeText(MainMenu.this, "Essa universidade não tem cursos, lol", Toast.LENGTH_SHORT).show();
 			} else if (result == -1) {
 				Toast.makeText(MainMenu.this, "Ocorreu um erro no servidor, malz =S", Toast.LENGTH_SHORT).show();
 				connectBtn.setVisibility(View.GONE);
+				disabledConBtn.setVisibility(View.GONE);
 				retryConnectBtn.setVisibility(View.VISIBLE);
 			} else if (result == -2) {
 				Toast.makeText(MainMenu.this, "Chave inválida para usuário. Esse usuário fez login em outro aparelho.", Toast.LENGTH_LONG).show();
@@ -606,7 +613,7 @@ public class MainMenu extends FragmentActivity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	URL url = new URL(Settings.API_URL + "/send_message2.php");
+		        	URL url = new URL(Settings.API_URL + "/send_message");
 		    	    JSONObject json = new JSONObject(POSTConnection (params[0], url));
     
 		    	    return json.getInt("response");
@@ -640,7 +647,7 @@ public class MainMenu extends FragmentActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (database.countConversations() >= Settings.MAX_STORED_CONVERSATIONS) {
+		if (database.countMyConversations() >= Settings.MAX_STORED_CONVERSATIONS) {
 			connectBtn.setVisibility(View.GONE);
 			disabledConBtn.setVisibility(View.VISIBLE);
 		} else {

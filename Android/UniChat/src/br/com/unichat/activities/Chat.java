@@ -274,7 +274,7 @@ public class Chat extends Activity {
 		});
 		
 		// Creating confirm exit dialog box
-		// EditText for anonimous alias
+		// EditText for anonymous alias
 		alias = new EditText(this);
 		alias.setHint("Apelido");
 		alias.setText("");
@@ -284,11 +284,11 @@ public class Chat extends Activity {
 					.setPositiveButton("Salvar e sair", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							if (Settings.N_CONVERSATIONS < Settings.MAX_STORED_CONVERSATIONS) {
+							if (database.countMyConversations() < Settings.MAX_STORED_CONVERSATIONS) {
 								if (alias.getText().toString().length() > 0) {
 									chat.setAnonymousAlias(alias.getText().toString());
 								}
-								chat.setImgId(new Random().nextInt(7));
+								chat.setImgId(new Random().nextInt(8));
 								database.addConversation(chat);
 								Settings.N_CONVERSATIONS++;
 								voltarTela();
@@ -298,13 +298,6 @@ public class Chat extends Activity {
 							confirmQuit.dismiss();
 						}
 					})
-					/*.setNeutralButton("Sair sem salvar", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							voltarTela();
-						}
-						
-					})*/
 					.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -471,9 +464,9 @@ public class Chat extends Activity {
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(filePath, o);
-
+			
 			// The new size we want to scale to
-			final int REQUIRED_SIZE = 1024;
+			final int REQUIRED_SIZE = 207;
 
 			// Find the correct scale value. It should be the power of 2.
 			int width_tmp = o.outWidth, height_tmp = o.outHeight;
@@ -489,9 +482,9 @@ public class Chat extends Activity {
 			// Decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
+			o2.inJustDecodeBounds = true;
 			bitmap = BitmapFactory.decodeFile(filePath, o2);
 			
-			//Message msg = new Message(false, message.getText().toString(), DateFormat.getTimeInstance().format(new Date()).substring(0,5), true, bitmap, filePath);
 			Message msg = new Message.Builder()
 				.left(false)
 				.message(message.getText().toString())
@@ -503,7 +496,7 @@ public class Chat extends Activity {
 			adapter.add(msg);
 			chat.addMessage(msg);
 			conversation.setSelection(conversation.getCount() - 1);
-			if (extras.get("type").equals("old"))  msg.id = database.addMessage(chat.getAnonymID(), msg);//newMessages.add(msg);
+			if (extras.get("type").equals("old"))  msg.id = database.addMessage(chat.getAnonymID(), msg);
 			Integer lastMsg = adapter.getItem(msg);
 		
 			// Upload to server
@@ -523,7 +516,7 @@ public class Chat extends Activity {
 		   
 			if (networkInfo != null && networkInfo.isConnected()) {
 		        try {
-		        	URL url = new URL(Settings.API_URL + "/send_message2.php");
+		        	URL url = new URL(Settings.API_URL + "/send_message");
 		    	    JSONObject json = new JSONObject(POSTConnection (params[0], url));
 		    	    
 		    	    if (Integer.parseInt(params[1]) != -1) {
